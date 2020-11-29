@@ -1,0 +1,5 @@
+#!/bin/sh
+cd ../..
+cabal build exe:qmonad
+mv "$1" "$1.bak" 2>/dev/null
+cp "$(find dist-newstyle -type f -executable -name "qmonad" | sort -n | tail -n1)" "$1"

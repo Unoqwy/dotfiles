@@ -1,0 +1,3 @@
+# exclude every config except the example
+config*.json
+!config.example.json

@@ -1,0 +1,32 @@
+#!/bin/sh
+###
+# bin/brightness
+##
+# Script used to dynamically increase or decrease monitor's brightness
+##
+# $1 (optional): step (relative brightness change)
+#   default: 0.1
+# $2 (optional): screen name
+#   default: all connected screens, looping in reverse order
+##
+# @indent SPC-2
+# @out none
+##
+# AUTHORS Unoqwy
+# LICENSE Apache-2.0
+###
+
+STEP=${1:-0.1}
+
+if [[ -z "$2" ]]; then
+  while IFS= read -r line; do
+    {
+      exec "$0" "$STEP" "$line"
+    } &> /dev/null
+  done <<< "$(xrandr | sort -r | awk '/\sconnected/ { print $1 }')"
+else
+  current=$(xrandr --verbose | sed -n '/HDMI-1-1/,$p' | awk '/Brightness/ { print $2; end }')
+  brightness=$(echo "scale=2; a=($current + $STEP)/1; if (a < 1) {if (a > 0.1) a else 0.1} else 1" | bc)
+  xrandr --output "$2" --brightness "$brightness"
+fi
+

@@ -1,0 +1,58 @@
+cabal-version: >=1.10
+build-type: Simple
+
+name: qmonad
+version: 1.3.0
+author: Unoqwy <julien.qwy@gmail.com>
+license: MIT
+
+library
+  hs-source-dirs: src
+
+  default-language: Haskell2010
+  build-depends:
+    base >=4.13 && <4.14,
+    containers,
+    bifunctors,
+    X11 >=1.8 && <1.10,
+    xmonad ==0.15.*,
+    xmonad-contrib ==0.16.*
+
+executable qmonad
+  main-is: xmonad.hs
+  hs-source-dirs: src
+
+  other-modules:
+    QMonad.Config.Applications
+    QMonad.Config.Hooks
+    QMonad.Config.Keybindings
+    QMonad.Config.Prompt
+    QMonad.Config.Xmobar
+    QMonad.Lib.WorkspaceMasks
+    QMonad.Shared.Theme
+
+  default-language: Haskell2010
+  build-depends:
+    base,
+    containers,
+    bifunctors,
+    X11,
+    xmonad,
+    xmonad-contrib
+
+executable qmobar
+  main-is: xmobar.hs
+  hs-source-dirs: src
+
+  other-modules:
+    QMonad.Shared.Theme
+
+  default-language: Haskell2010
+  build-depends:
+    base,
+    containers,
+    directory,
+    split,
+    dotenv,
+    xmobar ==0.36.*
+

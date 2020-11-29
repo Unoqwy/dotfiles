@@ -1,0 +1,11 @@
+# use gen-hie to get hie.yaml
+hie.yaml
+
+# cache
+prompt-history
+
+bin/xmo**/xmo*
+**/.env
+
+# cabal output
+dist-newstyle
