@@ -1,62 +1,47 @@
-source $HOME/.vimrc-fn
-
-set nocompatible
-set encoding=utf8
-
-set hidden
+set nocompatible encoding=utf8
 set noerrorbells
+set hidden
 
 set lazyredraw
 set number relativenumber
 set signcolumn=number
-set wrap
+set wrap linebreak
+set noshowmatch
 
-set mat=2
 set magic
-set showmatch
 
 set wildmenu
-set splitbelow splitright
+set nosplitbelow splitright
 
 " tabs
 set tabstop=4 softtabstop=4
 set shiftwidth=4
-set smarttab
-set expandtab
+set smarttab expandtab
 
 " indent
 set autoindent
 set smartindent
 
 " search
-set ignorecase
-set smartcase
-"set hlsearch
+set ignorecase smartcase
 set incsearch
 
 " undo and backup
-set undodir=$HOME/.undodir
-set undofile
-set nobackup
-set noswapfile
+set undodir=$HOME/.undodir undofile
+set nobackup noswapfile
 
 filetype plugin indent on
 syntax on
 
-" one clipboard rule them all
-"set clipboard=unnamedplus
+" I often find myself wanting to switch colorscheme
+" so I have this easy want of doing so between the 3 themes I used
+" > 1: gruvbox | 2: miramare | 3: ayu-mirage
+let s:theme=3
 
 """ PLUGINS
 call plug#begin('~/.vim/plugged')
 
-" VIM config debug
-if !has('nvim')
-    Plug 'rhysd/vim-healthcheck'
-endif
-
 " Project/file navigation
-Plug 'preservim/nerdtree' |
-            \ Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'junegunn/fzf.vim'
 
 " Transforms
@@ -76,77 +61,128 @@ Plug 'vimwiki/vimwiki'
 Plug 'junegunn/goyo.vim'
 
 " Theme/Display
+if s:theme == 1
+    Plug 'gruvbox-community/gruvbox'
+elseif s:theme == 2
+    Plug 'franbach/miramare'
+elseif s:theme == 3
+    Plug 'ayu-theme/ayu-vim'
+endif
+
 Plug 'itchyny/lightline.vim'
-Plug 'gruvbox-community/gruvbox'
-"Plug 'ryanoasis/vim-devicons'
+Plug 'jszakmeister/vim-togglecursor'
 
 call plug#end()
 ""/ PLUGINS
 
-" Colorscheme
-set background=dark
-let g:gruvbox_italic=1
-colorscheme gruvbox
-
+""" THEME
+set termguicolors t_Co=256
 if exists('+termguicolors')
     " fix to make colors feel right within tmux
     let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
     let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-    set termguicolors
 endif
-set t_Co=256
+
+set background=dark
+if s:theme == 1
+    let g:gruvbox_italic=1
+    let s:lightline_theme="seoul256"
+    colorscheme gruvbox
+elseif s:theme == 2
+    let g:miramare_enable_italic=1
+    let g:miramare_enable_italic_string=1
+    let g:miramare_enable_bold=0
+
+    let s:lightline_theme="seoul256"
+    colorscheme miramare
+elseif s:theme == 3
+    let g:ayucolor="mirage"
+    let s:lightline_theme="ayu_mirage"
+    colorscheme ayu
+endif
+
+if s:theme == 2 || s:theme == 3
+    set hlsearch
+    hi clear Search
+    hi Search gui=underline,bold
+
+    set cursorline
+    hi clear CursorLine
+    hi CursorLineNR guifg=#607080
+endif
+
+let g:togglecursor_force = 'xterm'
 
 " Status line
 set laststatus=2
-set noshowmode
-set showcmd
+set noshowmode showcmd
 
 " = gb color red
 hi ExtraWhitespace guibg=#fb4934
 
+function! DisplayGitBranch()
+    let branch = fugitive#head()
+    if len(branch) > 0
+        return "\ue0a0 " . fugitive#head()
+    endif
+    return ""
+endfunction
+
 let g:lightline = {
-      \ 'colorscheme': 'seoul256',
+      \ 'colorscheme': s:lightline_theme,
       \ 'active': {
-      \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'readonly', 'filename', 'modified' ] ],
-      \   'right': [ [ 'percent', 'position' ],
-      \              [ 'filetype' ],
-      \              [ 'fileencoding' ] ]
+      \   'left': [ ['mode', 'paste']
+      \           , ['readonly', 'filename', 'modified']
+      \           , ['gitbranch']
+      \           ],
+      \   'right': [ ['position']
+      \            , ['fileencoding', 'filetype']
+      \            , ['total']
+      \            ],
       \ },
       \ 'component': {
-      \   'position': '%l:%c (%L)'
+      \   'position': '%l:%c',
+      \   'total': '%L',
+      \ },
+      \ 'component_function': {
+      \   'gitbranch': 'DisplayGitBranch',
       \ },
       \ }
-
-" Files management
-let NERDTreeShowHidden=1
+""/ THEME
 
 " Writing
-let g:vimwiki_list = [{
+let g:vimwiki_list = [ {
      \ 'path': '~/vimwiki/',
      \ 'syntax': 'markdown',
      \ 'ext': '.notes.md',
-     \ }]
+     \ } ]
 
 let g:goyo_width  = '60%'
 let g:goyo_height = '80%'
 
+function! s:SetIndentation(size)
+    let &shiftwidth=a:size
+    let &tabstop=a:size
+    let &softtabstop=a:size
+endfunction
+autocmd BufRead,BufNew *.notes.md call s:SetIndentation(3)
+
+" Languages
 set colorcolumn=120
 autocmd FileType haskell,cabal set cc=80
 
-" Languages
 let g:haskell_indent_disable = 1
 
-let g:coc_global_extensions = [
-     \ 'coc-rust-analyzer',
-     \ 'coc-toml',
-     \ 'coc-tsserver',
-     \ 'coc-python',
-     \ 'coc-clangd',
-     \ 'coc-html',
-     \ 'coc-json',
-     \ 'coc-xml',
-     \ ]
+"let g:coc_global_extensions = [
+     "\ 'coc-rust-analyzer',
+     "\ 'coc-toml',
+     "\ 'coc-tsserver',
+     "\ 'coc-python',
+     "\ 'coc-clangd',
+     "\ 'coc-html',
+     "\ 'coc-json',
+     "\ 'coc-xml',
+     "\ ]
 
 """ KEY BINDINGS
 nnoremap <SPACE> <Nop>
@@ -173,10 +209,7 @@ nnoremap <silent> <leader>wx F[dt]i[x<ESC>$
 nnoremap <silent> <leader>wu F[dt]i[ <ESC>$
 
 " transform bindings
-nnoremap <silent>       <leader>tW :StripWhitespace<CR>
-nnoremap <silent><expr> <leader>tw  v:count is 0
-    \? ':<C-U>set opfunc=<SNR>' . GetScriptNumber('better-whitespace.vim') . '_StripWhitespaceMotion<CR>g@'
-    \: ':<C-U>exe ".,+' . v:count . ' StripWhitespace"<CR>'
+nnoremap <silent> <leader>tW :StripWhitespace<CR>
 
 " COC - Most keybindings here are defaults
 " from the README page of coc.nvim as I find them convenient
