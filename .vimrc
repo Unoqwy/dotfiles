@@ -173,17 +173,6 @@ autocmd FileType haskell,cabal set cc=80
 
 let g:haskell_indent_disable = 1
 
-"let g:coc_global_extensions = [
-     "\ 'coc-rust-analyzer',
-     "\ 'coc-toml',
-     "\ 'coc-tsserver',
-     "\ 'coc-python',
-     "\ 'coc-clangd',
-     "\ 'coc-html',
-     "\ 'coc-json',
-     "\ 'coc-xml',
-     "\ ]
-
 """ KEY BINDINGS
 nnoremap <SPACE> <Nop>
 let mapleader = " "
