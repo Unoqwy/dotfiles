@@ -178,16 +178,15 @@ nnoremap <SPACE> <Nop>
 let mapleader = " "
 
 " v(im) shortcuts
-" R(eload) all
+" R(eload all)
 nnoremap <leader>vR :source $HOME/.vimrc<CR>
 " r(elaod): c(urrent), p(lugins)
 nnoremap <leader>vrc :source %<CR>
 nnoremap <leader>vrp :source $HOME/.vimrc<CR>:PlugUpdate<CR>
 
 " f(ile) shortcuts
-" l(ist), s(ave)
-nnoremap <silent> <leader>fl :NERDTreeToggle<CR>
-nnoremap          <leader>fs :w<CR>
+" s(ave)
+nnoremap <leader>fs :w<CR>
 
 nnoremap <silent> <leader>. :Files<CR>
 nnoremap <silent><expr> <leader>, ':e#' . v:count . '<CR>'
@@ -196,6 +195,14 @@ nnoremap <silent> <leader>W :Goyo<CR>
 " mark task as (un)done
 nnoremap <silent> <leader>wx F[dt]i[x<ESC>$
 nnoremap <silent> <leader>wu F[dt]i[ <ESC>$
+
+" QoL shortcuts
+nnoremap <leader>d "_d
+nnoremap <silent> <leader>P :set paste!<CR>
+
+" git
+nnoremap <silent> <leader>gs :G<CR>
+nnoremap <silent> <leader>gc :Gcommit<CR>
 
 " transform bindings
 nnoremap <silent> <leader>tW :StripWhitespace<CR>
