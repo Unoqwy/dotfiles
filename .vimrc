@@ -207,6 +207,9 @@ nnoremap <silent> <leader>gc :Gcommit<CR>
 " transform bindings
 nnoremap <silent> <leader>tW :StripWhitespace<CR>
 
+match Error /\t/
+nnoremap <silent> <leader>tT :retab<CR>
+
 " COC - Most keybindings here are defaults
 " from the README page of coc.nvim as I find them convenient
 inoremap <silent><expr> <C-@> coc#refresh()

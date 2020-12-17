@@ -64,13 +64,13 @@ module.exports = {
 
             var number = parseInt(numberBadge.innerText);
             var innerHTML = dm.innerHTML.toString();
-			var userMatch = innerHTML.match(/avatars\/(\d+)/);
+            var userMatch = innerHTML.match(/avatars\/(\d+)/);
             if (userMatch !== null) {
-				dmList[userMatch[1]] = number;
+                dmList[userMatch[1]] = number;
             } else {
-             	// dm is group
- 				var groupId = 'G:' + innerHTML.match(/channels\/@me\/(\d+)/)[1];
-				dmList[groupId] = number;
+                // dm is group
+                var groupId = 'G:' + innerHTML.match(/channels\/@me\/(\d+)/)[1];
+                dmList[groupId] = number;
             }
         }
         return dmList;
