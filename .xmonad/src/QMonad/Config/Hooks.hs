@@ -54,8 +54,8 @@ mkGaps = spacingRaw False
   (Border windowSpacing windowSpacing windowSpacing windowSpacing) True
 
 defaultIncr = 5/100
-layouts = named "H 1|1" htall
-      ||| named "V 2*|1" vtall
+layouts = named "V 2*|1" vtall
+      ||| named "H 1|1" htall
       ||| named "H 2|3/2" three
       ||| named "Full" full
       ||| named "" fullScreen
