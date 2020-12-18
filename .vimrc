@@ -48,10 +48,12 @@ Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-surround'
 Plug 'ntpeters/vim-better-whitespace'
 
-" Completion, syntax, docs, languages, etc
+" Completion, syntax, docs, languages, git, etc
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'preservim/nerdcommenter'
+
 Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
 
 Plug 'rust-lang/rust.vim'
 Plug 'cespare/vim-toml'
@@ -116,6 +118,8 @@ endif
 
 let g:togglecursor_force = 'xterm'
 
+match Error /\t/
+
 " Status line
 set laststatus=2
 set noshowmode showcmd
@@ -178,7 +182,7 @@ let g:haskell_indent_disable = 1
 
 """ KEY BINDINGS
 nnoremap <SPACE> <Nop>
-let mapleader = " "
+let mapleader=" "
 
 " v(im) shortcuts
 " R(eload all)
@@ -194,6 +198,7 @@ nnoremap <leader>fs :w<CR>
 nnoremap <silent> <leader>. :Files<CR>
 nnoremap <silent><expr> <leader>, ':e#' . v:count . '<CR>'
 
+" Writing
 nnoremap <silent> <leader>W :Goyo<CR>
 " mark task as (un)done
 nnoremap <silent> <leader>wx F[dt]i[x<ESC>$
@@ -206,11 +211,10 @@ nnoremap <silent> <leader>P :set paste!<CR>
 " git
 nnoremap <silent> <leader>gs :G<CR>
 nnoremap <silent> <leader>gc :Gcommit<CR>
+nnoremap <silent> <leader>gg :GitGutterToggle<CR>
 
 " transform bindings
 nnoremap <silent> <leader>tW :StripWhitespace<CR>
-
-match Error /\t/
 nnoremap <silent> <leader>tT :retab<CR>
 
 " COC - Most keybindings here are defaults
