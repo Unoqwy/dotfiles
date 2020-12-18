@@ -109,6 +109,9 @@ if s:theme == 2 || s:theme == 3
     set cursorline
     hi clear CursorLine
     hi CursorLineNR guifg=#607080
+
+    hi CocRustTypeHint guifg=#607080
+    hi CocRustChainingHint guifg=#959595
 endif
 
 let g:togglecursor_force = 'xterm'
