@@ -11,7 +11,6 @@ set noshowmatch
 set magic
 
 set wildmenu
-set nosplitbelow splitright
 
 " tabs
 set tabstop=4 softtabstop=4
@@ -55,10 +54,17 @@ Plug 'preservim/nerdcommenter'
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 
+" the best
 Plug 'rust-lang/rust.vim'
 Plug 'cespare/vim-toml'
 Plug 'neovimhaskell/haskell-vim'
 
+" web
+Plug 'mattn/emmet-vim'
+Plug 'pangloss/vim-javascript'
+Plug 'nelsyeung/twig.vim'
+
+" Writing
 Plug 'vimwiki/vimwiki'
 Plug 'junegunn/goyo.vim'
 
@@ -172,13 +178,36 @@ function! s:SetIndentation(size)
     let &tabstop=a:size
     let &softtabstop=a:size
 endfunction
-autocmd BufRead,BufNew *.notes.md call s:SetIndentation(3)
+au BufRead,BufNew *.notes.md call s:SetIndentation(3)
 
 " Languages
-set colorcolumn=120
-autocmd FileType haskell,cabal set cc=80
 
+" indent
 let g:haskell_indent_disable = 1
+
+set colorcolumn=120
+au FileType haskell,cabal set cc=80
+
+au FileType svg,xml set nowrap
+au FileType svg,xml call s:SetIndentation(2)
+
+au FileType toml,json set cc=80
+au FileType toml call s:SetIndentation(2)
+
+" completion
+let g:user_emmet_leader_key='<C-_>'
+au FileType html.twig.js.css EmmetInstall
+
+" fixes
+au FileType html.twig.js.css silent call CocActionAsync('activeExtension', 'coc-html')
+
+function! s:onCocInit()
+    let &ft=&ft
+endfunction
+autocmd User CocNvimInit call s:onCocInit()
+
+" QoL
+let g:UltiSnipsEditSplit="vertical"
 
 """ KEY BINDINGS
 nnoremap <SPACE> <Nop>
@@ -208,6 +237,12 @@ nnoremap <silent> <leader>wu F[dt]i[ <ESC>$
 nnoremap <leader>d "_d
 nnoremap <silent> <leader>P :set paste!<CR>
 
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+set nosplitbelow splitright
+
 " git
 nnoremap <silent> <leader>gs :G<CR>
 nnoremap <silent> <leader>gc :Gcommit<CR>
@@ -219,9 +254,12 @@ nnoremap <silent> <leader>tT :retab<CR>
 
 " COC - Most keybindings here are defaults
 " from the README page of coc.nvim as I find them convenient
-inoremap <silent><expr> <C-@> coc#refresh()
-inoremap <silent><expr> <CR>  pumvisible() ? coc#_select_confirm()
-    \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+if has('nvim')
+    inoremap <silent><expr> <c-space> coc#refresh()
+else
+    inoremap <silent><expr> <c-@> coc#refresh()
+endif
+inoremap <silent><expr> <CR> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
 
 nmap <silent> [g <Plug>(coc-diagnostic-prev)
 nmap <silent> ]g <Plug>(coc-diagnostic-next)
