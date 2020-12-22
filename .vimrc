@@ -227,6 +227,18 @@ nnoremap <leader>fs :w<CR>
 nnoremap <silent> <leader>. :Files<CR>
 nnoremap <silent><expr> <leader>, ':e#' . v:count . '<CR>'
 
+" window/tab/file/buffer movements
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+set nosplitbelow splitright
+
+" s(witch tab)
+nnoremap <leader>sp :tabp<CR>
+nnoremap <leader>sn :tabn<CR>
+nnoremap <leader>sx :tabclose<CR>
+
 " Writing
 nnoremap <silent> <leader>W :Goyo<CR>
 " mark task as (un)done
@@ -236,12 +248,6 @@ nnoremap <silent> <leader>wu F[dt]i[ <ESC>$
 " QoL shortcuts
 nnoremap <leader>d "_d
 nnoremap <silent> <leader>P :set paste!<CR>
-
-nnoremap <C-J> <C-W><C-J>
-nnoremap <C-K> <C-W><C-K>
-nnoremap <C-L> <C-W><C-L>
-nnoremap <C-H> <C-W><C-H>
-set nosplitbelow splitright
 
 " git
 nnoremap <silent> <leader>gs :G<CR>
