@@ -42,6 +42,7 @@ call plug#begin('~/.vim/plugged')
 
 " Project/file navigation
 Plug 'junegunn/fzf.vim'
+Plug 'preservim/tagbar'
 
 " Transforms
 Plug 'tpope/vim-surround'
@@ -49,6 +50,7 @@ Plug 'ntpeters/vim-better-whitespace'
 
 " Completion, syntax, docs, languages, git, etc
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'SirVer/ultisnips'
 Plug 'preservim/nerdcommenter'
 
 Plug 'tpope/vim-fugitive'
@@ -224,8 +226,11 @@ nnoremap <leader>vrp :source $HOME/.vimrc<CR>:PlugUpdate<CR>
 " s(ave)
 nnoremap <leader>fs :w<CR>
 
+nnoremap <silent> <leader>/ :GitFiles<CR>
 nnoremap <silent> <leader>. :Files<CR>
 nnoremap <silent><expr> <leader>, ':e#' . v:count . '<CR>'
+
+nnoremap <silent> <leader>\ :TagbarToggle<CR>
 
 " window/tab/file/buffer movements
 nnoremap <C-J> <C-W><C-J>
@@ -266,6 +271,7 @@ else
     inoremap <silent><expr> <c-@> coc#refresh()
 endif
 inoremap <silent><expr> <CR> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
+inoremap <silent><expr> <C-P> CocActionAsync('showSignatureHelp')
 
 nmap <silent> [g <Plug>(coc-diagnostic-prev)
 nmap <silent> ]g <Plug>(coc-diagnostic-next)
@@ -277,7 +283,12 @@ nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
 " refactoring
-nmap <leader>rn <Plug>(coc-rename)
+nmap <silent> <leader>rn <Plug>(coc-rename)
+
+nmap <silent> <leader>A <Plug>(coc-codeaction)
+nmap <silent> <leader>a <Plug>(coc-codeaction-selected)
+" q(quick) f(ix)
+nmap <silent> <leader>qf <Plug>(coc-fix-current)
 
 " K in preview -> show doc
 nnoremap <silent> K :call <SID>show_documentation()<CR>
