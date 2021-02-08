@@ -1,12 +1,3 @@
-" -----------------------------------------------------------------
-" My IdeaVim configuration, mainly mirroring my .vimrc keybindings
-"
-" IdeaVim feels quite limited and not so powerful, I wish I could
-" use regular vim for Java, but you don't always have what you want
-"
-" Unoqwy 2021 - public domain
-" -----------------------------------------------------------------
-
 " default behavior I expect for any vim config (cf. my .vimrc)
 set number relativenumber
 set wrap linebreak
@@ -42,6 +33,7 @@ let mapleader=" "
 nnoremap <leader>vR :source $HOME/.ideavimrc<CR>
 
 nnoremap <leader>fs :w<CR>
+nnoremap <leader>, :e#<CR>
 
 " window/tab/file/buffer movements
 nnoremap <C-J> <C-W><C-J>
@@ -62,7 +54,7 @@ nmap gy :action GotoTypeDeclaration<CR>
 nmap gi :action GotoImplementation<CR>
 " gr -> what the heck? why isn't there a GotoReferences?
 
-inoremap <C-P> :action ParameterInfo<CR>
+inoremap <C-P> <C-O>:action ParameterInfo<CR>
 nnoremap K :action QuickJavaDoc<CR>
 
 nmap <leader>rn :action RenameElement<CR>
@@ -72,6 +64,6 @@ nmap <leader>I :action ImplementMethods<CR>
 nmap <leader>ig :action GenerateGetter<CR>
 nmap <leader>is :action GenerateSetter<CR>
 nmap <leader>iG :action GenerateGetterAndSetter<CR>
+nmap <leader>ih :action GenerateConstructor<CR>
 
 nnoremap <leader>a :action ShowIntentionActions<CR>
-
