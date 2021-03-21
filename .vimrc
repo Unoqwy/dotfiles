@@ -27,6 +27,7 @@ set incsearch
 
 " undo and backup
 set undodir=$HOME/.undodir undofile
+set backupdir=$HOME/tmp
 set nobackup noswapfile
 
 filetype plugin indent on
@@ -50,11 +51,14 @@ Plug 'ntpeters/vim-better-whitespace'
 
 " Completion, syntax, docs, languages, git, etc
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
 Plug 'preservim/nerdcommenter'
 
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
+
+Plug 'turbio/bracey.vim'
+Plug '~/vim-godot'
 
 " the best
 Plug 'rust-lang/rust.vim'
@@ -71,6 +75,8 @@ Plug 'vimwiki/vimwiki'
 Plug 'junegunn/goyo.vim'
 
 " Theme/Display
+Plug 'ap/vim-css-color'
+
 if s:theme == 1
     Plug 'gruvbox-community/gruvbox'
 elseif s:theme == 2
@@ -81,6 +87,8 @@ endif
 
 Plug 'itchyny/lightline.vim'
 Plug 'jszakmeister/vim-togglecursor'
+
+Plug 'wakatime/vim-wakatime'
 
 call plug#end()
 ""/ PLUGINS
@@ -189,6 +197,7 @@ let g:haskell_indent_disable = 1
 
 set colorcolumn=120
 au FileType haskell,cabal set cc=80
+au FileType haskell call s:SetIndentation(2)
 
 au FileType svg,xml set nowrap
 au FileType svg,xml call s:SetIndentation(2)
@@ -270,8 +279,13 @@ if has('nvim')
 else
     inoremap <silent><expr> <c-@> coc#refresh()
 endif
-inoremap <silent><expr> <CR> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
 inoremap <silent><expr> <C-P> CocActionAsync('showSignatureHelp')
+
+" ugly workaround to get completion working in GDScript
+" or natively for everything else
+inoremap <silent><expr> <CR> pumvisible() ?
+        \ &ft == "gdscript" ? (complete_info().selected == -1 ? "\<C-n>\<ESC>a" : "\<C-p>\<C-n>\<ESC>a") : coc#_select_confirm()
+        \ : "\<C-g>u\<CR>"
 
 nmap <silent> [g <Plug>(coc-diagnostic-prev)
 nmap <silent> ]g <Plug>(coc-diagnostic-next)
@@ -305,4 +319,3 @@ endfunction
 
 autocmd CursorHold * silent call CocActionAsync('highlight')
 ""/ KEY BINDINGS
-
