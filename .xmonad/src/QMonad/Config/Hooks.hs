@@ -6,7 +6,7 @@ module QMonad.Config.Hooks (
 ) where
 
 import XMonad hiding (Hide)
-import XMonad.Hooks.ManageHelpers (isFullscreen, doFullFloat)
+import XMonad.Hooks.ManageHelpers (isDialog, doCenterFloat)
 import XMonad.Util.SpawnOnce (spawnOnce)
 import qualified XMonad.StackSet as W
 import Data.Bifunctor (first)
@@ -32,6 +32,8 @@ setupDefaultWorkspaces = do
             , (4, "main")
             , (5, "any")
             , (6, "chat")
+            , (7, "ts")
+            , (8, "tm")
             ]
 
 startupHook :: X()
@@ -45,8 +47,8 @@ startupHook = do
 windowSpacing = 4 `div` 2
 screenSpacing = [ 6 - windowSpacing -- Top
                 , 6 - windowSpacing -- Bottom
-                , 8 - windowSpacing -- Right
-                , 8 - windowSpacing -- Left
+                , 6 - windowSpacing -- Right
+                , 6 - windowSpacing -- Left
                 ]
 
 mkGaps = spacingRaw False
@@ -67,39 +69,31 @@ layouts = named "V 2*|1" vtall
     fullScreen = noBorders Full
 
 -- Log hook
-data XmobarSignal = Hide | Reveal | Toggle
-
-instance Show XmobarSignal where
-    show Hide = "Hide 0"
-    show Reveal = "Reveal 0"
-    show Toggle = "Toggle 0"
-
-sendXmobarSig :: XmobarSignal -> X()
-sendXmobarSig sig = spawn
-  $ "dbus-send --print-reply --type=method_call --session"
-  ++ " --dest=org.Xmobar.Control /org/Xmobar/Control org.Xmobar.Control.SendSignal"
-  ++ " \"string:" ++ show sig ++ "\""
-
 logHook :: X()
 logHook = do
-  -- Temporary solution to hide xmobar while in fullScreen
-  -- so that windows it's hidden from windows with transparency
-  -- FIXME: this is a terrible solution
-  wset <- gets windowset
-  let ld = description . W.layout . W.workspace . W.current $ wset
-  if null ld
-    then sendXmobarSig Hide
-    else sendXmobarSig Reveal
+    return ()
 
 -- Manage hook
 manageHook :: ManageHook
 manageHook = composeAll [
-    isFullscreen --> doFullFloat
+    isDialog --> doF W.swapUp
 
+  -- Organized applications
   , className =? "discord" --> doShift "6"
+  , className =? "TeamSpeak 3" --> doShift "7"
+  , className =? "Notion" --> doShift "8"
 
-  , className =? "Pavucontrol" --> doFloat
-  , role =? "PictureInPicture" --> doFloat
+  -- Splash screens
+  , className =? "jetbrains-idea-ce" <&&> title =? "win0" --> doCenterFloat
+
+  -- Settings apps
+  , className =? "Pavucontrol" --> doCenterFloat
+  , className =? "flameshot" <&&> title =? "Configuration" --> doCenterFloat
+
+  -- Firefox PiP
+  , wmRole =? "PictureInPicture" --> doFloat
+
+  -- Misc
+  , resource =? "Godot_Engine" --> doFloat
   ] where
-      role = stringProperty "WM_WINDOW_ROLE"
-
+      wmRole = stringProperty "WM_WINDOW_ROLE"

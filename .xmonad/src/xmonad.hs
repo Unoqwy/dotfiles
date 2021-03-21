@@ -42,7 +42,7 @@ main = do
     , keys               = keybindings
     , layoutHook = smartBorders Hooks.layouts
     , startupHook = Hooks.startupHook
-    , manageHook = insertPosition End Newer <+> Hooks.manageHook
+    , manageHook = insertPosition Below Newer <+> Hooks.manageHook
     , logHook = xmobarLogHook xmobarStdin infoPipe <+> Hooks.logHook
     }
 

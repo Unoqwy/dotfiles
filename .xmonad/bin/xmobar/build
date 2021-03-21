@@ -1,4 +1,8 @@
 #!/bin/sh
+if [ -n ${XMOBAR_IGNORE_BUILD+a} ]; then
+    exit
+fi
+
 OUTPUT=${1:-"$(dirname $(readlink -f $0))/xmobar"}
 FLAGS=("+with_utf8" "+with_xft" "+with_weather" "+with_dbus")
 
