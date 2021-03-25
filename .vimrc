@@ -4,7 +4,11 @@ set hidden
 
 set lazyredraw
 set number relativenumber
-set signcolumn=number
+if has('nvim')
+    set signcolumn=yes
+else
+    set signcolumn=number
+endif
 set wrap linebreak
 set noshowmatch
 
@@ -34,9 +38,9 @@ filetype plugin indent on
 syntax on
 
 " I often find myself wanting to switch colorscheme
-" so I have this easy want of doing so between the 3 themes I used
-" > 1: gruvbox | 2: miramare | 3: ayu-mirage
-let s:theme=3
+" so I have this easy want of doing so between the 3 themes I use
+" > 1: gruvbox | 2: sonkai | 3: ayu-mirage
+let s:theme=2
 
 """ PLUGINS
 call plug#begin('~/.vim/plugged')
@@ -50,6 +54,10 @@ Plug 'tpope/vim-surround'
 Plug 'ntpeters/vim-better-whitespace'
 
 " Completion, syntax, docs, languages, git, etc
+if has('nvim')
+    Plug 'nvim-treesitter/nvim-treesitter'
+endif
+
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'honza/vim-snippets'
 Plug 'preservim/nerdcommenter'
@@ -80,7 +88,8 @@ Plug 'ap/vim-css-color'
 if s:theme == 1
     Plug 'gruvbox-community/gruvbox'
 elseif s:theme == 2
-    Plug 'franbach/miramare'
+    Plug 'sainnhe/sonokai'
+    Plug 'sainnhe/everforest'
 elseif s:theme == 3
     Plug 'ayu-theme/ayu-vim'
 endif
@@ -92,6 +101,17 @@ Plug 'wakatime/vim-wakatime'
 
 call plug#end()
 ""/ PLUGINS
+
+if has('nvim')
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+    ensure_installed = {"rust"},
+    highlight = {
+        enable = true
+    },
+}
+EOF
+endif
 
 """ THEME
 set termguicolors t_Co=256
@@ -107,29 +127,34 @@ if s:theme == 1
     let s:lightline_theme="seoul256"
     colorscheme gruvbox
 elseif s:theme == 2
-    let g:miramare_enable_italic=1
-    let g:miramare_enable_italic_string=1
-    let g:miramare_enable_bold=0
+    let g:sonokai_style = 'shusia'
+    let g:sonokai_lightline_disable_bold = 1
+    let g:sonokai_disable_italic_comment = 1
+    let g:sonokai_diagnostic_line_highlight = 0
 
-    let s:lightline_theme="seoul256"
-    colorscheme miramare
+    let g:everforest_background = 'hard'
+
+    let s:lightline_theme="sonokai"
+    colorscheme sonokai
 elseif s:theme == 3
     let g:ayucolor="mirage"
     let s:lightline_theme="ayu_mirage"
     colorscheme ayu
 endif
 
+set cursorline
 if s:theme == 2 || s:theme == 3
     set hlsearch
     hi clear Search
     hi Search gui=underline,bold
 
-    set cursorline
-    hi clear CursorLine
-    hi CursorLineNR guifg=#607080
-
     hi CocRustTypeHint guifg=#607080
     hi CocRustChainingHint guifg=#959595
+
+    if s:theme == 3
+        hi clear CursorLineNR
+        hi CursorLineNR guifg=#607080
+    endif
 endif
 
 let g:togglecursor_force = 'xterm'
