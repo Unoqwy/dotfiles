@@ -1,5 +1,7 @@
 #!/bin/sh
-if [ -n ${XMOBAR_IGNORE_BUILD+a} ]; then
+echo 'a'
+if [ -z "$XMOBAR_IGNORE_BUILD" ]; then
+    echo 'b'
     exit
 fi
 
