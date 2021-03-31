@@ -25,11 +25,15 @@ for k,v in pairs(opts.wrap_lines) do
     end
 end
 
+--> Comments
+require('nvim_comment').setup()
+
 end
 return {
     init = init,
     install_deps = function(use)
         use('nvim-treesitter/nvim-treesitter')
+        use('terrortylor/nvim-comment')
     end,
 }
 

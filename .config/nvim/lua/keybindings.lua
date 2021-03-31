@@ -37,8 +37,9 @@ local function register_defaults()
     nmap('<leader>pt', ':set paste!<CR>', true)
 
     --> [c]lear
-    -- [h]ighlight;
+    -- [h]ighlight; [l]ine;
     nmap('<leader>ch', ':nohl<CR>', true)
+    nmap('<leader>cl', '^d$', true)
 
     --> Splits
     for _,v in ipairs({'J', 'K', 'L', 'H'}) do

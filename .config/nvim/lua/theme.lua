@@ -9,6 +9,10 @@ q.wo.t_Co = '256'
 q.o.hlsearch = true
 q.wo.cursorline = true
 
+-- fix for tmux (TODO: is it even needed?)
+vim.cmd('let &t_8f = "\\<Esc>[38;2;%lu;%lu;%lum"')
+vim.cmd('let &t_8b = "\\<Esc>[48;2;%lu;%lu;%lum"')
+
 -------------------
 -- Theme settings
 -------------------
