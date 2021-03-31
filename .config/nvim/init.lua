@@ -1,4 +1,5 @@
 require('opts') -- load opts
+
 require('settings') -- apply settings
 require('keybindings') -- bindings helper methods
 

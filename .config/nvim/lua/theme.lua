@@ -3,11 +3,11 @@ local function init()
 ---------------------
 -- General settings
 ---------------------
-vim.o.termguicolors = true
-vim.wo.t_Co = '256'
+q.o.termguicolors = true
+q.wo.t_Co = '256'
 
-vim.o.hlsearch = true
-vim.wo.cursorline = true
+q.o.hlsearch = true
+q.wo.cursorline = true
 
 -------------------
 -- Theme settings
@@ -47,12 +47,21 @@ local galaxyline = require('galaxyline')
 local colorizer = require('colorizer')
 colorizer.setup()
 
+vim.g.indent_blankline_char = '▏'
+vim.g.indent_blankline_use_treesitter = true
+
+vim.g.indent_blankline_show_first_indent_level = false
+vim.g.indent_blankline_show_trailing_blankline_indent = false
+
 end
 return {
     init = init,
     install_deps = function(use)
         use('glepnir/galaxyline.nvim')
         use('norcalli/nvim-colorizer.lua')
+
+        -- disabled for now, breaks listchars highlight
+        --use {'lukas-reineke/indent-blankline.nvim', branch='lua'}
 
         if opts.theme == Themes.Sonokai then
             use('sainnhe/sonokai')

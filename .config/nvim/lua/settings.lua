@@ -1,31 +1,49 @@
+--------------
+-- Utilities
+--------------
+local function bake_q(scopes)
+    return setmetatable({}, {
+        __newindex = function(_, key, value)
+            for _,scope in ipairs(scopes) do
+                scope[key] = value
+            end
+        end,
+    })
+end
+
+_G.q = {
+    o = bake_q {vim.o},
+    wo = bake_q {vim.wo, vim.o},
+    bo = bake_q {vim.bo, vim.o},
+}
+
 -----------------
 -- Set settings
 -----------------
-
 --> Global
-vim.o.smarttab = true
-vim.o.showmode = false
-vim.o.ignorecase = true
-vim.o.smartcase = true
+q.o.smarttab = true
+q.o.showmode = false
+q.o.ignorecase = true
+q.o.smartcase = true
 
-vim.o.hidden = true
-vim.o.splitbelow = true
-vim.o.splitright = true
+q.o.hidden = true
+q.o.splitbelow = true
+q.o.splitright = true
 
 --> Window
-vim.wo.number = true
-vim.wo.relativenumber = true
-vim.wo.signcolumn = "yes:1"
-vim.wo.list = true
+q.wo.number = true
+q.wo.relativenumber = true
+q.wo.signcolumn = "yes:1"
+q.wo.list = true
 
-vim.wo.wrap = true
-vim.wo.linebreak = true
+q.wo.wrap = true
+q.wo.linebreak = true
 
 --> Buffer
-vim.bo.expandtab = true
-vim.bo.tabstop = opts.indent_level
-vim.bo.shiftwidth = opts.indent_level
+q.bo.expandtab = true
+q.bo.tabstop = opts.indent_level
+q.bo.shiftwidth = opts.indent_level
 
-vim.bo.autoindent = true
-vim.bo.smartindent = true
+q.bo.autoindent = true
+q.bo.smartindent = true
 
