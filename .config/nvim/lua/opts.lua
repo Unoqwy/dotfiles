@@ -11,5 +11,6 @@ Themes = {
 opts = {
     indent_level = 4,
     theme = Themes.Sonokai,
+    time_tracking = true,
 }
 

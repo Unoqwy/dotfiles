@@ -1,24 +1,56 @@
 ----------------------
 -- Utility functions
 ----------------------
-local function nmap(key, action, silent, noremap)
-    if noremap == nil then
-        noremap = true
+function nmap(key, action, silent, opts)
+    if opts == nil then
+        opts = {}
     end
-    vim.api.nvim_set_keymap('n', key, action, {silent = silent, noremap = noremap})
+    if opts.noremap == nil then
+        opts.noremap = true
+    end
+    opts.silent = silent
+    vim.api.nvim_set_keymap('n', key, action, opts)
 end
 
 -------------
 -- Mappings
 -------------
-nmap('<space>', '<Nop>')
-vim.g.mapleader = ' '
+local function register_defaults()
+    nmap('<space>', '<Nop>')
+    vim.g.mapleader = ' '
 
--- f(ile) shortcuts
--- s(ave)
-nmap('<leader>fs', ':w<CR>') 
+    --> [f]ile
+    -- [s]ave; r[eload];
+    nmap('<leader>fs', ':w<CR>')
+    nmap('<leader>fr', ':e<CR>')
 
--- splits
-for _,v in ipairs({'J', 'K', 'L', 'H'}) do
-    nmap('<C-'..v..'>', '<C-W><C-'..v..'>', true)
+    nmap('<leader>,', "':e#' . v:count . '<CR>'", true, { expr = true })
+
+    --> [t]ransform
+    -- [w]hitespaces; [r]etab;
+    nmap('<leader>tw', ':StripTrailingWhitespace<CR>', true)
+    nmap('<leader>tr', ':retab<CR>', true)
+
+    --> [p]aste
+    -- [a]bove; [t]oggle;
+    nmap('<leader>pa', 'O<ESC>p')
+    nmap('<leader>pt', ':set paste!<CR>', true)
+
+    --> [c]lear
+    -- [h]ighlight;
+    nmap('<leader>ch', ':nohl<CR>', true)
+
+    --> Splits
+    for _,v in ipairs({'J', 'K', 'L', 'H'}) do
+        nmap('<C-'..v..'>', '<C-W><C-'..v..'>', true)
+    end
+
+    --> Quality of Life
+    nmap('<leader>d', '"_d') -- delete without yanking
+
+    -- go up/down and re-indent trimmed line
+    nmap('<leader>k', 'kddO')
+    nmap('<leader>j', 'jddO')
 end
+return { register_defaults = register_defaults }
+

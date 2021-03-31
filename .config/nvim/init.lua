@@ -1,5 +1,6 @@
 require('opts') -- load opts
 require('settings') -- apply settings
+require('keybindings') -- bindings helper methods
 
 -- preload modules before loading plugins
 local theme = require('theme')
@@ -14,5 +15,6 @@ plugins.install {theme, editor}
 theme.init()
 editor.init()
 
-require('keybindings')
+-- key mappings
+require('keybindings').register_defaults()
 

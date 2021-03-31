@@ -1,38 +1,58 @@
 local function init()
 
--- compat
+---------------------
+-- General settings
+---------------------
+vim.o.termguicolors = true
 vim.wo.t_Co = '256'
 
-local function set(key, val) vim.api.nvim_set_var(key, val) end
+vim.o.hlsearch = true
+vim.wo.cursorline = true
 
------------------------
--- Per-theme settings
------------------------
-local colorscheme
-if opts.theme == Themes.Sonokai then
-    set('sonokai_lightline_disabled_bold', 1)
-    set('sonokai_disable_italic_comment', 1)
-
-    set('sonokai_style', 'andromeda')
-    colorscheme = 'sonokai'
-end
-
+-------------------
+-- Theme settings
+-------------------
 vim.cmd('syntax on')
-vim.cmd('set background=dark')
-if colorscheme ~= nil then
-    vim.cmd('colorscheme ' .. colorscheme)
+
+--> Set theme
+if opts.theme == Themes.Sonokai then
+    vim.g.sonokai_disable_italic_comment = 1
+    vim.g.sonokai_style = 'shusia'
+    vim.cmd('colorscheme sonokai')
 end
 
--------------------------------
--- Theme-independent settings
--------------------------------
-vim.cmd('set cursorline')
+--> Special highlights
+vim.cmd('hi CocRustTypeHint guifg=#607080')
+vim.cmd('hi CocRustChainingHint guifg=#959595')
+
+--> Search
+vim.cmd('hi clear Search')
+vim.cmd('hi Search gui=underline,bold')
+
+--> Special chars
+local invalid_color = '#FF8A65'
+vim.cmd('set listchars=trail:·,tab:▷\\ ,nbsp:␣')
+vim.cmd('hi SpecialKey guifg=' .. invalid_color)
+vim.fn.matchadd('SpecialKey', '\\t')
+vim.fn.matchadd('SpecialKey', '\\s\\+$')
+
+----------------
+-- Status line
+----------------
+local galaxyline = require('galaxyline')
+
+-----------------
+-- Other tweaks
+-----------------
+local colorizer = require('colorizer')
+colorizer.setup()
 
 end
 return {
     init = init,
     install_deps = function(use)
         use('glepnir/galaxyline.nvim')
+        use('norcalli/nvim-colorizer.lua')
 
         if opts.theme == Themes.Sonokai then
             use('sainnhe/sonokai')

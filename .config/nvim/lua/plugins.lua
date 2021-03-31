@@ -7,6 +7,12 @@ local function install(modules)
     packer.startup(function(use)
         use('wbthomason/packer.nvim')
 
+        use('axelf4/vim-strip-trailing-whitespace')
+
+        if opts.time_tracking then
+            use('wakatime/vim-wakatime')
+        end
+
         for _,module in ipairs(modules) do
             if module.install_deps ~= nil then
                 module.install_deps(use)
