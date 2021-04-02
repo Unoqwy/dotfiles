@@ -21,7 +21,7 @@ vim.cmd('syntax on')
 --> Set theme
 if opts.theme == Themes.Sonokai then
     vim.g.sonokai_disable_italic_comment = 1
-    vim.g.sonokai_style = 'shusia'
+    vim.g.sonokai_style = 'spectrum'
     vim.cmd('colorscheme sonokai')
 end
 
@@ -65,10 +65,11 @@ return {
         use('norcalli/nvim-colorizer.lua')
 
         -- disabled for now, breaks listchars highlight
-        --use {'lukas-reineke/indent-blankline.nvim', branch='lua'}
+        --use {'lukas-reineke/indent-blankline.nvim',branch='lua'}
+        use('dominikduda/vim_current_word')
 
         if opts.theme == Themes.Sonokai then
-            use('sainnhe/sonokai')
+            use('~/contrib/sonokai')
         end
     end
 }

@@ -9,12 +9,15 @@ Themes = {
 -- Shared options
 -------------------
 opts = {
-    indent_level = 4,
     theme = Themes.Sonokai,
-    time_tracking = true,
+
+    time_tracking = false, -- install wakatime plugin?
+    repl = false, -- install codi plugin?
+
+    indent_level = 4,
     wrap_lines = {
         default = '120',
-	['80'] = {'toml', 'yaml'},
+        ['80'] = {'toml', 'yaml'},
     },
 }
 

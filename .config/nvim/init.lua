@@ -1,4 +1,5 @@
 require('opts') -- load opts
+require('overrides') -- local overrides
 
 require('settings') -- apply settings
 require('keybindings') -- bindings helper methods
