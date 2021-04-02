@@ -33,7 +33,14 @@ return {
     init = init,
     install_deps = function(use)
         use('nvim-treesitter/nvim-treesitter')
+
         use('terrortylor/nvim-comment')
+        use('axelf4/vim-strip-trailing-whitespace')
+
+        use {
+            'nvim-telescope/telescope.nvim',
+            requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}}
+        }
     end,
 }
 

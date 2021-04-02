@@ -24,7 +24,14 @@ local function register_defaults()
     nmap('<leader>fs', ':w<CR>')
     nmap('<leader>fr', ':e<CR>')
 
-    nmap('<leader>,', "':e#' . v:count . '<CR>'", true, { expr = true })
+    nmap('<C-P>', [[:lua require('telescope.builtin').find_files()<CR>]])
+    -- [g]rep;
+    nmap('<leader>fg', [[:lua require('telescope.builtin').live_grep()<CR>]])
+    -- [l]ocal; [t]ags
+    nmap('<leader>fl', [[:lua require('telescope.builtin').current_buffer_fuzzy_find()<CR>]])
+    nmap('<leader>ft', [[:lua require('telescope.builtin').current_buffer_tags()<CR>]])
+
+    nmap('<leader>,', '<C-^>')
 
     --> [t]ransform
     -- [w]hitespaces; [r]etab;

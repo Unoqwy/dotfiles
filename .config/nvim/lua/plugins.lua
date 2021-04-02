@@ -20,8 +20,6 @@ plugins.install = function(modules)
     packer.startup(function(use)
         use('wbthomason/packer.nvim')
 
-        use('axelf4/vim-strip-trailing-whitespace')
-
         if opts.time_tracking then
             use('wakatime/vim-wakatime')
         end
