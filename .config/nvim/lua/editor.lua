@@ -57,6 +57,10 @@ function M.install_deps(use)
         use 'metakirby5/codi.vim'
     end
 
+    if opts.lsp then
+        use('neovim/nvim-lspconfig')
+        use('kabouzeid/nvim-lspinstall')
+    end
     elangs.install_deps(use)
 end
 

@@ -1,7 +1,23 @@
 local M = {}
 
-function M.init()
+local function reload_lsp()
+    local lspinstall = require('lspinstall')
+    local lspconfig = require('lspconfig')
 
+    lspinstall.setup()
+    for _,server in pairs(lspinstall.installed_servers()) do
+        lspconfig[server].setup({})
+    end
+end
+
+function M.init()
+    if opts.lsp then
+        reload_lsp()
+        require('lspinstall').post_install_hook = function()
+            reload_lsp()
+            vim.cmd('bufdo e')
+        end
+    end
 end
 
 function M.treesitter_languages()

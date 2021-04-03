@@ -19,6 +19,7 @@ _G.opts = {
     time_tracking = false, -- install wakatime plugin?
     repl = false, -- install codi plugin?
     better_comments = true, -- give some powers to comments
+    lsp = true, -- configure lsp clients
 
     indent_level = 4,
     wrap_lines = {
