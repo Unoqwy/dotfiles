@@ -1,4 +1,4 @@
-require('utils') -- global util functions
+require('utils') -- global utils
 
 require('opts') -- load opts
 require('overrides') -- local overrides
@@ -16,8 +16,8 @@ plugins.pre_install() -- make sure Packer is installed
 plugins.install {theme, editor}
 
 -- init modules
-theme.init()
-editor.init()
+pcall(theme.init)
+pcall(editor.init)
 
 -- key mappings
 require('keybindings').register_defaults()

@@ -11,11 +11,9 @@ local function bake_q(scopes)
     })
 end
 
-_G.q = {
-    o = bake_q {vim.o},
-    wo = bake_q {vim.wo, vim.o},
-    bo = bake_q {vim.bo, vim.o},
-}
+_G.q.o = bake_q {vim.o}
+_G.q.wo = bake_q {vim.wo, vim.o}
+_G.q.bo = bake_q {vim.bo, vim.o}
 
 -----------------
 -- Set settings
