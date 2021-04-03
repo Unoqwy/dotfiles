@@ -33,6 +33,7 @@ local mode_colors = {
     [VimModes.Insert] = palette.green,
     [VimModes.Visual] = palette.purple,
     [VimModes.Replace] = palette.red,
+    [VimModes.CmdLine] = palette.orange,
 }
 
 gls.left = {
