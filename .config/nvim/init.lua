@@ -1,3 +1,5 @@
+require('utils') -- global util functions
+
 require('opts') -- load opts
 require('overrides') -- local overrides
 
