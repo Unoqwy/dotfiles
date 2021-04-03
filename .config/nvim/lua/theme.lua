@@ -62,7 +62,7 @@ function M.init()
 end
 
 function M.install_deps(use)
-    use {'glepnir/galaxyline.nvim', requires = {'ryanoasis/vim-devicons', opt = true}}
+    use({'glepnir/galaxyline.nvim', requires = {'ryanoasis/vim-devicons', opt = true}})
     use('norcalli/nvim-colorizer.lua')
 
     use('glepnir/indent-guides.nvim')

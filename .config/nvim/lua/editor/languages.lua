@@ -21,6 +21,9 @@ function M.treesitter_languages()
 end
 
 function M.install_deps(use)
+    if opts.handles(Languages.Lua) then
+        use('tbastos/vim-lua')
+    end
     if opts.handles(Languages.Rust) then
         use('rust-lang/rust.vim')
     end

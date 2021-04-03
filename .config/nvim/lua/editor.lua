@@ -48,10 +48,10 @@ function M.install_deps(use)
     use('terrortylor/nvim-comment')
     use('axelf4/vim-strip-trailing-whitespace')
 
-    use {
+    use({
         'nvim-telescope/telescope.nvim',
         requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}}
-    }
+    })
 
     if opts.repl then
         use 'metakirby5/codi.vim'
