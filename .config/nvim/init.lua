@@ -7,7 +7,7 @@ _G.q.ext_dir = vim.fn.stdpath('config') .. '/ext'
 require('utils') -- global utils
 
 require('opts') -- load opts
-require('overrides') -- local overrides
+pcall(require, 'overrides') -- local overrides if file exists
 
 require('settings') -- apply settings
 require('keybindings') -- bindings helper methods
