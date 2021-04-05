@@ -49,3 +49,11 @@ function q.vim_mode()
     end
 end
 
+--> Error handling
+function q.safe_call(fn)
+    local status, err = pcall(fn)
+    if not status then
+        print('[ERROR]\n' .. err .. '\n[/ERROR]')
+    end
+end
+

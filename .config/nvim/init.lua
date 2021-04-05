@@ -6,19 +6,21 @@ require('overrides') -- local overrides
 require('settings') -- apply settings
 require('keybindings') -- bindings helper methods
 
--- preload modules before loading plugins
+--> preload modules before loading plugins
 local theme = require('theme')
 local editor = require('editor')
 
--- manage plugins
+--> manage plugins
 local plugins = require('plugins')
-plugins.pre_install() -- make sure Packer is installed
-plugins.install {theme, editor}
+q.safe_call(function()
+    plugins.pre_install() -- make sure Packer is installed
+    plugins.install {theme, editor}
+end)
 
--- init modules
-pcall(theme.init)
-pcall(editor.init)
+--> init modules
+q.safe_call(theme.init)
+q.safe_call(editor.init)
 
--- key mappings
-require('keybindings').register_defaults()
+--> key mappings
+q.safe_call(require('keybindings').register_defaults)
 
