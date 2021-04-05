@@ -21,6 +21,7 @@ _G.opts = {
     time_tracking = false, -- install wakatime plugin?
     repl = false, -- install codi plugin?
     better_comments = true, -- give some powers to comments
+    smart_pairs = true, -- auto close pairs
     lsp = true, -- configure lsp clients
 
     indent_level = 4,

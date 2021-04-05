@@ -79,9 +79,9 @@ function M.register_defaults()
     --> Quality of Life
     nmap('<leader>d', '"_d') -- delete without yanking
 
-    -- go up/down and re-indent trimmed line
-    nmap('<leader>k', 'kddO')
-    nmap('<leader>j', 'jddO')
+    -- go up/down, clear line and autoindent
+    nmap('<leader>k', 'kcc')
+    nmap('<leader>j', 'jcc')
 end
 
 function M.telescope_mappings()
