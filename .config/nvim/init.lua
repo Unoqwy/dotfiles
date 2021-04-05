@@ -1,3 +1,6 @@
+-- 'q' -> custom api for config
+_G.q = {}
+
 require('utils') -- global utils
 
 require('opts') -- load opts

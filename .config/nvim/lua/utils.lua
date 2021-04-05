@@ -1,9 +1,6 @@
 --------------
 -- Utilities
 --------------
--- 'q' -> custom api for config
-_G.q = {}
-
 --> Missing lua ops
 function table.includes(tbl, elt)
     for i,val in ipairs(tbl) do
