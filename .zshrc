@@ -23,4 +23,5 @@ export PATH="$HOME/.cabal/bin:$HOME/.ghcup/bin:$PATH" # haskell env
 
 # Handy aliases
 alias .f="/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME"
+alias .g="lazygit --git-dir=$HOME/.dotfiles --work-tree=$HOME"
 
