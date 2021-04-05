@@ -38,6 +38,9 @@ function M.init()
         }
     }
 
+    --> Completion
+    q.o.completeopt = 'menuone,noinsert'
+
     --> Languages
     elangs.init()
 end
@@ -57,6 +60,7 @@ function M.install_deps(use)
         use 'metakirby5/codi.vim'
     end
 
+    use('nvim-lua/completion-nvim')
     if opts.lsp then
         use('neovim/nvim-lspconfig')
         use('kabouzeid/nvim-lspinstall')

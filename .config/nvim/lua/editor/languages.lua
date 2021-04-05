@@ -1,12 +1,16 @@
 local M = {}
 
+local function common_attach()
+    require('completion').on_attach()
+end
+
 local function reload_lsp()
     local lspinstall = require('lspinstall')
     local lspconfig = require('lspconfig')
 
     lspinstall.setup()
     for _,server in pairs(lspinstall.installed_servers()) do
-        lspconfig[server].setup({})
+        lspconfig[server].setup({on_attach=common_attach})
     end
 end
 
@@ -17,6 +21,16 @@ function M.init()
             reload_lsp()
             vim.cmd('bufdo e')
         end
+
+        local lspconfig = require('lspconfig')
+        -- lsp servers requiring manual installation
+        if opts.handles(Languages.Zig) then
+            lspconfig.zls.setup({on_attach=common_attach})
+        end
+    end
+
+    if opts.handles(Languages.Zig) then
+        vim.g.zig_fmt_autosave = 0
     end
 end
 
@@ -37,11 +51,17 @@ function M.treesitter_languages()
 end
 
 function M.install_deps(use)
-    if opts.handles(Languages.Lua) then
-        use('tbastos/vim-lua')
-    end
-    if opts.handles(Languages.Rust) then
-        use('rust-lang/rust.vim')
+    local deps = {
+        [Languages.Lua] = {'tbastos/vim-lua'},
+        [Languages.Rust] = {'rust-lang/rust.vim'},
+        [Languages.Zig] = {'ziglang/zig.vim'},
+    }
+    for _,lang in ipairs(opts.languages) do
+        if deps[lang] then
+            for _,dep in ipairs(deps[lang]) do
+                use(dep)
+            end
+        end
     end
 end
 

@@ -8,6 +8,7 @@ _G.Themes = {
 _G.Languages = {
     Lua = 'lua',
     Rust = 'rust',
+    Zig = 'zig',
 }
 
 -------------------
@@ -31,6 +32,7 @@ _G.opts = {
     languages = {
         Languages.Lua,
         Languages.Rust,
+        Languages.Zig,
     },
     handles = function(lang) return table.includes(opts.languages, lang) end,
 }
