@@ -4,13 +4,20 @@ local function common_attach()
     require('completion').on_attach()
 end
 
-local function reload_lsp()
+local function setup_lsp(reload)
     local lspinstall = require('lspinstall')
     local lspconfig = require('lspconfig')
 
     lspinstall.setup()
-    for _,server in pairs(lspinstall.installed_servers()) do
-        lspconfig[server].setup({on_attach=common_attach})
+    for _,lang in ipairs(opts.languages) do
+        local elang = M.get(lang)
+        if elang then
+            if elang.setup_lsp and not reload then
+                elang.setup_lsp()
+            end
+        elseif lspconfig[lang] then
+            lspconfig[lang].setup({ on_attach = q.lsp.on_attach })
+        end
     end
 end
 
@@ -28,17 +35,10 @@ function M.init()
             on_attach = common_attach,
         }
 
-        reload_lsp()
+        setup_lsp(false)
         require('lspinstall').post_install_hook = function()
-            reload_lsp()
+            setup_lsp(true)
             vim.cmd('bufdo e')
-        end
-    end
-
-    for _,lang in ipairs(opts.languages) do
-        local elang = M.get(lang)
-        if elang and elang.setup_lsp then
-            elang.setup_lsp()
         end
     end
 
