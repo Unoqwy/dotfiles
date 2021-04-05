@@ -65,6 +65,7 @@ end
 
 function M.install_deps(use)
     local deps = {
+        [Languages.Java] = {'mfussenegger/nvim-jdtls'},
         [Languages.Lua] = {'tbastos/vim-lua'},
         [Languages.Rust] = {'rust-lang/rust.vim'},
         [Languages.Zig] = {'ziglang/zig.vim'},

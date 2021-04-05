@@ -6,6 +6,7 @@ _G.Themes = {
 }
 
 _G.Languages = {
+    Java = 'java',
     Lua = 'lua',
     Rust = 'rust',
     Zig = 'zig',
@@ -30,6 +31,7 @@ _G.opts = {
 
     -- which supported languages should be installed/managed?
     languages = {
+        Languages.Java,
         Languages.Lua,
         Languages.Rust,
         Languages.Zig,

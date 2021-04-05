@@ -1,6 +1,9 @@
 -- 'q' -> custom api for config
 _G.q = {}
 
+--> global directories
+_G.q.ext_dir = vim.fn.stdpath('config') .. '/ext'
+
 require('utils') -- global utils
 
 require('opts') -- load opts
