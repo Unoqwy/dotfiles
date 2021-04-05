@@ -1,0 +1,69 @@
+env:
+  TERM: xterm-256color
+
+window:
+  decorations: none
+  dynamic_title: true
+
+scrolling:
+  history: 1000
+  multiplier: 2
+
+font:
+  size: 9.5
+  offset:
+    y: 3
+  normal:
+    family: Jetbrains Mono
+    style: Regular
+  bold:
+    family: Jetbrains Mono
+    style: Medium
+  italic:
+    family: Jetbrains Mono
+    style: Italic
+
+mouse:
+  hide_when_typing: true
+
+draw_bold_text_with_bright_colors: false
+colors:
+  cursor:
+    cursor: "#e3e1e4"
+  vi_mode_cursor:
+    cursor: "#f85e84"
+
+  primary:
+    background: "#191919"
+    foreground: "#e3e1e4"
+
+  normal:
+    black: "#131313"
+    red: "#f85e84"
+    green: "#7bd88f"
+    yellow: "#fce566"
+    blue: "#5ad4e6"
+    magenta: "#948ae3"
+    cyan: "#85dacc"
+    white: "#e3e1e4"
+
+  bright:
+    black: "#1a181a"
+    red: "#f85e84"
+    green: "#9ecd6f"
+    yellow: "#e5c463"
+    blue: "#7accd7"
+    magenta: "#ab9df2"
+    cyan: "#9cd1bb"
+    white: "#e3e1e4"
+
+# the following bindings require alacritty 0.8.x
+key_bindings:
+  # use Pause/Break key to toggle vi mode
+  - action: ScrollToBottom
+    key: Home
+    mode: "vi | ~search"
+  - action: ToggleViMode
+    key: Home
+    mode: "~search"
+
