@@ -94,9 +94,10 @@ function M.telescope_mappings()
         local cwd = action_state.get_current_picker(prompt_bufnr).cwd
         local selection = action_state.get_selected_entry()
 
-        local confirmation = vim.fn.input('Do you really wanna delete file' .. selection.value .. '? [y/N] ')
+        local confirmation = vim.fn.input('Do you really wanna delete file ' .. selection.value .. '? [y/N] ')
         if string.lower(confirmation) ~= 'y' then return end
 
+        actions.close()
         local _, ret, stderr = utils.get_os_command_output({ 'rm', '-rf', selection.value }, cwd)
         if ret == 0 then
             print(" Deleted file: " .. selection.value)
