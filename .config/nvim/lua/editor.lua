@@ -15,7 +15,7 @@ function M.init()
     require('nvim-treesitter.configs').setup({
         ensure_installed = elangs.treesitter_languages(),
         highlight = {
-            enabled = true
+            enable = true
         },
     })
 
