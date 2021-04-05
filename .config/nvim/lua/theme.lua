@@ -58,6 +58,8 @@ function M.init()
 
     require('indent_guides').setup({
         indent_start_level = 2,
+        even_colors = { fg = 'TermCursor', bg = '#23272e' },
+        odd_colors = { fg = 'TermCursor', bg = '#23272e' },
     })
 end
 
