@@ -37,6 +37,14 @@ _G.opts = {
         Languages.Rust,
         Languages.Zig,
     },
+    -- languages that do not need LSP support or whatsoever, just being installed with treesitter
+    treesitter_additional_languages = {
+        'bash',
+        'json',
+        'jsonc',
+        'regex',
+        'toml',
+    },
     handles = function(lang) return table.includes(opts.languages, lang) end,
 }
 
