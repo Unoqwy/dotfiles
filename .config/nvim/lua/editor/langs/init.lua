@@ -14,18 +14,31 @@ local function reload_lsp()
     end
 end
 
+function M.get(lang)
+    local status,elang = pcall(require, 'editor.langs.' .. lang)
+    if not status then
+        return nil
+    end
+    return elang
+end
+
 function M.init()
     if opts.lsp then
+        q.lsp = {
+            on_attach = common_attach,
+        }
+
         reload_lsp()
         require('lspinstall').post_install_hook = function()
             reload_lsp()
             vim.cmd('bufdo e')
         end
+    end
 
-        local lspconfig = require('lspconfig')
-        -- lsp servers requiring manual installation
-        if opts.handles(Languages.Zig) then
-            lspconfig.zls.setup({on_attach=common_attach})
+    for _,lang in ipairs(opts.languages) do
+        local elang = M.get(lang)
+        if elang and elang.setup_lsp then
+            elang.setup_lsp()
         end
     end
 

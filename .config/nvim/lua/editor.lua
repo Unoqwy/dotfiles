@@ -1,4 +1,4 @@
-local elangs = require('editor.languages')
+local elangs = require('editor.langs')
 
 local M = {}
 
