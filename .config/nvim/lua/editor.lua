@@ -53,6 +53,8 @@ function M.init()
     vim.api.nvim_set_var('completion_matching_smart_case', 1)
     vim.api.nvim_set_var('completion_sorting', 'length')
 
+    vim.api.nvim_set_var('completion_trigger_keyword_length', 0)
+
     _G.q.completion = {
         map = function(tbl, kind, display_name)
             if type(kind) == 'table' and not display_name then
