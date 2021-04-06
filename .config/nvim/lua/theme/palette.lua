@@ -6,6 +6,7 @@ if opts.theme == Themes.Sonokai then
     if colors then
         palette['fg'] = colors.fg[1]
         palette['bg'] = colors.bg1[1]
+        palette['bg_contrast'] = '#23272e'
         palette['stand_bg'] = colors.bg2[1]
         palette['red'] = colors.red[1]
         palette['orange'] = colors.orange[1]

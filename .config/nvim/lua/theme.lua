@@ -23,7 +23,6 @@ function M.init()
     if opts.theme == Themes.Sonokai then
         vim.g.sonokai_disable_italic_comment = 1
 
-        vim.g.sonokai_menu_selection_background = 'red'
         vim.g.sonokai_style = 'spectrum'
         if vim.g.sonokai_style == 'spectrum' then
             -- if the function is not called prior to be overrided, it won't be replaced
@@ -32,10 +31,16 @@ function M.init()
             vim.cmd('source ' .. vim.fn.stdpath('config') .. '/themes/sonokai.vim')
         end
         vim.cmd('colorscheme sonokai')
+
+        local palette = require('theme.palette')
+        vim.cmd('hi Pmenu guibg=' .. palette.bg)
+        vim.cmd('hi PmenuThumb guibg=' .. palette.stand_bg)
+        vim.cmd('hi PmenuSbar guibg=' .. palette.bg_contrast)
+        vim.cmd('hi NormalFloat guibg=' .. palette.bg)
+        vim.cmd('hi PmenuSel guifg=' .. palette.blue .. ' guibg=' .. palette.stand_bg)
     end
 
-    --> Load palette
-    require('theme.palette')
+    local palette = require('theme.palette')
 
     --> Special highlights
     vim.cmd('hi CocRustTypeHint guifg=#607080')
@@ -46,9 +51,8 @@ function M.init()
     vim.cmd('hi Search gui=underline,bold')
 
     --> Special chars
-    local invalid_color = '#FF8A65'
     vim.cmd('set listchars=trail:·,tab:▷\\ ,nbsp:␣')
-    vim.cmd('hi SpecialKey guifg=' .. invalid_color)
+    vim.cmd('hi SpecialKey guifg=' .. palette.orange)
     vim.fn.matchadd('SpecialKey', '\\t')
     vim.fn.matchadd('SpecialKey', '\\s\\+$')
 
@@ -60,8 +64,8 @@ function M.init()
 
     require('indent_guides').setup({
         indent_start_level = 2,
-        even_colors = { fg = 'TermCursor', bg = '#23272e' },
-        odd_colors = { fg = 'TermCursor', bg = '#23272e' },
+        even_colors = { fg = 'TermCursor', bg = palette.bg_contrast },
+        odd_colors = { fg = 'TermCursor', bg = palette.bg_contrast },
     })
 end
 
