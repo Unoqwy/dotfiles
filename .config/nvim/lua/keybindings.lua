@@ -38,6 +38,9 @@ local imap = function(key, action, opts) q.map('i', key, action, opts) end
 -- Mappings
 -------------
 function M.register_defaults()
+    --> Unset annoying keybindings
+    nmap('Q', '<Nop>') -- dead is Ex mode, Q stands for Quick Fix, change my mind
+
     nmap('<space>', '<Nop>')
     vim.g.mapleader = ' '
 
@@ -47,7 +50,7 @@ function M.register_defaults()
     nmap('<leader>fr', ':e<CR>')
 
     nmap('<C-P>', function() require('telescope.builtin').find_files() end)
-    nmap('<C-M>', function() require('telescope.builtin').git_files() end)
+    nmap('<C-G>', function() require('telescope.builtin').git_files() end)
     nmap('<leader>.', function() require('telescope.builtin').file_browser() end)
     -- [g]rep;
     nmap('<leader>fg', function() require('telescope.builtin').live_grep() end)
@@ -69,6 +72,7 @@ function M.register_defaults()
     --> [c]lear
     -- [h]ighlight; [l]ine;
     nmap('<leader>ch', ':nohl<CR>')
+    nmap('<C-M>', ':nohl<CR>')
     nmap('<leader>cl', '^d$')
 
     --> Splits
@@ -78,6 +82,7 @@ function M.register_defaults()
 
     --> Quality of Life
     nmap('<leader>d', '"_d') -- delete without yanking
+    nmap('<leader>D', '"_dd') -- delete without yanking
 
     -- go up/down, clear line and autoindent
     nmap('<leader>k', 'kcc')
@@ -87,6 +92,37 @@ function M.register_defaults()
     imap('<C-space>', function() require('completion').triggerCompletion() end)
     imap('<C-K>', '<C-P>')
     imap('<C-J>', '<C-N>')
+
+    --> LSP
+    if opts.lsp then
+        local lspbuf = vim.lsp.buf
+
+        -- Goto
+        nmap('gd', function() lspbuf.definition() end)
+        nmap('gD', function() lspbuf.declaration() end)
+        nmap('gi', function() lspbuf.implementation() end)
+        nmap('gr', function() lspbuf.references() end)
+        nmap('gy', function() lspbuf.type_definition() end)
+
+        -- Help
+        nmap('K', function() lspbuf.hover() end)
+        imap('<C-P>', function() lspbuf.signature_help() end)
+
+        -- Diagnostics
+        nmap('[d', function() lspbuf.diagnostic.goto_prev() end)
+        nmap(']d', function() lspbuf.diagnostic.goto_next() end)
+
+        -- Refactor
+        nmap('<leader>rn', function() lspbuf.rename() end)
+
+        -- Code actions
+        nmap('<leader>a', function() lspbuf.code_action() end)
+    end
+
+    --> Quick Fix
+    nmap('[q', ':cp<CR>')
+    nmap(']q', ':cn<CR>')
+    nmap('Q', ':ccl<CR>')
 end
 
 function M.telescope_mappings()
