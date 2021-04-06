@@ -91,7 +91,8 @@ function M.attach_completion(map)
 end
 
 function M.install_deps(use)
-    use({'glepnir/galaxyline.nvim', requires = {'ryanoasis/vim-devicons', opt = true}})
+    use('kyazdani42/nvim-web-devicons')
+    use('glepnir/galaxyline.nvim')
     use('norcalli/nvim-colorizer.lua')
 
     use('glepnir/indent-guides.nvim')
