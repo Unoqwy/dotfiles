@@ -25,7 +25,7 @@ function _G.q.map(mode, key, action, opts)
         func_current_id = func_current_id + 1
         local func_id = mode .. '(' .. func_current_id .. ')'
         func_bindings[func_id] = action
-        vim.api.nvim_set_keymap(mode, key, ":lua require('keybindings').call('" .. func_id .. "')<CR>", opts)
+        vim.api.nvim_set_keymap(mode, key, "<CMD>lua require('keybindings').call('" .. func_id .. "')<CR>", opts)
     else
         vim.api.nvim_set_keymap(mode, key, action, opts)
     end
@@ -82,6 +82,11 @@ function M.register_defaults()
     -- go up/down, clear line and autoindent
     nmap('<leader>k', 'kcc')
     nmap('<leader>j', 'jcc')
+
+    --> Completion
+    imap('<C-space>', function() require('completion').triggerCompletion() end)
+    imap('<C-K>', '<C-P>')
+    imap('<C-J>', '<C-N>')
 end
 
 function M.telescope_mappings()

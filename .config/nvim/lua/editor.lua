@@ -1,3 +1,4 @@
+local nvim_protocol = require('vim.lsp.protocol')
 local elangs = require('editor.langs')
 
 local M = {}
@@ -43,6 +44,48 @@ function M.init()
 
     --> Completion
     q.o.completeopt = 'menuone,noinsert'
+    q.o.shortmess = vim.o.shortmess .. 'c'
+
+    -- TODO: look into smart completion because bog-standard completion is insanity
+    -- maybe aca/completion-tabnine?
+    vim.api.nvim_set_var('completion_matching_strategy_list', {'exact', 'substring'})
+    vim.api.nvim_set_var('completion_matching_ignore_case', 0)
+    vim.api.nvim_set_var('completion_matching_smart_case', 1)
+    vim.api.nvim_set_var('completion_sorting', 'length')
+
+    _G.q.completion = {
+        map = function(tbl, kind, display_name)
+            if type(kind) == 'table' and not display_name then
+                for k,n in pairs(kind) do
+                    if k ~= '_' then
+                        q.completion.map(tbl, k, n)
+                    end
+                end
+
+                -- yes, this is very hacky
+                local surround = kind['_']
+                if surround then
+                    local lhs, rhs = surround[1] or '', surround[2] or surround[1]
+                    local transform = type(surround[3]) == 'function' and surround[3] or function(n) return n end
+
+                    local tbl_ref = nvim_protocol[tbl]
+                    local labels = require('completion.option').get_option('customize_lsp_label')
+                    for n,idx in pairs(tbl_ref) do
+                        if type(n) == 'string' and type(idx) == 'number' then
+                            labels[n] = lhs .. transform(labels[n] or tbl_ref[idx]) .. rhs
+                        end
+                    end
+                end
+            elseif type(kind) == 'string' and display_name then
+                local labels = require('completion.option').get_option('customize_lsp_label')
+                labels[kind] = display_name
+            end
+        end,
+        on_attach = function()
+            require('completion').on_attach({ customize_lsp_label = {} })
+            require('theme').attach_completion(q.completion.map)
+        end,
+    }
 
     --> Languages
     elangs.init()

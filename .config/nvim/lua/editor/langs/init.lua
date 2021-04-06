@@ -1,9 +1,5 @@
 local M = {}
 
-local function common_attach()
-    require('completion').on_attach()
-end
-
 local function setup_lsp(reload)
     local lspinstall = require('lspinstall')
     local lspconfig = require('lspconfig')
@@ -12,7 +8,7 @@ local function setup_lsp(reload)
     for _,lang in ipairs(opts.languages) do
         local elang = M.get(lang)
         if elang then
-            if elang.setup_lsp and not reload then
+            if elang.setup_lsp and (elang.supports_reload or not reload) then
                 elang.setup_lsp()
             end
         elseif lspconfig[lang] then
@@ -32,7 +28,9 @@ end
 function M.init()
     if opts.lsp then
         q.lsp = {
-            on_attach = common_attach,
+            on_attach = function()
+                q.completion.on_attach()
+            end,
         }
 
         setup_lsp(false)
