@@ -1,3 +1,4 @@
+local spyglass = require('editor.spyglass')
 local M = {}
 
 ----------------------
@@ -125,6 +126,20 @@ function M.register_defaults()
     nmap('[q', ':cp<CR>')
     nmap(']q', ':cn<CR>')
     nmap('Q', ':ccl<CR>')
+
+    --> Config tools
+    if opts.cfg_tools then
+        nmap('<leader>f.', function() spyglass.dot_files() end)
+        nmap('<leader>fv', function() spyglass.config_files() end)
+        nmap('<leader>fV', function()
+            -- TODO: use lua api to
+            -- * open tab on buffer init.lua
+            -- * change cwd to stdpath config for tab (is it even possible)
+            local cfg_dir = vim.fn.stdpath('config')
+            vim.cmd('e ' .. cfg_dir .. '/init.lua')
+            vim.cmd('cd ' .. cfg_dir)
+        end)
+    end
 end
 
 function M.telescope_mappings()

@@ -21,7 +21,11 @@ export XDG_CONFIG_HOME=$HOME/.config
 export PATH="$HOME/.cargo/bin:$PATH" # rust env
 export PATH="$HOME/.cabal/bin:$HOME/.ghcup/bin:$PATH" # haskell env
 
+# default dotfiles path
+export DOTFILES_GIT="$HOME/.dotfiles/"
+export DOTFILES_HOME="$HOME"
+
 # Handy aliases
-alias .f="/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME"
-alias .g="lazygit --git-dir=$HOME/.dotfiles --work-tree=$HOME"
+alias .f="$(which git) --git-dir=$DOTFILES_GIT --work-tree=$DOTFILES_HOME"
+alias .g="$(which lazygit) --git-dir=$DOTFILES_GIT --work-tree=$DOTFILES_HOME"
 

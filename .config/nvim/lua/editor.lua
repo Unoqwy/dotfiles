@@ -118,6 +118,10 @@ function M.install_deps(use)
         use('kabouzeid/nvim-lspinstall')
     end
     elangs.install_deps(use)
+
+    if opts.cfg_tools then
+        use('rafcamlet/nvim-luapad')
+    end
 end
 
 return M
