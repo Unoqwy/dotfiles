@@ -75,10 +75,12 @@ function M.register_defaults()
     nmap('<C-M>', ':nohl<CR>')
     nmap('<leader>cl', '^d$')
 
-    --> Splits
+    --> Splits, tabs, and buffers navigation
     for _,v in ipairs({'J', 'K', 'L', 'H'}) do
         nmap('<C-'..v..'>', '<C-W><C-'..v..'>')
     end
+    nmap('<leader>sp', ':tabp<CR>')
+    nmap('<leader>sn', ':tabn<CR>')
 
     --> Quality of Life
     nmap('<leader>d', '"_d') -- delete without yanking
@@ -109,8 +111,8 @@ function M.register_defaults()
         imap('<C-P>', function() lspbuf.signature_help() end)
 
         -- Diagnostics
-        nmap('[d', function() lspbuf.diagnostic.goto_prev() end)
-        nmap(']d', function() lspbuf.diagnostic.goto_next() end)
+        nmap('[d', function() vim.lsp.diagnostic.goto_prev() end)
+        nmap(']d', function() vim.lsp.diagnostic.goto_next() end)
 
         -- Refactor
         nmap('<leader>rn', function() lspbuf.rename() end)
