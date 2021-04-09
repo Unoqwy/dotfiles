@@ -102,6 +102,7 @@ function M.register_defaults()
 
         -- Goto
         nmap('gd', function() lspbuf.definition() end)
+        nmap('<leader>gd', function() require('lspsaga.provider').preview_definition() end)
         nmap('gD', function() lspbuf.declaration() end)
         nmap('gi', function() lspbuf.implementation() end)
         nmap('gr', function() lspbuf.references() end)
@@ -116,10 +117,11 @@ function M.register_defaults()
         nmap(']d', function() vim.lsp.diagnostic.goto_next() end)
 
         -- Refactor
-        nmap('<leader>rn', function() lspbuf.rename() end)
+        nmap('<leader>rn', function() require('lspsaga.rename').rename() end)
 
         -- Code actions
-        nmap('<leader>a', function() lspbuf.code_action() end)
+        nmap('<leader>a', function() require('lspsaga.codeaction').code_action() end)
+        vim.cmd("vnoremap <silent><leader>a :<C-U>lua require('lspsaga.codeaction').range_code_action()<CR>")
     end
 
     --> Quick Fix

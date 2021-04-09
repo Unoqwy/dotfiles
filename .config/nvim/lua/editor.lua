@@ -53,7 +53,7 @@ function M.init()
     vim.api.nvim_set_var('completion_matching_smart_case', 1)
     vim.api.nvim_set_var('completion_sorting', 'length')
 
-    vim.api.nvim_set_var('completion_trigger_keyword_length', 0)
+    vim.api.nvim_set_var('completion_trigger_keyword_length', 1)
 
     _G.q.completion = {
         map = function(tbl, kind, display_name)
@@ -91,6 +91,19 @@ function M.init()
 
     --> Languages
     elangs.init()
+
+    --> LSP extensions
+    if opts.lsp then
+        vim.cmd("au InsertLeave,BufEnter,BufWinEnter,TabEnter,BufWritePost *.rs :lua require('editor').inlay_hints()")
+    end
+end
+
+function M.inlay_hints()
+    require('lsp_extensions').inlay_hints({
+        highlight = "InlayHints",
+        prefix = "➾ ",
+        enabled = { "TypeHint", "ChainingHint", "ParameterHint" },
+    })
 end
 
 function M.install_deps(use)
@@ -117,6 +130,8 @@ function M.install_deps(use)
     if opts.lsp then
         use('neovim/nvim-lspconfig')
         use('kabouzeid/nvim-lspinstall')
+        use('nvim-lua/lsp_extensions.nvim')
+        use('glepnir/lspsaga.nvim')
     end
     elangs.install_deps(use)
 

@@ -40,6 +40,8 @@ function M.init()
         vim.cmd('hi PmenuSel guifg=' .. palette.blue .. ' guibg=' .. palette.stand_bg)
 
         vim.cmd('hi Crates guibg=' .. palette.bg_contrast .. ' guifg=' .. palette.purple)
+
+        vim.cmd('hi InlayHints guifg=' .. palette.grey)
     end
 
     -- load palette
