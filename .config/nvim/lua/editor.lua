@@ -111,7 +111,9 @@ function M.install_deps(use)
     if opts.smart_pairs then
         use('cohama/lexima.vim')
     end
-
+    if opts.snippets then
+        use('hrsh7th/vim-vsnip')
+    end
     if opts.lsp then
         use('neovim/nvim-lspconfig')
         use('kabouzeid/nvim-lspinstall')
