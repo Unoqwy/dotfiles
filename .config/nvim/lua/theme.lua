@@ -38,13 +38,12 @@ function M.init()
         vim.cmd('hi PmenuSbar guibg=' .. palette.bg_contrast)
         vim.cmd('hi NormalFloat guibg=' .. palette.bg)
         vim.cmd('hi PmenuSel guifg=' .. palette.blue .. ' guibg=' .. palette.stand_bg)
+
+        vim.cmd('hi Crates guibg=' .. palette.bg_contrast .. ' guifg=' .. palette.purple)
     end
 
+    -- load palette
     local palette = require('theme.palette')
-
-    --> Special highlights
-    vim.cmd('hi CocRustTypeHint guifg=#607080')
-    vim.cmd('hi CocRustChainingHint guifg=#959595')
 
     --> Search
     vim.cmd('hi clear Search')

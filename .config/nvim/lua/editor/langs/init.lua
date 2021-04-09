@@ -80,6 +80,11 @@ function M.install_deps(use)
             end
         end
     end
+
+    if opts.handles(Languages.Rust) and opts.deps_tools then
+        use('mhinz/vim-crates')
+        vim.cmd('au BufRead Cargo.toml call crates#toggle()')
+    end
 end
 
 return M

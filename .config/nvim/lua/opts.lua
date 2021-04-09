@@ -16,15 +16,19 @@ _G.Languages = {
 -- Shared options
 -------------------
 _G.opts = {
-    theme = Themes.Sonokai,
-
     time_tracking = false, -- install wakatime plugin?
-    repl = false, -- install codi plugin?
-    cfg_tools = false, -- install/config tools to help configure vim
+
+    lsp = true, -- configure lsp clients
+    deps_tools = true, -- install tools to manage dependencies for some languages / techs
+
     better_comments = true, -- give some powers to comments
     smart_pairs = true, -- auto close pairs
-    lsp = true, -- configure lsp clients
 
+    repl = false, -- install codi plugin?
+    cfg_tools = false, -- install/config tools to help configure vim
+
+    -- style
+    theme = Themes.Sonokai,
     indent_level = 4,
     wrap_lines = {
         default = '120',
