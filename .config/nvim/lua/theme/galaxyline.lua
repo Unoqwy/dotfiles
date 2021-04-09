@@ -2,6 +2,7 @@ local galaxyline = require('galaxyline')
 local condition = require('galaxyline.condition')
 
 local fileinfo = require('galaxyline.provider_fileinfo')
+local vcs = require('galaxyline.provider_vcs')
 
 local palette = require('theme.palette')
 local gls = galaxyline.section
@@ -69,7 +70,30 @@ gls.left = {
             return vim.trim(fileinfo.get_file_size()):upper()
         end,
         condition = condition.buffer_not_empty,
+        separator = ' -> ',
         highlight = {palette.grey, palette.bg},
+    }},
+    {LineColumn = _{
+        provider = function()
+            return vim.fn.line('.') .. ':' .. vim.fn.col('.')
+        end,
+        highlight = {palette.grey, palette.bg},
+    }},
+}
+
+gls.right = {
+    {FileFormat = _{
+        provider = function()
+            return fileinfo.get_file_format():lower()
+        end,
+        highlight = {palette.grey, palette.bg},
+    }},
+    {GitBranch = _{
+        provider = function()
+            return '  ' .. vcs.get_git_branch() .. ' '
+        end,
+        condition = condition.check_git_workspace,
+        highlight = {palette.fg, palette.stand_bg},
     }},
 }
 
