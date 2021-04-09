@@ -34,7 +34,7 @@ q.wo.relativenumber = true
 q.wo.signcolumn = "yes:1"
 q.wo.list = true
 
-q.wo.wrap = true
+q.wo.wrap = false
 q.wo.linebreak = true
 
 --> Buffer
