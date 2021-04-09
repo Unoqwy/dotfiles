@@ -70,27 +70,6 @@ function M.init()
     })
 end
 
-function M.attach_completion(map)
-    map('CompletionItemKind', {
-        Constant = 'const',
-        Constructor = 'new',
-        Function = 'fn',
-        Interface = 'itf',
-        Keyword = 'kw',
-        Method = 'mth',
-        Module = 'mod',
-        Operator = 'op',
-        Property = 'prop',
-        Reference = 'ref',
-        Snippet = 'snp',
-        Text = 'str',
-        TypeParameter = 'param',
-        Value = 'val',
-        Variable = 'var',
-        _ = {'[', ']', function(n) return n:lower() end},
-    })
-end
-
 function M.install_deps(use)
     use('kyazdani42/nvim-web-devicons')
     use('glepnir/galaxyline.nvim')

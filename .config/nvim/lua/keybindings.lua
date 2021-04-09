@@ -73,7 +73,7 @@ function M.register_defaults()
     --> [c]lear
     -- [h]ighlight; [l]ine;
     nmap('<leader>ch', ':nohl<CR>')
-    nmap('<C-M>', ':nohl<CR>')
+    nmap('<CR>', ':nohl<CR>')
     nmap('<leader>cl', '^d$')
 
     --> Splits, tabs, and buffers navigation
@@ -92,7 +92,8 @@ function M.register_defaults()
     nmap('<leader>j', 'jcc')
 
     --> Completion
-    imap('<C-space>', function() require('completion').triggerCompletion() end)
+    imap('<C-space>', function() vim.fn['compe#complete']() end)
+    imap('<CR>', "compe#confirm(lexima#expand('<LT>CR>', 'i'))", { expr = true })
     imap('<C-K>', '<C-P>')
     imap('<C-J>', '<C-N>')
 

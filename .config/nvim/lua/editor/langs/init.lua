@@ -29,7 +29,6 @@ function M.init()
     if opts.lsp then
         q.lsp = {
             on_attach = function()
-                q.completion.on_attach()
             end,
         }
 

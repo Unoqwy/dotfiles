@@ -43,7 +43,7 @@ function M.init()
     }
 
     --> Completion
-    q.o.completeopt = 'menuone,noinsert'
+    q.o.completeopt = 'menuone,noselect' -- required for nvim-compe, noselect is reverted in compe's config
     q.o.shortmess = vim.o.shortmess .. 'c'
 
     -- TODO: look into smart completion because bog-standard completion is insanity
@@ -55,39 +55,24 @@ function M.init()
 
     vim.api.nvim_set_var('completion_trigger_keyword_length', 1)
 
-    _G.q.completion = {
-        map = function(tbl, kind, display_name)
-            if type(kind) == 'table' and not display_name then
-                for k,n in pairs(kind) do
-                    if k ~= '_' then
-                        q.completion.map(tbl, k, n)
-                    end
-                end
+    require('compe').setup({
+        enabled = true,
+        autocomplete = true,
+        min_length = 1,
+        preselect = 'always',
+        documentation = true,
 
-                -- yes, this is very hacky
-                local surround = kind['_']
-                if surround then
-                    local lhs, rhs = surround[1] or '', surround[2] or surround[1]
-                    local transform = type(surround[3]) == 'function' and surround[3] or function(n) return n end
-
-                    local tbl_ref = nvim_protocol[tbl]
-                    local labels = require('completion.option').get_option('customize_lsp_label')
-                    for n,idx in pairs(tbl_ref) do
-                        if type(n) == 'string' and type(idx) == 'number' then
-                            labels[n] = lhs .. transform(labels[n] or tbl_ref[idx]) .. rhs
-                        end
-                    end
-                end
-            elseif type(kind) == 'string' and display_name then
-                local labels = require('completion.option').get_option('customize_lsp_label')
-                labels[kind] = display_name
-            end
-        end,
-        on_attach = function()
-            require('completion').on_attach({ customize_lsp_label = {} })
-            require('theme').attach_completion(q.completion.map)
-        end,
-    }
+        source = {
+            path = true,
+            buffer = true,
+            calc = true,
+            nvim_lsp = true,
+            nvim_lua = true,
+            vsnip = true,
+        };
+    })
+    vim.g.lexima_no_default_rules = true;
+    vim.fn['lexima#set_default_rules']()
 
     --> Languages
     elangs.init()
@@ -122,7 +107,7 @@ function M.install_deps(use)
         use 'metakirby5/codi.vim'
     end
 
-    use('nvim-lua/completion-nvim')
+    use('hrsh7th/nvim-compe')
     if opts.smart_pairs then
         use('cohama/lexima.vim')
     end
