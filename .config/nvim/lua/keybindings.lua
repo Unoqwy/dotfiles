@@ -147,6 +147,14 @@ function M.register_defaults()
             vim.cmd('e ' .. cfg_dir .. '/init.lua')
             vim.cmd('cd ' .. cfg_dir)
         end)
+        nmap('<leader>vrl', function() -- [v]im [r]e[l]oad
+            require('editor.cfg_tools').reload()
+            print('nvim configuration reloaded')
+        end)
+        nmap('<leader>vrd', function() -- [v]im [r]eload [d]isplay
+            local cfg_tools = require('editor.cfg_tools')
+            cfg_tools.reload_galaxyline()
+        end)
     end
 end
 

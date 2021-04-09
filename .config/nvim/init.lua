@@ -1,5 +1,10 @@
 -- 'q' -> custom api for config
-_G.q = {}
+if _G.q then
+    -- reloading config
+    _G.q = { already_loaded = true }
+else
+    _G.q = {}
+end
 
 --> global directories
 _G.q.ext_dir = vim.fn.stdpath('config') .. '/ext'
@@ -24,7 +29,9 @@ q.safe_call(function()
 end)
 
 --> init modules
-q.safe_call(theme.init)
+if not q.already_loaded then
+    q.safe_call(theme.init)
+end
 q.safe_call(editor.init)
 
 --> key mappings
