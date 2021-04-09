@@ -96,6 +96,7 @@ end
 function M.install_deps(use)
     use('nvim-treesitter/nvim-treesitter')
 
+    use('tpope/vim-surround')
     use('terrortylor/nvim-comment')
     use('axelf4/vim-strip-trailing-whitespace')
 
