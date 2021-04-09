@@ -26,7 +26,9 @@ function _G.q.map(mode, key, action, opts)
         func_current_id = func_current_id + 1
         local func_id = mode .. '(' .. func_current_id .. ')'
         func_bindings[func_id] = action
-        vim.api.nvim_set_keymap(mode, key, "<CMD>lua require('keybindings').call('" .. func_id .. "')<CR>", opts)
+        local prefix = mode:lower() == 'v' and opts.range and ":<C-U>" or "<CMD>"
+        opts.range = nil
+        vim.api.nvim_set_keymap(mode, key, prefix .. "lua require('keybindings').call('" .. func_id .. "')<CR>", opts)
     else
         vim.api.nvim_set_keymap(mode, key, action, opts)
     end
@@ -34,6 +36,7 @@ end
 
 local nmap = function(key, action, opts) q.map('n', key, action, opts) end
 local imap = function(key, action, opts) q.map('i', key, action, opts) end
+local vmap = function(key, action, opts) q.map('v', key, action, opts) end
 
 -------------
 -- Mappings
@@ -116,13 +119,15 @@ function M.register_defaults()
         -- Diagnostics
         nmap('[d', function() vim.lsp.diagnostic.goto_prev() end)
         nmap(']d', function() vim.lsp.diagnostic.goto_next() end)
+        nmap('<leader>dl', function() require('lspsaga.diagnostic').show_line_diagnostics() end)
+        nmap('<leader>dh', function() require('lspsaga.diagnostic').show_cursor_diagnostics() end)
 
         -- Refactor
         nmap('<leader>rn', function() require('lspsaga.rename').rename() end)
 
         -- Code actions
         nmap('<leader>a', function() require('lspsaga.codeaction').code_action() end)
-        vim.cmd("vnoremap <silent><leader>a :<C-U>lua require('lspsaga.codeaction').range_code_action()<CR>")
+        vmap('<leader>a', function() require('lspsaga.codeaction').range_code_action() end, { range = true })
     end
 
     --> Quick Fix
