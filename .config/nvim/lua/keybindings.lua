@@ -110,15 +110,16 @@ function M.register_defaults()
         nmap('gD', function() lspbuf.declaration() end)
         nmap('gi', function() lspbuf.implementation() end)
         nmap('gr', function() lspbuf.references() end)
+        nmap('<leader>gr', function() require('lspsaga.provider').lsp_finder() end)
         nmap('gy', function() lspbuf.type_definition() end)
 
         -- Help
-        nmap('K', function() lspbuf.hover() end)
-        imap('<C-P>', function() lspbuf.signature_help() end)
+        nmap('K', function() require('lspsaga.hover').render_hover_doc() end)
+        imap('<C-P>', function() require('lspsaga.signaturehelp').signature_help() end)
 
         -- Diagnostics
-        nmap('[d', function() vim.lsp.diagnostic.goto_prev() end)
-        nmap(']d', function() vim.lsp.diagnostic.goto_next() end)
+        nmap('[d', function() require('lspsaga.diagnostic').lsp_jump_diagnostic_prev() end)
+        nmap(']d', function() require('lspsaga.diagnostic').lsp_jump_diagnostic_next() end)
         nmap('<leader>dl', function() require('lspsaga.diagnostic').show_line_diagnostics() end)
         nmap('<leader>dh', function() require('lspsaga.diagnostic').show_cursor_diagnostics() end)
 

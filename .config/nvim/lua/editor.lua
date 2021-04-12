@@ -81,6 +81,23 @@ function M.init()
     if opts.lsp then
         vim.cmd("au InsertLeave,BufEnter,BufWinEnter,TabEnter,BufWritePost *.rs :lua require('editor').inlay_hints()")
     end
+
+    --> LSP Saga
+    require('lspsaga').init_lsp_saga({
+        finder_action_keys = {
+            open = 'o', vsplit = 'v', split = 's',
+            scroll_down = '<C-F>',scroll_up = '<C-B>',
+            quit = '<C-C>',
+        },
+        code_action_keys = {
+            exec = '<CR>',
+            quit = '<C-C>',
+        },
+        rename_action_keys = {
+            exec = '<CR>',
+            quit = '<C-C>',
+        },
+    })
 end
 
 function M.inlay_hints()
