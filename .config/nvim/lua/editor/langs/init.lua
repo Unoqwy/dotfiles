@@ -50,16 +50,16 @@ function M.treesitter_languages()
 
     local ensure_installed = {}
     for _,lang in ipairs(opts.languages) do
-        if table.includes(parserlist, lang) then
+        if vim.tbl_contains(parserlist, lang) then
             table.insert(ensure_installed, lang)
         end
     end
     for _,lang in ipairs(opts.treesitter_additional_languages) do
-        if not table.includes(ensure_installed, lang) then
+        if not vim.tbl_contains(ensure_installed, lang) then
             table.insert(ensure_installed, lang)
         end
     end
-    if opts.better_comments and not table.includes(ensure_installed, 'comment') then
+    if opts.better_comments and not vim.tbl_contains(ensure_installed, 'comment') then
         table.insert(ensure_installed, 'comment')
     end
     return ensure_installed

@@ -52,6 +52,6 @@ _G.opts = {
         'regex',
         'toml',
     },
-    handles = function(lang) return table.includes(opts.languages, lang) end,
+    handles = function(lang) return vim.tbl_contains(opts.languages, lang) end,
 }
 

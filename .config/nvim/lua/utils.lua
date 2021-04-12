@@ -1,16 +1,6 @@
 --------------
 -- Utilities
 --------------
---> Missing lua ops
-function table.includes(tbl, elt)
-    for i,val in ipairs(tbl) do
-        if val == elt then
-            return true
-        end
-    end
-    return false
-end
-
 --> Vim Mode
 _G.VimModes = {
     Normal = 1,
