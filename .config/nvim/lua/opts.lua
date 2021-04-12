@@ -33,6 +33,7 @@ _G.opts = {
     indent_level = 4,
     wrap_lines = {
         default = '120',
+        ['100,120'] = {'rust'},
         ['80'] = {'toml', 'yaml'},
     },
 

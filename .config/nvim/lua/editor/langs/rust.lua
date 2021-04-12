@@ -13,6 +13,10 @@ function M.setup_lsp()
                     importMergeBehavior = "last",
                     importPrefix = "by_crate",
                 },
+                diagnostics = {
+                    enable = true,
+                    disabled = {"unresolved-proc-macro"},
+                },
 
                 cargo = {
                     loadOutDirsFromCheck = true, -- eq. runBuildScripts
