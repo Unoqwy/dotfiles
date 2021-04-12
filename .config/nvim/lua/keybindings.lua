@@ -28,6 +28,9 @@ function _G.q.map(mode, key, action, opts)
         func_bindings[func_id] = action
         local prefix = mode:lower() == 'v' and opts.range and ":<C-U>" or "<CMD>"
         opts.range = nil
+        if mode == 't' then
+            prefix = "<C-\\><C-n>:"
+        end
         vim.api.nvim_set_keymap(mode, key, prefix .. "lua require('keybindings').call('" .. func_id .. "')<CR>", opts)
     else
         vim.api.nvim_set_keymap(mode, key, action, opts)
@@ -129,6 +132,10 @@ function M.register_defaults()
         -- Code actions
         nmap('<leader>a', function() require('lspsaga.codeaction').code_action() end)
         vmap('<leader>a', function() require('lspsaga.codeaction').range_code_action() end, { range = true })
+
+        -- Float term
+        nmap('<leader>to', function() require('lspsaga.floaterm').open_float_terminal() end)
+        q.map('t', '<leader><C-C>', function() require('lspsaga.floaterm').close_float_terminal() end)
     end
 
     --> Quick Fix
