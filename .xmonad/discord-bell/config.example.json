@@ -2,5 +2,14 @@
     "pipePath": "/tmp/discord.pipe",
     "coloredDMs": {
         "159985870458322944": "#60d1f6"
+    },
+
+    "icons": {
+        "idle": "\uf0f3",
+        "guild": "\uf0f3",
+        "dm": "\uf8fa"
+    },
+    "colors": {
+        "colored": "#7289da"
     }
 }

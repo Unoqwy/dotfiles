@@ -12,14 +12,19 @@ function check() {
         return;
     }
 
-    let icon = "\uf0f3", colored = false, customColor = null;
+    let icon = config.icons.idle, colored = false, customColor = null;
     if (libNotif.getBadgeCount(['GUILD', 'FRIEND_REQUEST']) > 0) {
+        if (config.icons.mention) {
+            icon = config.icons.mention;
+        }
         colored = true;
     }
 
     let dms = Object.keys(libNotif.getDMList());
     if (dms.length > 0) {
-        icon = "\uf8fa";
+        if (config.icons.dm) {
+            icon = config.icons.dm;
+        }
         colored = true;
 
         for (var userId in config.coloredDMs) {
@@ -29,14 +34,25 @@ function check() {
         }
     }
 
-    let color = customColor !== null ?
-        customColor : colored ? "#7289da" : "#9a9898";
-    var line = [
-        "<box type=Bottom width=2 color=#7289da><fc=", color, ">",
-        "<fn=3>", icon, "</fn>",
-        "</fc></box>",
-        "\n"
-    ].join("");
+    let color = (customColor !== null ?
+        customColor : (colored && config.colors.colored ?
+            config.colors.colored : config.colors.default
+        )
+    );
+
+    var line;
+    if (icon) {
+        line = [
+            //"<box type=Bottom width=2" + (color ? " color=" + color : "") + ">",
+            color ? "<fc=" + color + ">" : "",
+            "<fn=2>", icon, "</fn>",
+            color ? "</fc>" : "",
+            //"</box>",
+            "\n"
+        ].join("");
+    } else {
+        line = "\n";
+    }
 
     if (revive >= 10 || statusLine !== line) {
         statusLine = line;
