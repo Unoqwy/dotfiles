@@ -19,17 +19,17 @@ config (scriptsDir, weatherStation, networkCards) = defaultConfig {
   , persistent       = False
 
   -- Appearance
-  , font            = "xft:Jetbrains Mono:size=11:antialias=true:hinting=true"
+  , font            = "xft:Jetbrains Mono:size=10:antialias=true:hinting=true"
   , additionalFonts = [
-      "xft:Ubuntu Nerd Font:size=12"
-    , "xft:Font Awesome 5 Pro:size=11:style=Solid"
-    , "xft:Font Awesome 5 Pro:size=10:style=Regular"
+      "xft:Ubuntu Nerd Font:size=10"
+    , "xft:Font Awesome 5 Pro:size=10:style=Solid"
   ]
-  , textOffset  = 17
-  , textOffsets = [-1, 18, 17]
+  , textOffset  = 16
+  , textOffsets = [-1, 16]
 
-  , fgColor  = T.fgColor
-  , bgColor  = T.bgColor
+  , fgColor  = "#848089"
+  , bgColor  = "#191919"
+  , alpha    = 210
   , position = Top
   , border   = NoBorder
 
@@ -43,7 +43,7 @@ config (scriptsDir, weatherStation, networkCards) = defaultConfig {
       ++ " "
       ++ "%XmonadInfo%"
       ++ "}"
-      ++ "%DiscordBell% %UnsafeStdinReader%"
+      ++ "%UnsafeStdinReader% %DiscordBell%"
       ++ "{"
 
       ++ "%battery% <action=`pavucontrol`>%vol%</action>"
@@ -72,7 +72,7 @@ config (scriptsDir, weatherStation, networkCards) = defaultConfig {
 
   -- Network cards dynamic commands
   ] ++ map (\(networkCard, icon) -> Run $ Network networkCard [
-      "-t", "<fc=#98bcbd><rx>kB<fn=1> </fn><fn=2>\xf063</fn></fc>"
+      "-t", "<fc=#72beb3><rx>kB<fn=1> </fn><fn=2>\xf063</fn></fc>"
          ++ "<fn=1> </fn><fc=" ++ T.darkFgColor ++ "><fn=2>" ++ icon ++ "</fn></fc><fn=1> </fn>"
          ++ "<fn=2>\xf062</fn><fn=1> </fn><tx>kB"
     , "-m", "2", "-c", " ", "-x", "~" ++ networkCard ++ "~"

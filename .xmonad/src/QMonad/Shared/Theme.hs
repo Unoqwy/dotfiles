@@ -4,16 +4,16 @@ font :: Int -> String
 font s = "xft:Jetbrains Mono:size=" ++ show s ++ ":antialias=true:hinting=true"
 
 secondFont :: Int -> String
-secondFont s = "xft:Ubuntu Nerd Font:size=11:antialias=true"
+secondFont s = "xft:Ubuntu Nerd Font:size=10:antialias=true"
 
 ---------------------- Colors ----------------------
-primaryColor  = "#d7afaf"
-secondColor   = "#be7572"
+primaryColor  = "#85dacc"
+secondColor   = "#948ae3"
 
-fgColor       = "#9a9898"
+fgColor       = "#848089"
 fgOnPrimColor = "#303030"
 brightFgColor = "#d5d0c0"
-darkFgColor   = "#60656f"
+darkFgColor   = "#848089"
 
-bgColor       = "#212337"
+bgColor       = "#191919"
 

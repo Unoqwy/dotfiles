@@ -19,7 +19,7 @@ runOrRaiseCmd cmd = runOrRaise (map toLower cmd) (className =? cmd)
 ---------------------- dmenu ----------------------
 dmenuParams = " -nb '" ++ T.bgColor ++ "' -nf '" ++ T.fgColor ++ "'"
            ++ " -sb '" ++ T.primaryColor ++ "' -sf '" ++ T.fgOnPrimColor ++ "'"
-           ++ " -fn 'Ubuntu Nerd Font:size=11:antialias=true:hinting=true'"
+           ++ " -fn 'Jetbrains Mono:size=10:antialias=true:hinting=true'"
 
 run  = "dmenu_run" ++ dmenuParams ++ " -bw 1"
 calc = "= \"$(xclip -selection clipboard -o)\" -- -c -bw 3 -l 2" ++ dmenuParams

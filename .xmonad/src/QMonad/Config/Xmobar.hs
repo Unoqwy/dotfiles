@@ -34,19 +34,19 @@ wsLogHook xmobarStdin = workspaceMasksPP (def {
     , ppWsSep   = ""
   }) (def {
       wsppCurrent = \(WorkspaceMask w visible n) _ -> if visible
-        then cwrap w ("<fc=" ++ T.fgOnPrimColor ++ "," ++ T.primaryColor ++ ":0>") "</fc>" n
-        else cwrap w ("<fc=" ++ T.fgOnPrimColor ++ "," ++ T.secondColor ++ ":0>") "</fc>" n
+        then cwrap w ("<box type=Top width=1 offset=C10 color=" ++ T.primaryColor ++ "><fc=" ++ T.primaryColor ++ ">") "</fc></box>" n
+        else cwrap w ("<box type=Top width=1 offset=C10 color=" ++ T.secondColor ++ "><fc=" ++ T.secondColor ++ ">") "</fc></box>" n
     , wsppHidden  = \(WorkspaceMask w visible n) _ -> if visible
         then cwrap w "" "" n else ""
     , wsppHiddenNoWindows  = \(WorkspaceMask w visible n) _ -> if visible
-        then cwrap w ("<fc=" ++ T.darkFgColor ++ ">") "</fc>" n else ""
+        then cwrap w "<fc=#49464e>" "</fc>" n else ""
   }) >>= dynamicLogWithPP
 
 infoLogHook infoPipe = dynamicLogWithPP def {
       ppOutput = hPutStrLn infoPipe
     , ppOrder  = \(_:l:t:_) -> [l,t]
 
-    , ppLayout = wrap ("<box type=Bottom width=2 color=" ++ T.primaryColor ++ "><fc=" ++ T.primaryColor ++ ">") "</fc></box>"
+    , ppLayout = wrap ("<box type=Bottom width=2 color=" ++ T.secondColor ++ "><fc=" ++ T.secondColor ++ ">") "</fc></box>"
     , ppTitle  = wrap ("<fc=" ++ T.darkFgColor ++ ">") "</fc>" . xmobarStrip . shorten 40
     , ppSep    = " "
   }
