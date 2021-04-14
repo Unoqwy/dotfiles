@@ -59,12 +59,12 @@ function M.init()
         documentation = true,
 
         source = {
-            path = true,
-            buffer = true,
-            calc = true,
-            nvim_lsp = true,
-            nvim_lua = true,
-            vsnip = true,
+            path = { priority = 10 },
+            buffer = { priority = 10 },
+            calc = { priority = 5 },
+            nvim_lsp = { priority = 20 },
+            nvim_lua = { priority = 20 },
+            vsnip = { priority = 20 },
         };
     })
     vim.g.lexima_no_default_rules = true;
