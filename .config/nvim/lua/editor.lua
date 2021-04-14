@@ -45,6 +45,7 @@ function M.init()
             layout_strategy = 'horizontal',
         }
     }
+    require('telescope').load_extension('fzy_native')
 
     --> Completion
     q.o.completeopt = 'menuone,noselect' -- required for nvim-compe, noselect is reverted in compe's config
@@ -96,6 +97,9 @@ function M.inlay_hints()
 end
 
 function M.install_deps(use)
+    use('nvim-lua/plenary.nvim')
+    use('nvim-lua/popup.nvim')
+
     use('nvim-treesitter/nvim-treesitter')
 
     use('tpope/vim-surround')
@@ -104,7 +108,7 @@ function M.install_deps(use)
 
     use({
         'nvim-telescope/telescope.nvim',
-        requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}}
+        requires = {{'nvim-telescope/telescope-fzy-native.nvim'}}
     })
 
     if opts.repl then
