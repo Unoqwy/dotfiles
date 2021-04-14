@@ -1,4 +1,3 @@
-local nvim_protocol = require('vim.lsp.protocol')
 local elangs = require('editor.langs')
 
 local M = {}
@@ -46,15 +45,6 @@ function M.init()
     q.o.completeopt = 'menuone,noselect' -- required for nvim-compe, noselect is reverted in compe's config
     q.o.shortmess = vim.o.shortmess .. 'c'
 
-    -- TODO: look into smart completion because bog-standard completion is insanity
-    -- maybe aca/completion-tabnine?
-    vim.api.nvim_set_var('completion_matching_strategy_list', {'exact', 'substring'})
-    vim.api.nvim_set_var('completion_matching_ignore_case', 0)
-    vim.api.nvim_set_var('completion_matching_smart_case', 1)
-    vim.api.nvim_set_var('completion_sorting', 'length')
-
-    vim.api.nvim_set_var('completion_trigger_keyword_length', 1)
-
     require('compe').setup({
         enabled = true,
         autocomplete = true,
@@ -83,21 +73,13 @@ function M.init()
     end
 
     --> LSP Saga
-    require('lspsaga').init_lsp_saga({
-        finder_action_keys = {
-            open = 'o', vsplit = 'v', split = 's',
-            scroll_down = '<C-F>',scroll_up = '<C-B>',
-            quit = '<C-C>',
+    require('lspsaga').init_lsp_saga(vim.tbl_extend('keep', require('keybindings').lspsaga_mappings(), {
+        code_action_prompt = {
+            enable = true,
+            sign = false,
+            virtual_text = false,
         },
-        code_action_keys = {
-            exec = '<CR>',
-            quit = '<C-C>',
-        },
-        rename_action_keys = {
-            exec = '<CR>',
-            quit = '<C-C>',
-        },
-    })
+    }))
 end
 
 function M.inlay_hints()

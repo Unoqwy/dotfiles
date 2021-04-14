@@ -200,5 +200,23 @@ function M.telescope_mappings()
     }
 end
 
+function M.lspsaga_mappings()
+    return {
+        finder_action_keys = {
+            open = 'o', vsplit = 'v', split = 's',
+            scroll_down = '<C-F>',scroll_up = '<C-B>',
+            quit = '<C-C>',
+        },
+        code_action_keys = {
+            exec = '<CR>',
+            quit = '<C-C>',
+        },
+        rename_action_keys = {
+            exec = '<CR>',
+            quit = '<C-C>',
+        },
+    }
+end
+
 return M
 
