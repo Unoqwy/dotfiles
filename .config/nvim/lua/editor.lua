@@ -38,6 +38,11 @@ function M.init()
     require('telescope').setup{
         defaults = {
             mappings = require('keybindings').telescope_mappings(),
+
+            entry_prefix = ' ',
+            selection_caret = ' ',
+            borderchars = { '─', '│', '─', '│', '┌', '┐', '┘', '└' },
+            layout_strategy = 'horizontal',
         }
     }
 
