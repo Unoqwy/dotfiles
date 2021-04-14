@@ -1,4 +1,5 @@
 local spyglass = require('editor.spyglass')
+
 local M = {}
 
 ----------------------
@@ -44,6 +45,15 @@ local vmap = function(key, action, opts) q.map('v', key, action, opts) end
 -------------
 -- Mappings
 -------------
+local function mod_bindings(module_name, callback, silent)
+    local status, mod = pcall(require, module_name)
+    if status then
+        callback(mod)
+    elseif not silent then
+        print("[ERR/Keybindings] Could not set bindings depending on module '" .. module_name .. "'")
+    end
+end
+
 function M.register_defaults()
     --> Unset annoying keybindings
     nmap('Q', '<Nop>') -- dead is Ex mode, Q stands for Quick Fix, change my mind
@@ -56,14 +66,20 @@ function M.register_defaults()
     nmap('<leader>fs', ':w<CR>')
     nmap('<leader>fr', ':e<CR>')
 
-    nmap('<C-P>', function() require('telescope.builtin').find_files() end)
-    nmap('<C-G>', function() require('telescope.builtin').git_files() end)
-    nmap('<leader>.', function() require('telescope.builtin').file_browser() end)
-    -- [g]rep;
-    nmap('<leader>fg', function() require('telescope.builtin').live_grep() end)
-    -- [l]ocal; [t]ags
-    nmap('<leader>fl', function() require('telescope.builtin').current_buffer_fuzzy_find() end)
-    nmap('<leader>ft', function() require('telescope.builtin').current_buffer_tags() end)
+    mod_bindings('telescope.builtin', function(builtin)
+        nmap('<C-P>', function() builtin.find_files() end)
+        nmap('<C-G>', function() builtin.git_files() end)
+
+        -- dotfiles
+        nmap('<leader>.', function() builtin.file_browser() end)
+        -- [g]rep;
+        nmap('<leader>fg', function() builtin.live_grep() end)
+
+        --> [s]earch
+        -- [l]ocal; [t]ags
+        nmap('<leader>sl', function() builtin.current_buffer_fuzzy_find() end)
+        nmap('<leader>st', function() builtin.current_buffer_tags() end)
+    end)
 
     nmap('<leader>,', '<C-^>') -- previous file
 
@@ -86,12 +102,14 @@ function M.register_defaults()
     for _,v in ipairs({'J', 'K', 'L', 'H'}) do
         nmap('<C-'..v..'>', '<C-W><C-'..v..'>')
     end
+    -- 's' stands for both search and split
+    -- may sound confusing but it's fine
     nmap('<leader>sp', ':tabp<CR>')
     nmap('<leader>sn', ':tabn<CR>')
 
     --> Quality of Life
     nmap('<leader>d', '"_d') -- delete without yanking
-    nmap('<leader>D', '"_dd') -- delete without yanking
+    nmap('<leader>D', '"_dd') -- delete line without yanking
 
     -- go up/down, clear line and autoindent
     nmap('<leader>k', 'kcc')
@@ -109,22 +127,38 @@ function M.register_defaults()
 
         -- Goto
         nmap('gd', function() lspbuf.definition() end)
-        nmap('<leader>gd', function() require('lspsaga.provider').preview_definition() end)
         nmap('gD', function() lspbuf.declaration() end)
         nmap('gi', function() lspbuf.implementation() end)
         nmap('gr', function() lspbuf.references() end)
-        nmap('<leader>gr', function() require('lspsaga.provider').lsp_finder() end)
         nmap('gy', function() lspbuf.type_definition() end)
+
+        mod_bindings('lspsaga.provider', function(provider)
+            nmap('<leader>gd', function() provider.preview_definition() end)
+            nmap('<leader>gr', function() provider.lsp_finder() end)
+        end)
+
+        -- Search
+        mod_bindings('telescope.builtin', function(builtin)
+            -- [d]ocument; [w]orkspace;
+            nmap('<leader>sd', function() builtin.lsp_document_symbols() end)
+            nmap('<leader>sw', function() builtin.lsp_workspace_symbols() end)
+            -- [r]eferences;
+            nmap('<leader>sr', function() builtin.lsp_references() end)
+            -- [D]efinitions;
+            nmap('<leader>sD', function() builtin.lsp_definitions() end)
+        end)
 
         -- Help
         nmap('K', function() require('lspsaga.hover').render_hover_doc() end)
         imap('<C-P>', function() require('lspsaga.signaturehelp').signature_help() end)
 
         -- Diagnostics
-        nmap('[d', function() require('lspsaga.diagnostic').lsp_jump_diagnostic_prev() end)
-        nmap(']d', function() require('lspsaga.diagnostic').lsp_jump_diagnostic_next() end)
-        nmap('<leader>dl', function() require('lspsaga.diagnostic').show_line_diagnostics() end)
-        nmap('<leader>dh', function() require('lspsaga.diagnostic').show_cursor_diagnostics() end)
+        mod_bindings('lspsaga.diagnostic', function(diagnostic)
+            nmap('[d', function() diagnostic.lsp_jump_diagnostic_prev() end)
+            nmap(']d', function() diagnostic.lsp_jump_diagnostic_next() end)
+            nmap('<leader>dl', function() diagnostic.show_line_diagnostics() end)
+            nmap('<leader>dh', function() diagnostic.show_cursor_diagnostics() end)
+        end)
 
         -- Refactor
         nmap('<leader>rn', function() require('lspsaga.rename').rename() end)
@@ -132,11 +166,11 @@ function M.register_defaults()
         -- Code actions
         nmap('<leader>a', function() require('lspsaga.codeaction').code_action() end)
         vmap('<leader>a', function() require('lspsaga.codeaction').range_code_action() end, { range = true })
-
-        -- Float term
-        nmap('<leader>to', function() require('lspsaga.floaterm').open_float_terminal() end)
-        q.map('t', '<leader><C-C>', function() require('lspsaga.floaterm').close_float_terminal() end)
     end
+
+    -- Float term
+    nmap('<leader>to', function() require('lspsaga.floaterm').open_float_terminal() end)
+    q.map('t', '<leader><C-C>', function() require('lspsaga.floaterm').close_float_terminal() end)
 
     --> Quick Fix
     nmap('[q', ':cp<CR>')
