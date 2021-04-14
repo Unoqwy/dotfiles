@@ -60,7 +60,7 @@ function M.init()
     -----------------
     -- Other tweaks
     -----------------
-    require('colorizer').setup()
+    require('colorizer').setup({'*'}, {names = false})
     require('theme.galaxyline')
 
     require('indent_guides').setup({
