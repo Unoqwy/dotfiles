@@ -40,7 +40,10 @@ function M.init()
     end
 
     if opts.handles(Languages.Zig) then
-        vim.g.zig_fmt_autosave = 0
+        vim.g.zig_fmt_autosave = 1
+    end
+    if opts.handles(Languages.Rust) then
+        vim.g.rustfmt_autosave = 1
     end
 end
 
