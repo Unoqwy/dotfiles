@@ -86,6 +86,18 @@ function M.init()
             virtual_text = false,
         },
     }))
+
+    --> Git
+    require('gitsigns').setup({
+        signs = {
+            add = {text = ' │'},
+            change = {text = ' │'},
+            delete = {text = ' _'},
+            topdelete = {text = ' ‾'},
+            changedelete = {text = ' ~'},
+        },
+        sign_priority = 9, -- lsp has priority
+    })
 end
 
 function M.inlay_hints()
@@ -112,7 +124,12 @@ function M.install_deps(use)
     })
 
     if opts.repl then
-        use 'metakirby5/codi.vim'
+        use('metakirby5/codi.vim')
+    end
+
+    if opts.git then
+        use('tpope/vim-fugitive')
+        use('lewis6991/gitsigns.nvim')
     end
 
     use('hrsh7th/nvim-compe')
@@ -126,7 +143,7 @@ function M.install_deps(use)
         use('neovim/nvim-lspconfig')
         use('kabouzeid/nvim-lspinstall')
         use('nvim-lua/lsp_extensions.nvim')
-        use('glepnir/lspsaga.nvim')
+        use('~/contrib/lspsaga.nvim')
     end
     elangs.install_deps(use)
 

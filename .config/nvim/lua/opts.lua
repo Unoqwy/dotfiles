@@ -19,6 +19,7 @@ _G.opts = {
     time_tracking = false, -- install wakatime plugin?
 
     lsp = true, -- configure lsp clients
+    git = true, -- plugins for git integration
     snippets = true, -- handle and preconfigure snippets
     deps_tools = true, -- install tools to manage dependencies for some languages / techs
 
