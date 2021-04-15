@@ -25,7 +25,7 @@ q.o.ignorecase = true
 q.o.smartcase = true
 
 q.o.hidden = true
-q.o.splitbelow = true
+q.o.splitbelow = false
 q.o.splitright = true
 
 --> Window
