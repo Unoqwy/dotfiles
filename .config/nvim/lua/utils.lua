@@ -44,3 +44,12 @@ function q.safe_call(fn)
     end
 end
 
+--> Arrays
+function q.vec_ext(tbl, values)
+    for _, value in ipairs(values) do
+        if not vim.tbl_contains(tbl, values) then
+            table.insert(tbl, value)
+        end
+    end
+end
+

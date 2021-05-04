@@ -8,8 +8,13 @@ _G.Themes = {
 _G.Languages = {
     Java = 'java',
     Lua = 'lua',
+    PHP = 'php',
     Rust = 'rust',
     Zig = 'zig',
+}
+
+_G.Tools = {
+    Symfony = 'symfony',
 }
 
 -------------------
@@ -18,14 +23,21 @@ _G.Languages = {
 _G.opts = {
     time_tracking = false, -- install wakatime plugin?
 
-    lsp = true, -- configure lsp clients
-    git = true, -- plugins for git integration
-    snippets = true, -- handle and preconfigure snippets
-    deps_tools = true, -- install tools to manage dependencies for some languages / techs
+    -- editing
+    text = false, -- use vim for text editing
 
     better_comments = true, -- give some powers to comments
     smart_pairs = true, -- auto close pairs
 
+    -- vcs
+    git = true, -- plugins for git integration
+
+    -- code
+    lsp = false, -- configure lsp clients
+    snippets = false, -- handle and preconfigure snippets
+    deps_tools = false, -- install tools to manage dependencies for some languages / techs
+
+    -- debug
     repl = false, -- install codi plugin?
     cfg_tools = false, -- install/config tools to help configure vim
 
@@ -40,11 +52,11 @@ _G.opts = {
 
     -- which supported languages should be installed/managed?
     languages = {
-        Languages.Java,
         Languages.Lua,
         Languages.Rust,
-        Languages.Zig,
     },
+    tools = {},
+
     -- languages that do not need LSP support or whatsoever, just being installed with treesitter
     treesitter_additional_languages = {
         'bash',
@@ -55,4 +67,26 @@ _G.opts = {
     },
     handles = function(lang) return vim.tbl_contains(opts.languages, lang) end,
 }
+
+local M = {}
+
+function M.preset_desktop()
+    opts.text = true
+    opts.lsp = true
+    opts.snippets = true
+    opts.deps_tools = true
+
+    opts.languages = {
+        Languages.Lua,
+        Languages.Rust,
+        Languages.Zig,
+    }
+end
+
+function M.preset_ext_web()
+    q.vec_ext(opts.languages, {Languages.PHP})
+    q.vec_ext(opts.tools, {Tools.Symfony})
+end
+
+return M
 

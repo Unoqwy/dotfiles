@@ -18,7 +18,7 @@ function M.init()
             enable = true,
         },
         indent = {
-            enable = true,
+            enable = false,
         },
     })
 
@@ -123,8 +123,8 @@ function M.install_deps(use)
         requires = {{'nvim-telescope/telescope-fzy-native.nvim'}}
     })
 
-    if opts.repl then
-        use('metakirby5/codi.vim')
+    if opts.text then
+        use('preservim/vim-pencil')
     end
 
     if opts.git then
@@ -143,10 +143,13 @@ function M.install_deps(use)
         use('neovim/nvim-lspconfig')
         use('kabouzeid/nvim-lspinstall')
         use('nvim-lua/lsp_extensions.nvim')
-        use('~/contrib/lspsaga.nvim')
+        use('glepnir/lspsaga.nvim')
     end
     elangs.install_deps(use)
 
+    if opts.repl then
+        use('metakirby5/codi.vim')
+    end
     if opts.cfg_tools then
         use('rafcamlet/nvim-luapad')
     end

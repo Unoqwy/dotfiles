@@ -72,12 +72,22 @@ function M.install_deps(use)
     local deps = {
         [Languages.Java] = {'mfussenegger/nvim-jdtls'},
         [Languages.Lua] = {'tbastos/vim-lua'},
+
+        [Tools.Symfony] = {'nelsyeung/twig.vim'},
+
         [Languages.Rust] = {'rust-lang/rust.vim'},
         [Languages.Zig] = {'ziglang/zig.vim'},
     }
     for _,lang in ipairs(opts.languages) do
         if deps[lang] then
             for _,dep in ipairs(deps[lang]) do
+                use(dep)
+            end
+        end
+    end
+    for _,tool in ipairs(opts.tools) do
+        if deps[tool] then
+            for _,dep in ipairs(deps[tool]) do
                 use(dep)
             end
         end
