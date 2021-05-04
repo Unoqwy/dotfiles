@@ -162,6 +162,8 @@ function M.register_defaults()
 
         -- Refactor
         nmap('<leader>rn', function() require('lspsaga.rename').rename() end)
+        nmap('<leader>ri', '<Nop>') -- Initially, this is refactor (organize) imports but this is yet to be done
+                                    -- tho I have a muscle memory of it so binding it to Nop prevents unwanted replaces
 
         -- Code actions
         nmap('<leader>a', function() require('lspsaga.codeaction').code_action() end)
