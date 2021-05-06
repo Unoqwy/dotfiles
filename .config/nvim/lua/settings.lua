@@ -32,6 +32,7 @@ q.o.splitright = true
 q.wo.number = true
 q.wo.relativenumber = true
 q.wo.signcolumn = "yes:1"
+q.wo.conceallevel = 2
 q.wo.list = true
 
 q.wo.wrap = false

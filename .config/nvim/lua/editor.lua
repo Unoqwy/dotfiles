@@ -31,6 +31,10 @@ function M.init()
         end
     end
 
+    if opts.text then
+        vim.g.markdown_fenced_languages = {'vim', 'lua'}
+    end
+
     --> Comments
     require('nvim_comment').setup()
 
@@ -124,6 +128,7 @@ function M.install_deps(use)
     })
 
     if opts.text then
+        use('tpope/vim-markdown')
         use('preservim/vim-pencil')
     end
 
