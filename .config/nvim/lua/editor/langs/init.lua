@@ -44,6 +44,7 @@ function M.init()
     end
     if opts.handles(Languages.Rust) then
         vim.g.rustfmt_autosave = 1
+        vim.g.crates_always_show_newer_caret = 1
     end
 end
 
@@ -94,7 +95,7 @@ function M.install_deps(use)
     end
 
     if opts.handles(Languages.Rust) and opts.deps_tools then
-        use('mhinz/vim-crates')
+        use('Unoqwy/vim-crates')
         vim.cmd('au BufRead Cargo.toml call crates#toggle()')
     end
 end
