@@ -32,7 +32,7 @@ function M.init()
     end
 
     if opts.text then
-        vim.g.markdown_fenced_languages = {'vim', 'lua'}
+        vim.g.markdown_fenced_languages = {'vim', 'lua', 'rust'}
     end
 
     --> Comments
@@ -66,7 +66,7 @@ function M.init()
             path = { priority = 10 },
             buffer = { priority = 10 },
             calc = { priority = 5 },
-            nvim_lsp = { priority = 20 },
+            nvim_lsp = { priority = 20, sort = false },
             nvim_lua = { priority = 20 },
             vsnip = { priority = 20 },
         };
