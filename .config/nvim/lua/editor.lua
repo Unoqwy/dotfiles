@@ -121,6 +121,7 @@ function M.install_deps(use)
     use('tpope/vim-surround')
     use('terrortylor/nvim-comment')
     use('axelf4/vim-strip-trailing-whitespace')
+    use('tpope/vim-eunuch')
 
     use({
         'nvim-telescope/telescope.nvim',
