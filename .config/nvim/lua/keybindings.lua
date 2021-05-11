@@ -27,8 +27,8 @@ function _G.q.map(mode, key, action, opts)
         func_current_id = func_current_id + 1
         local func_id = mode .. '(' .. func_current_id .. ')'
         func_bindings[func_id] = action
-        local prefix = mode:lower() == 'v' and opts.range and ":<C-U>" or "<CMD>"
-        opts.range = nil
+
+        local prefix = "<CMD>"
         if mode == 't' then
             prefix = "<C-\\><C-n>:"
         end
@@ -92,11 +92,9 @@ function M.register_defaults()
     -- [t]oggle;
     nmap('<leader>pt', ':set paste!<CR>')
 
-    --> [c]lear
-    -- [h]ighlight; [l]ine;
-    nmap('<leader>ch', ':nohl<CR>')
-    nmap('<CR>', ':nohl<CR>')
-    nmap('<leader>cl', '^d$')
+    --> [c]omment
+    nmap('<C-_>', ':CommentToggle<CR>')
+    vmap('<C-_>', ':<C-U>call CommentOperator(visualmode())<CR>')
 
     --> Splits, tabs, and buffers navigation
     for _,v in ipairs({'J', 'K', 'L', 'H'}) do
@@ -110,6 +108,7 @@ function M.register_defaults()
     --> Quality of Life
     nmap('<leader>d', '"_d') -- delete without yanking
     nmap('<leader>D', '"_dd') -- delete line without yanking
+    nmap('<CR>', ':nohl<CR>')
 
     -- go up/down, clear line and autoindent
     nmap('<leader>k', 'kcc')
@@ -164,10 +163,9 @@ function M.register_defaults()
         nmap('<leader>rn', function() require('lspsaga.rename').rename() end)
         nmap('<leader>ri', '<Nop>') -- Initially, this is refactor (organize) imports but this is yet to be done
                                     -- tho I have a muscle memory of it so binding it to Nop prevents unwanted replaces
-
         -- Code actions
         nmap('<leader>a', function() require('lspsaga.codeaction').code_action() end)
-        vmap('<leader>a', function() require('lspsaga.codeaction').range_code_action() end, { range = true })
+        vmap('<leader>a', ":<C-U>lua require('lspsaga.codeaction').range_code_action()<CR>")
     end
 
     -- Float term

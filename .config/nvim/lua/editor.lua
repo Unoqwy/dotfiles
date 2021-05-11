@@ -36,7 +36,9 @@ function M.init()
     end
 
     --> Comments
-    require('nvim_comment').setup()
+    require('nvim_comment').setup({
+        create_mappings = false,
+    })
 
     --> Telescope
     require('telescope').setup{
