@@ -9,6 +9,7 @@ _G.Languages = {
     Java = 'java',
     Lua = 'lua',
     PHP = 'php',
+    Python = 'python',
     Rust = 'rust',
     Zig = 'zig',
 }
@@ -53,6 +54,7 @@ _G.opts = {
     -- which supported languages should be installed/managed?
     languages = {
         Languages.Lua,
+        Languages.Python,
         Languages.Rust,
     },
     tools = {},
@@ -75,12 +77,6 @@ function M.preset_desktop()
     opts.lsp = true
     opts.snippets = true
     opts.deps_tools = true
-
-    opts.languages = {
-        Languages.Lua,
-        Languages.Rust,
-        Languages.Zig,
-    }
 end
 
 function M.preset_ext_web()

@@ -18,7 +18,8 @@ function M.init()
             enable = true,
         },
         indent = {
-            enable = false,
+            enable = true,
+            disable = {'rust'},
         },
     })
 
@@ -32,7 +33,7 @@ function M.init()
     end
 
     if opts.text then
-        vim.g.markdown_fenced_languages = {'vim', 'lua', 'rust'}
+        vim.g.markdown_fenced_languages = {'vim', 'lua', 'rust', 'python', 'sh'}
     end
 
     --> Comments
@@ -132,6 +133,7 @@ function M.install_deps(use)
 
     if opts.text then
         use('tpope/vim-markdown')
+        use('junegunn/vim-easy-align')
         use('preservim/vim-pencil')
     end
 
