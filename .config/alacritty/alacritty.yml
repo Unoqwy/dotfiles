@@ -12,7 +12,7 @@ scrolling:
 font:
   size: 9.5
   offset:
-    y: 3
+    y: 2
   normal:
     family: Jetbrains Mono
     style: Regular
@@ -28,8 +28,6 @@ mouse:
 
 draw_bold_text_with_bright_colors: false
 colors:
-  cursor:
-    cursor: "#e3e1e4"
   vi_mode_cursor:
     cursor: "#f85e84"
 
@@ -57,13 +55,15 @@ colors:
     cyan: "#9cd1bb"
     white: "#e3e1e4"
 
-# the following bindings require alacritty 0.8.x
+# the following bindings require alacritty 0.8.x (now stable)
 key_bindings:
-  # use Pause/Break key to toggle vi mode
+  # use Control + Home key to toggle vi mode
   - action: ScrollToBottom
     key: Home
+    mods: Control
     mode: "vi | ~search"
   - action: ToggleViMode
     key: Home
+    mods: Control
     mode: "~search"
 
