@@ -30,4 +30,4 @@ alias .f="$(which git) --git-dir=$DOTFILES_GIT --work-tree=$DOTFILES_HOME"
 alias .g="$(which lazygit) --git-dir=$DOTFILES_GIT --work-tree=$DOTFILES_HOME"
 
 # alias to set tmux working directory to $PWD
-alias tcd="tmux command-prompt -I $PWD -p 'CWD:' 'attach -c %1'"
+alias tcd="tmux command-prompt -I \$PWD -p 'CWD:' 'attach -c %1'"
