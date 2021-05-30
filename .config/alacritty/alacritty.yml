@@ -57,7 +57,7 @@ colors:
 
 # the following bindings require alacritty 0.8.x (now stable)
 key_bindings:
-  # use Control + Home key to toggle vi mode
+  # use Control + Home to toggle vi mode
   - action: ScrollToBottom
     key: Home
     mods: Control
@@ -66,4 +66,3 @@ key_bindings:
     key: Home
     mods: Control
     mode: "~search"
-
