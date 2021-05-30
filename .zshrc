@@ -21,6 +21,7 @@ export XDG_CONFIG_HOME=$HOME/.config
 export PATH="$HOME/.cargo/bin:$PATH" # rust env
 export PATH="$HOME/.cabal/bin:$HOME/.ghcup/bin:$PATH" # haskell env
 
+# FIXME: quit using a bare repo to manage dotfiles
 # default dotfiles path
 export DOTFILES_GIT="$HOME/.dotfiles/"
 export DOTFILES_HOME="$HOME"
@@ -29,5 +30,7 @@ export DOTFILES_HOME="$HOME"
 alias .f="$(which git) --git-dir=$DOTFILES_GIT --work-tree=$DOTFILES_HOME"
 alias .g="$(which lazygit) --git-dir=$DOTFILES_GIT --work-tree=$DOTFILES_HOME"
 
-# alias to set tmux working directory to $PWD
-alias tcd="tmux command-prompt -I \$PWD -p 'CWD:' 'attach -c %1'"
+# tmux aliases
+# [a]ttach; cd [h]ere;
+alias ta="tmux attach -t"
+alias th="tmux command-prompt -I \$PWD -p 'CWD:' 'attach -c %1'"
