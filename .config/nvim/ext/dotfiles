@@ -1,2 +1,0 @@
-#!/bin/sh
-/usr/bin/git --git-dir=$DOTFILES_GIT --work-tree=$DOTFILES_HOME $*

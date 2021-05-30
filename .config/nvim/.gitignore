@@ -1,5 +1,0 @@
-# "compiled" vim scripts
-plugin/*compiled*
-
-# user options
-lua/overrides.lua
