@@ -29,6 +29,7 @@ export DOTFILES_HOME="$HOME"
 # Handy aliases
 alias .f="$(which git) --git-dir=$DOTFILES_GIT --work-tree=$DOTFILES_HOME"
 alias .g="$(which lazygit) --git-dir=$DOTFILES_GIT --work-tree=$DOTFILES_HOME"
+alias yank="xclip -selection clipboard"
 
 # tmux aliases
 # [a]ttach; cd [h]ere;
