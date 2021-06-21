@@ -36,7 +36,7 @@ colors:
     foreground: "#e3e1e4"
 
   normal:
-    black: "#131313"
+    black: "#534b4f"
     red: "#f85e84"
     green: "#7bd88f"
     yellow: "#fce566"
@@ -46,7 +46,7 @@ colors:
     white: "#e3e1e4"
 
   bright:
-    black: "#1a181a"
+    black: "#635147"
     red: "#f85e84"
     green: "#9ecd6f"
     yellow: "#e5c463"
@@ -55,7 +55,7 @@ colors:
     cyan: "#9cd1bb"
     white: "#e3e1e4"
 
-# the following bindings require alacritty 0.8.x (now stable)
+# following bindings require alacritty 0.8.x (now stable)
 key_bindings:
   # use Control + Home to toggle vi mode
   - action: ScrollToBottom
@@ -66,3 +66,4 @@ key_bindings:
     key: Home
     mods: Control
     mode: "~search"
+
