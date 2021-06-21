@@ -24,6 +24,7 @@ return {
         font = wezterm.font("JetBrains Mono", { weight = "Medium" }),
     }},
     font_size = 10,
+    line_height = 1.1,
 
     enable_tab_bar = false,
 
