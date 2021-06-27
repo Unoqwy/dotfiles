@@ -50,6 +50,7 @@ alias yank="xclip -selection clipboard"
 alias g="git"
 alias gc="git commit"
 alias gs="git status"
+alias lg="lazygit"
 
 # tmux
 alias ta="tmux attach -t"
