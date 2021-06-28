@@ -12,9 +12,6 @@ autoload -Uz promptinit; promptinit
 prompt walters
 # TOOO: custom prompt, but I'll stay with this minimal prompt for a little while (only caveat no git status)
 
-# Syntax highlighting
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
 # History
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=10000
@@ -31,6 +28,9 @@ bindkey "^j" down-line-or-beginning-search
 
 alias hist="history"
 alias inhist="history | grep -i"
+
+# Syntax highlighting
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # prevent accidental overwrite
 alias cp="cp --interactive"
