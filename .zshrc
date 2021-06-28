@@ -9,8 +9,23 @@ zstyle ":completion:*" menu select
 
 # Prompt
 autoload -Uz promptinit; promptinit
-prompt walters
-# TOOO: custom prompt, but I'll stay with this minimal prompt for a little while (only caveat no git status)
+
+if [[ "$TERM" != "dumb" ]]; then
+    autoload -Uz vcs_info
+    zstyle ":vcs_info:*" enable git
+    precmd() { vcs_info; }
+
+    zstyle ":vcs_info:git*" formats "  %b" # TODO: display more git info
+
+    setopt PROMPT_SUBST
+    # reminder: these need to stay single quotes to expand later, not on read
+    PS1='%F{red}%(?.. <%?>)%F{magenta}${vcs_info_msg_0_} %b%F{green}%f '
+    RPS1="%F{blue}%~%f"
+else
+    # based on default prompt 'walters'
+    PS1="%(?..[%?] )%n@%m:%~ "
+fi
+
 
 # History
 HISTFILE="$HOME/.zsh_history"
