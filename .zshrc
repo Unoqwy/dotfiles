@@ -5,6 +5,7 @@ setopt autocd
 
 # Completion
 autoload -Uz compinit; compinit
+setopt MENU_COMPLETE
 zstyle ":completion:*" menu select
 
 # Prompt
