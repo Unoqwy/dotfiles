@@ -4,47 +4,66 @@ env:
 window:
   decorations: none
   dynamic_title: true
-  history: 10000
+
+scrolling:
+  history: 1000
   multiplier: 2
 
 font:
-  size: 10
+  size: 9.5
+  offset:
+    y: 2
   normal:
     family: Jetbrains Mono
     style: Regular
   bold:
     family: Jetbrains Mono
-    style: Bold
+    style: Medium
   italic:
     family: Jetbrains Mono
     style: Italic
 
-draw_bold_text_with_bright_colors: false
 mouse:
   hide_when_typing: true
 
-# Colors (Ayu Mirage)
-# Taken from https://github.com/alacritty/alacritty/wiki/Color-schemes
+draw_bold_text_with_bright_colors: false
 colors:
+  vi_mode_cursor:
+    cursor: "#f85e84"
+
   primary:
-    background: '#202734'
-    foreground: '#CBCCC6'
+    background: "#191919"
+    foreground: "#e3e1e4"
+
   normal:
-    black: '#191E2A'
-    red: '#FF3333'
-    green: '#BAE67E'
-    yellow: '#FFA759'
-    blue: '#73D0FF'
-    magenta: '#FFD580'
-    cyan: '#95E6CB'
-    white: '#C7C7C7'
+    black: "#534b4f"
+    red: "#f85e84"
+    green: "#7bd88f"
+    yellow: "#fce566"
+    blue: "#5ad4e6"
+    magenta: "#948ae3"
+    cyan: "#85dacc"
+    white: "#e3e1e4"
+
   bright:
-    black: '#686868'
-    red: '#F27983'
-    green: '#A6CC70'
-    yellow: '#FFCC66'
-    blue: '#5CCFE6'
-    magenta: '#FFEE99'
-    cyan: '#95E6CB'
-    white: '#FFFFFF'
+    black: "#635147"
+    red: "#f85e84"
+    green: "#9ecd6f"
+    yellow: "#e5c463"
+    blue: "#7accd7"
+    magenta: "#ab9df2"
+    cyan: "#9cd1bb"
+    white: "#e3e1e4"
+
+# following bindings require alacritty 0.8.x (now stable)
+key_bindings:
+  # use Control + Home to toggle vi mode
+  - action: ScrollToBottom
+    key: Home
+    mods: Control
+    mode: "vi | ~search"
+  - action: ToggleViMode
+    key: Home
+    mods: Control
+    mode: "~search"
 
