@@ -8,6 +8,8 @@ autoload -Uz compinit; compinit
 setopt MENU_COMPLETE
 zstyle ":completion:*" menu select
 
+bindkey '^[[Z' reverse-menu-complete
+
 # Prompt
 autoload -Uz promptinit; promptinit
 
