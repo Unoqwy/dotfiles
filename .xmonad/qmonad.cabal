@@ -40,24 +40,8 @@ executable qmonad
     xmonad,
     xmonad-contrib
 
-executable qmobar-top
-  main-is: xmobar-top.hs
-  hs-source-dirs: src
-
-  other-modules:
-    QMonad.Shared.Theme
-
-  default-language: Haskell2010
-  build-depends:
-    base,
-    containers,
-    directory,
-    split,
-    dotenv,
-    xmobar ==0.38.*
-
-executable qmobar-bottom
-  main-is: xmobar-bottom.hs
+executable qmobar
+  main-is: xmobar.hs
   hs-source-dirs: src
 
   other-modules:

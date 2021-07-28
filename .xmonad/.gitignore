@@ -4,7 +4,6 @@ hie.yaml
 # cache
 prompt-history
 
-bin/xmo**/xmo*
 **/.env
 
 # cabal output

@@ -3,11 +3,10 @@ OUTPUT=${1:-"$(dirname $(readlink -f $0))/xmobar"}
 FLAGS=("+with_utf8" "+with_xft" "+with_weather" "+with_dbus")
 
 _flags=$(printf " %s" "${FLAGS[@]}" | xargs)
-pos=${XMOBAR_POS:-"top"}
 echo "INFO: xmobar flags: $_flags"
 
 cd ../..
-cabal build "exe:qmobar-$pos" --constraint="xmobar $_flags"
+cabal build "exe:qmobar" --constraint="xmobar $_flags"
 mv "$OUTPUT" "$OUTPUT.bak" 2>/dev/null
 chmod -x "$OUTPUT.bak" 2>/dev/null
-cp "$(find dist-newstyle -type f -executable -name "qmobar-$pos" | sort -n | tail -n1)" "$OUTPUT"
+cp "$(find dist-newstyle -type f -executable -name "qmobar" | sort -n | tail -n1)" "$OUTPUT"
