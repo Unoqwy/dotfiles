@@ -30,10 +30,12 @@ match Error /\t\
 nnoremap <SPACE> <Nop>
 let mapleader=" "
 
-nnoremap <leader>vR :source $HOME/.ideavimrc<CR>
-
 nnoremap <leader>fs :w<CR>
 nnoremap <leader>, :e#<CR>
+
+nnoremap <C-P> :action GotoClass<CR>
+nnoremap <leader>fo :action GotoFile<CR>
+nnoremap <leader>fg :action FindInPath<CR>
 
 " window/tab/file/buffer movements
 nnoremap <C-J> <C-W><C-J>
@@ -45,20 +47,27 @@ set nosplitbelow splitright
 nnoremap <leader>sp :tabp<CR>
 nnoremap <leader>sn :tabn<CR>
 
-" QoL
+# delete/cut end of line without copying
 nnoremap <leader>d "_d
-nnoremap <leader>P :set paste!<CR>
+nnoremap <leader>D "_D
 
+# move current line up/down
 nnoremap <A-k> :m-2<CR>==
 nnoremap <A-j> :m+<CR>==
 
+# code navigation
 nmap gd :action GotoDeclaration<CR>
 nmap gy :action GotoTypeDeclaration<CR>
 nmap gi :action GotoImplementation<CR>
-" gr -> what the heck? why isn't there a GotoReferences?
+nmap gr :action ShowUsages<CR>
 
-inoremap <C-P> <C-O>:action ParameterInfo<CR>
+nmap [d :action GotoPreviousError<CR>
+nmap ]d :action GotoNextError<CR>
+# nmap <leader>dl - no way to show all errors on line? :(
+nmap <leader>dh :action ShowErrorDescription<CR>
+
 nnoremap K :action QuickJavaDoc<CR>
+inoremap <C-P> <C-O>:action ParameterInfo<CR>
 
 nmap <leader>rn :action RenameElement<CR>
 nmap <leader>ri :action OptimizeImports<CR>
