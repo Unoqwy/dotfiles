@@ -1,0 +1,26 @@
+#!/bin/sh
+RESTART_ON_SUCCESS='false'
+
+while getopts ":r" o; do
+    case ${o} in
+        r)
+            RESTART_ON_SUCCESS='true'
+            ;;
+        *)
+            echo "Usage: $0 [-r]" 1>&2
+            exit 1
+            ;;
+    esac
+done
+shift $((OPTIND - 1))
+
+if XMONAD_FORCE_BUILD=1 qmonad --recompile; then
+    notify-send "xmonad" "Compilation OK"
+    if $RESTART_ON_SUCCESS; then
+        echo "Restarting xmonad..."
+        qmonad --restart
+    fi
+else
+    notify-send "xmonad" "Compilation failed"
+    exit 1
+fi

@@ -96,7 +96,7 @@ keybindings conf@XConfig {XMonad.modMask = modm} = M.fromList ([
 
   -- X server and xmonad control
   , ((modm, xK_x), submap . M.fromList $ [
-        ((0, xK_r), spawn "qmonad --recompile; qmonad --restart")
+        ((0, xK_r), spawn "$XMONAD/bin/xmonad/recompile -r")
       , ((0, xK_k), io exitSuccess)
       ])
   ]

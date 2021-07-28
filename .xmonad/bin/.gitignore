@@ -1,3 +1,4 @@
 /xmo**/*
+!/xmo**/
 !**/.gitignore
 !**/build
