@@ -43,6 +43,7 @@ startupHook :: X()
 startupHook = do
   spawnOnce "flameshot &" -- Flameshot needs to be running in order to open the GUI
   spawnOnce "picom --config $XDG_CONFIG_HOME/picom/picom.conf &"
+  spawnOnce "dunst &"
   spawnOnce "unread-bell &"
 
   setupDefaultWorkspaces
