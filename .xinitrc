@@ -39,5 +39,5 @@ sh $HOME/.fehbg
 export XMONAD_CONFIG_DIR=$XMONAD/bin/xmonad
 export XMOBAR_CONFIG_DIR=$XMONAD/bin/xmobar
 export XMONAD_DATA_DIR=$XMONAD_CONFIG_DIR
-exec xmonad
+exec qmonad
 
