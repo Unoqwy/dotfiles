@@ -2,6 +2,7 @@ module QMonad.Config.Hooks (
     QMonad.Config.Hooks.startupHook,
     QMonad.Config.Hooks.layouts,
     QMonad.Config.Hooks.logHook,
+    QMonad.Config.Hooks.scratchpads,
     QMonad.Config.Hooks.manageHook
 ) where
 
@@ -13,17 +14,19 @@ import Data.Bifunctor (first)
 
 import XMonad.Hooks.ManageDocks (avoidStruts)
 import XMonad.Layout.Named (named)
+import XMonad.Util.NamedScratchpad (NamedScratchpad(..), customFloating, namedScratchpadManageHook)
 import XMonad.Layout.NoBorders (noBorders)
 import XMonad.Layout.Spacing (spacingRaw, Border(..))
 import XMonad.Layout.ThreeColumns
 import QMonad.Lib.WorkspaceMasks (setWorkspaceMask)
 
+import qualified QMonad.Config.Applications as A
 -- Startup hook
 setupDefaultWorkspaces :: X()
 setupDefaultWorkspaces = do
     mapM_ (\w -> setWorkspaceMask w Nothing (Just False)) hidden
     mapM_ (\t -> setWorkspaceMask (fst t) (Just $ snd t) Nothing) named
-  where hidden = map show ([0, 1, 5] ++ [7..9])
+  where hidden = (map show ([0, 1, 5] ++ [7..9])) ++ ["NSP"]
         named  = map (Data.Bifunctor.first show) [
               (0, "config")
             , (1, "music")
@@ -40,6 +43,7 @@ startupHook :: X()
 startupHook = do
   spawnOnce "flameshot &" -- Flameshot needs to be running in order to open the GUI
   spawnOnce "picom --config $XDG_CONFIG_HOME/picom/picom.conf &"
+  spawnOnce "unread-bell &"
 
   setupDefaultWorkspaces
 
@@ -73,9 +77,16 @@ logHook :: X()
 logHook = do
     return ()
 
+-- Named scratchpads
+scratchpads = [
+      NS "floaterm" (A.spawnTermWithClass "floaterm" "") (resource =? "floaterm") float
+    , NS "quicksearch" "vimb --name quicksearch" (resource =? "quicksearch") float
+  ] where
+      float = customFloating $ W.RationalRect (0.1) (0.1) (0.8) (0.8)
+
 -- Manage hook
 manageHook :: ManageHook
-manageHook = composeAll [
+manageHook = namedScratchpadManageHook scratchpads <+> composeAll [
     isDialog --> doF W.swapUp
 
   -- Organized applications
@@ -91,9 +102,11 @@ manageHook = composeAll [
   , className =? "flameshot" <&&> title =? "Configuration" --> doCenterFloat
 
   -- Firefox PiP
-  , wmRole =? "PictureInPicture" --> doFloat
+  , wmName =? "Picture-in-Picture" --> doFloat
 
   -- Misc
   , resource =? "Godot_Engine" --> doFloat
+  , wmRole =? "GtkFileChooserDialog" --> doCenterFloat
   ] where
+      wmName = stringProperty "WM_NAME"
       wmRole = stringProperty "WM_WINDOW_ROLE"

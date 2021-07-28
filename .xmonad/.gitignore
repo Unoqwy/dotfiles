@@ -8,4 +8,4 @@ bin/xmo**/xmo*
 **/.env
 
 # cabal output
-dist-newstyle
+dist-newstyle/

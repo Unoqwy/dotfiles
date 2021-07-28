@@ -1,13 +1,9 @@
 #!/bin/sh
-if [ -z "$XMOBAR_IGNORE_BUILD" ]; then
-    exit
-fi
-
 OUTPUT=${1:-"$(dirname $(readlink -f $0))/xmobar"}
 FLAGS=("+with_utf8" "+with_xft" "+with_weather" "+with_dbus")
 
 _flags=$(printf " %s" "${FLAGS[@]}" | xargs)
-pos=${XMOBAR_POS:-"bottom"}
+pos=${XMOBAR_POS:-"top"}
 echo "INFO: xmobar flags: $_flags"
 
 cd ../..

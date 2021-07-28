@@ -19,7 +19,7 @@ config (scriptsDir, weatherStation, networkCards) = defaultConfig {
   , persistent       = False
 
   -- Appearance
-  , font            = "xft:Jetbrains Mono:size=10:antialias=true:hinting=true"
+  , font            = "xft:Jetbrains Mono:size=11:antialias=true:hinting=true"
   , additionalFonts = [
       "xft:Ubuntu Nerd Font:size=10"
     , "xft:Font Awesome 5 Pro:size=10:style=Solid"
@@ -39,7 +39,7 @@ config (scriptsDir, weatherStation, networkCards) = defaultConfig {
   , template =
          " "
 
-      ++ "<fc=#be7572>%memory% %cpu% %coretemp%</fc>"
+      ++ "<fc=#be7572>%memory% %cpu% %multicoretemp%</fc>"
       ++ " "
       ++ "%XmonadInfo%"
       ++ "}"
@@ -63,7 +63,7 @@ config (scriptsDir, weatherStation, networkCards) = defaultConfig {
 
     , Run $ Memory   ["-t", "<fn=2>\xf538</fn><fn=1> </fn><usedratio>%"] 10
     , Run $ Cpu ["-t", "<fn=2>\xf2db</fn><fn=1> </fn><total>%", "-m", "2" , "-c", " "] 10
-    , Run $ CoreTemp ["-t","<fn=2>\xf2c8</fn><fn=1> </fn><core0>°C"   ] 50
+    , Run $ MultiCoreTemp ["-t","<fn=2>\xf2c8</fn><fn=1> </fn><max>°C"] 50
 
     , Run $ Weather weatherStation ["-t", "<tempC>°C", "-x", "<fn=0></fn>"] 18000
     , Run $ Battery ["-t", "<acstatus>", "--", "-o", "<fn=2>\xf242</fn><fn=1> </fn><left>%", "-O", "<fn=2>\xf376</fn> <left>%", "-i", ""] 50

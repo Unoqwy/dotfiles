@@ -1,5 +1,8 @@
 #!/bin/sh
 cd ../..
-cabal build exe:qmonad
+if [ "$XMONAD_FORCE_BUILD" == "1" ]; then
+    echo "Rebuilding xmonad.."
+    cabal build exe:qmonad
+fi
 mv "$1" "$1.bak" 2>/dev/null
 cp "$(find dist-newstyle -type f -executable -name "qmonad" | sort -n | tail -n1)" "$1"

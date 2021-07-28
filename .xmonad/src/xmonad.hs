@@ -27,7 +27,7 @@ getFIFOHandle path = do
 -- Main
 main :: IO()
 main = do
-  xmobarStdin <- spawnPipe "cd $XMONAD/bin/xmobar && (./build &>/dev/null || 1) && ./xmobar"
+  xmobarStdin <- spawnPipe "cd $XMONAD/bin/xmobar && ./xmobar"
   infoPipe <- getFIFOHandle "/tmp/xmonad-info"
 
   xmonad $ (ewmh . docks) def {

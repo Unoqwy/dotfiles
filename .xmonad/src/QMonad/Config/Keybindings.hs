@@ -18,7 +18,10 @@ import QMonad.Lib.WorkspaceMasks (
     renameCurrentWorkspace, toggleCurrentWorkspaceVisibility
   )
 
+import XMonad.Util.NamedScratchpad (namedScratchpadAction)
+
 import qualified QMonad.Config.Applications as A
+import qualified QMonad.Config.Hooks as Hooks
 import qualified QMonad.Config.Prompt as XP
 
 -- Media controls
@@ -83,13 +86,17 @@ keybindings conf@XConfig {XMonad.modMask = modm} = M.fromList ([
   , ((modm .|. shiftMask, xK_k), windows W.swapUp     )
   , ((modm .|. shiftMask, xK_m), windows W.swapMaster )
 
+  -- Scratchpads
+  , ((modm, xK_f), namedScratchpadAction Hooks.scratchpads "floaterm")
+  , ((modm, xK_d), namedScratchpadAction Hooks.scratchpads "quicksearch")
+
   -- Workspaces
   , ((modm .|. shiftMask, xK_r), renameCurrentWorkspace XP.defaultConfig)
   , ((modm .|. shiftMask, xK_v), toggleCurrentWorkspaceVisibility)
 
   -- X server and xmonad control
   , ((modm, xK_x), submap . M.fromList $ [
-        ((0, xK_r), spawn "xmonad --recompile; xmonad --restart")
+        ((0, xK_r), spawn "qmonad --recompile; qmonad --restart")
       , ((0, xK_k), io exitSuccess)
       ])
   ]

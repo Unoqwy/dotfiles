@@ -1,4 +1,4 @@
-module QMonad.Config.Applications (keybindings) where
+module QMonad.Config.Applications (keybindings, spawnTermWithClass) where
 
 import XMonad
 import Data.Char (toLower)
@@ -13,7 +13,7 @@ import qualified QMonad.Shared.Theme as T
 raiseOrRunOn :: String -> WorkspaceId -> X()
 raiseOrRunOn cmd w = raiseMaybe (spawnOn w (map toLower cmd)) (className =? cmd)
 
-runOrRaiseCmd :: String -> X ()
+runOrRaiseCmd :: String -> X()
 runOrRaiseCmd cmd = runOrRaise (map toLower cmd) (className =? cmd)
 
 ---------------------- dmenu ----------------------
@@ -21,10 +21,13 @@ dmenuParams = " -nb '" ++ T.bgColor ++ "' -nf '" ++ T.fgColor ++ "'"
            ++ " -sb '" ++ T.primaryColor ++ "' -sf '" ++ T.fgOnPrimColor ++ "'"
            ++ " -fn 'Jetbrains Mono:size=10:antialias=true:hinting=true'"
 
-run  = "dmenu_run" ++ dmenuParams ++ " -bw 1"
+run  = "dmenu_run" ++ dmenuParams
 calc = "= \"$(xclip -selection clipboard -o)\" -- -c -bw 3 -l 2" ++ dmenuParams
 
 -------------------- Launchers --------------------
+spawnTermWithClass :: String -> String -> String
+spawnTermWithClass cls cmd = "alacritty --class " ++ cls ++ " " ++ cmd
+
 keybindings conf@XConfig{XMonad.modMask = modm} = M.fromList [
     ((modm, xK_Return), spawn $ XMonad.terminal conf)
 
