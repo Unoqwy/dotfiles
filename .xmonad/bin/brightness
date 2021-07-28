@@ -7,7 +7,7 @@
 # $1 (optional): step (relative brightness change)
 #   default: 0.1
 # $2 (optional): screen name
-#   default: all connected screens, looping in reverse order
+#   default: all connected monitors, looping in reverse order
 ##
 # @indent SPC-2
 # @out none
@@ -19,13 +19,12 @@
 STEP=${1:-0.1}
 
 if [[ -z "$2" ]]; then
-  while IFS= read -r line; do
-    {
-      exec "$0" "$STEP" "$line"
-    } &> /dev/null
-  done <<< "$(xrandr | sort -r | awk '/\sconnected/ { print $1 }')"
+  xrandr | sort -r | awk '/\sconnected/ { print $1 }' | while read monitor; do
+    exec "$0" "$STEP" "$monitor"
+  done
 else
-  current=$(xrandr --verbose | sed -n '/HDMI-1-1/,$p' | awk '/Brightness/ { print $2; end }')
+  current=$(xrandr --verbose | sed -n "/$2/,\$p" | awk '/Brightness/ { print $2; end }')
+  echo $current
   brightness=$(echo "scale=2; a=($current + $STEP)/1; if (a < 1) {if (a > 0.1) a else 0.1} else 1" | bc)
   xrandr --output "$2" --brightness "$brightness"
 fi
