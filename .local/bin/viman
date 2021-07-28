@@ -1,0 +1,4 @@
+#!/bin/sh
+if man $@ >/dev/null; then
+    man $@ | nvim -n -c "set ft=man"
+fi
