@@ -75,6 +75,7 @@ alias lg="lazygit"
 alias ta="tmux attach -t"
 alias th="tmux command-prompt -I \$PWD -p 'CWD:' 'attach -c %1'"
 alias thc="th && clear"
+alias tml="tmux ls"
 
 # cargo run test with stdout
 alias cto="cargo test -- --nocapture"
