@@ -1,15 +1,4 @@
-" default behavior I expect for any vim config (cf. my .vimrc)
-set number relativenumber
-set wrap linebreak
-set noshowmatch
-set magic
-set wildmenu
-set tabstop=4 softtabstop=4
-set shiftwidth=4
-set smarttab expandtab
-set autoindent smartindent
-set ignorecase smartcase
-set incsearch
+source ~/.vimrc
 
 " use system-wide clipboard
 set clipboard+=unnamed
@@ -23,37 +12,9 @@ set surround
 " damn you ugly thing
 set ideastatusicon=disabled
 
-" custom highlighting
-match Error /\t\
-
-" Key bindings
-nnoremap <SPACE> <Nop>
-let mapleader=" "
-
-nnoremap <leader>fs :w<CR>
-nnoremap <leader>, :e#<CR>
-
 nnoremap <C-P> :action GotoClass<CR>
 nnoremap <leader>fo :action GotoFile<CR>
 nnoremap <leader>fg :action FindInPath<CR>
-
-" window/tab/file/buffer movements
-nnoremap <C-J> <C-W><C-J>
-nnoremap <C-K> <C-W><C-K>
-nnoremap <C-L> <C-W><C-L>
-nnoremap <C-H> <C-W><C-H>
-set nosplitbelow splitright
-
-nnoremap <leader>sp :tabp<CR>
-nnoremap <leader>sn :tabn<CR>
-
-# delete/cut end of line without copying
-nnoremap <leader>d "_d
-nnoremap <leader>D "_D
-
-# move current line up/down
-nnoremap <A-k> :m-2<CR>==
-nnoremap <A-j> :m+<CR>==
 
 # code navigation
 nmap gd :action GotoDeclaration<CR>
