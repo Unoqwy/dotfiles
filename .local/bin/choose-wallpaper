@@ -1,9 +1,7 @@
 #!/bin/sh
-selected=$(sxiv -brot ~/Wallpapers | xargs)
-if [ -z "$selected" ]; then
+wallpaper=$(sxiv -brot ~/Wallpapers | head -n1)
+if [ -z "$wallpaper" ]; then
     exit 0
 fi
-
-wallpaper=${selected[0]}
 feh --bg-scale "$wallpaper"
 notify-send "Wallpaper set" "${wallpaper##*/}"
