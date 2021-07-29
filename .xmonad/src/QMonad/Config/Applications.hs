@@ -39,6 +39,8 @@ keybindings conf@XConfig{XMonad.modMask = modm} = M.fromList [
         ((0, xK_s), raiseOrRunOn "Spotify" "1")
       , ((0, xK_f), raiseOrRunOn "firefox" "2")
       , ((0, xK_d), runOrRaiseCmd "discord")
+
+      , ((0, xK_w), runOrRaiseCmd "choose-wallpaper")
       ])
 
   -- Special keys
