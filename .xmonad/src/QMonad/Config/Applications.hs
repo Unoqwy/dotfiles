@@ -25,8 +25,9 @@ run  = "dmenu_run" ++ dmenuParams
 calc = "= \"$(xclip -selection clipboard -o)\" -- -c -bw 3 -l 2" ++ dmenuParams
 
 -------------------- Launchers --------------------
-spawnTermWithClass :: String -> String -> String
-spawnTermWithClass cls cmd = "alacritty --class " ++ cls ++ " " ++ cmd
+spawnTermWithClass :: String -> Maybe String -> String
+spawnTermWithClass cls Nothing = "alacritty --class " ++ cls
+spawnTermWithClass cls (Just cmd) = "alacritty --class " ++ cls ++ " -e " ++ cmd
 
 keybindings conf@XConfig{XMonad.modMask = modm} = M.fromList [
     ((modm, xK_Return), spawn $ XMonad.terminal conf)

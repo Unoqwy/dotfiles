@@ -80,10 +80,13 @@ logHook = do
 
 -- Named scratchpads
 scratchpads = [
-      NS "floaterm" (A.spawnTermWithClass "floaterm" "") (resource =? "floaterm") float
+      NS "floaterm" (A.spawnTermWithClass "floaterm" Nothing) (resource =? "floaterm") float
+    , NS "floaterm-min" (A.spawnTermWithClass "floaterm-min" Nothing) (resource =? "floaterm-min") floatMin
     , NS "quicksearch" "vimb --name quicksearch" (resource =? "quicksearch") float
+    , NS "filexplorer" (A.spawnTermWithClass "floatfe" (Just "xplr")) (resource =? "floatfe") float
   ] where
       float = customFloating $ W.RationalRect (0.1) (0.1) (0.8) (0.8)
+      floatMin = customFloating $ W.RationalRect (0.2) (0.2) (0.6) (0.6)
 
 -- Manage hook
 manageHook :: ManageHook
