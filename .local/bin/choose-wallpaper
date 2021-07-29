@@ -1,10 +1,9 @@
 #!/bin/sh
 selected=$(sxiv -brot ~/Wallpapers | xargs)
 if [ -z "$selected" ]; then
-    echo "No wallpaper selected"
     exit 0
 fi
 
 wallpaper=${selected[0]}
 feh --bg-scale "$wallpaper"
-notify-send "Wallpaper set" "$wallpaper"
+notify-send "Wallpaper set" "${wallpaper##*/}"
