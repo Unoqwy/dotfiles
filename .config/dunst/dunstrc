@@ -64,13 +64,13 @@
 [urgency_low]
     background = "#242530"
     foreground = "#e3e1e4"
-	frame_color = "#4c516d"
-    timeout = 5
+    frame_color = "#4c516d"
+    timeout = 3
 
 [urgency_normal]
     background = "#242530"
     foreground = "#e3e1e4"
-	frame_color = "#7bd88f"
+    frame_color = "#4c516d"
     timeout = 5
 
 [urgency_critical]
