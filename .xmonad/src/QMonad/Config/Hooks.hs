@@ -20,6 +20,8 @@ import XMonad.Layout.Spacing (spacingRaw, Border(..))
 import XMonad.Layout.ThreeColumns
 import QMonad.Lib.WorkspaceMasks (setWorkspaceMask)
 
+import System.Environment (lookupEnv, setEnv)
+
 import qualified QMonad.Config.Applications as A
 -- Startup hook
 setupDefaultWorkspaces :: X()
@@ -45,6 +47,11 @@ startupHook = do
   spawnOnce "picom --config $XDG_CONFIG_HOME/picom/picom.conf &"
   spawnOnce "dunst &"
   spawnOnce "unread-bell &"
+
+  xmonad_started <- liftIO $ lookupEnv "XMONAD_STARTED"
+  case xmonad_started of
+    Just "1" -> spawn "notify-send 'xmonad' 'Restart OK'"
+    _ -> liftIO $ setEnv "XMONAD_STARTED" "1"
 
   setupDefaultWorkspaces
 
@@ -104,6 +111,7 @@ manageHook = namedScratchpadManageHook scratchpads <+> composeAll [
   -- Settings apps
   , className =? "Pavucontrol" --> doCenterFloat
   , className =? "flameshot" <&&> title =? "Configuration" --> doCenterFloat
+  , resource =? "sxiv" --> doCenterFloat
 
   -- Firefox PiP
   , wmName =? "Picture-in-Picture" --> doFloat
