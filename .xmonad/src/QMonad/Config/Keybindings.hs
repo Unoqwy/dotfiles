@@ -87,8 +87,8 @@ keybindings conf@XConfig {XMonad.modMask = modm} = M.fromList ([
   , ((modm .|. shiftMask, xK_m), windows W.swapMaster )
 
   -- Scratchpads
-  , ((modm, xK_f), namedScratchpadAction Hooks.scratchpads "floaterm")
-  , ((modm .|. shiftMask, xK_f), namedScratchpadAction Hooks.scratchpads "floaterm-min")
+  , ((modm, xK_f), namedScratchpadAction Hooks.scratchpads "floaterm-min")
+  , ((modm .|. shiftMask, xK_f), namedScratchpadAction Hooks.scratchpads "floaterm")
   , ((modm, xK_d), namedScratchpadAction Hooks.scratchpads "quicksearch")
   , ((modm, xK_e), namedScratchpadAction Hooks.scratchpads "filexplorer")
 
