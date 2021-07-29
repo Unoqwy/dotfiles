@@ -11,11 +11,11 @@
 ###
 
 xset r rate 600 35
-xmodmap "$HOME/.Xmodmap"
 
-if [[ -f "$HOME/.xinitrc-local" ]]; then
-    sh "$HOME/.xinitrc-local"
-fi
+[[ -f "$HOME/.Xmodmap" ]] && xmodmap "$HOME/.Xmodmap"
+[[ -f "$HOME/.Xresources" ]] && xrdb -load "$HOME/.Xresources"
+
+[[ -f "$HOME/.xinitrc-local" ]] && sh "$HOME/.xinitrc-local"
 
 # Variables used in xmonad config
 export XDG_CONFIG_HOME=$HOME/.config
@@ -33,7 +33,7 @@ mkpipe "/tmp/xmonad-info"
 mkpipe "/tmp/discord.pipe"
 
 # Set wallpaper
-sh $HOME/.fehbg
+[[ -f $HOME/.fehbg ]] && sh $HOME/.fehbg
 
 # Start xmonad
 export XMONAD_CONFIG_DIR=$XMONAD/bin/xmonad
