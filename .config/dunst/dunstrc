@@ -42,13 +42,13 @@
     ellipsize = middle
 
     stack_duplicates = true
-	hide_duplicate_count = false
+    hide_duplicate_count = false
     show_indicators = true
 
-    icon_position = off
-    # min_icon_size = 0
-    # max_icon_size = 32
-    # text_icon_padding = 0
+    icon_position = left
+    min_icon_size = 48
+    max_icon_size = 48
+    text_icon_padding = 6
 
     sticky_history = yes
     history_length = 20
@@ -81,6 +81,14 @@
 
 
 [notify-send]
-format = "<b>%s</b>\n%b"
+    appname = "notify-send"
+    format = "<b>%s</b>\n%b"
+
+[spotify]
+    appname = "Spotify"
+    icon_position = right
+    format = "<b>Now playing</b>\n%b"
+    frame_color = "#1DB954"
+    timeout = 2
 
 # vim: ft=cfg
