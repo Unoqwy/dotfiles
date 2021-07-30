@@ -3,16 +3,24 @@ if [[ -z "$1" ]]; then
     exit 0
 fi
 declare -A windows
-declare entry
-for wid in "$@"; do
+args=("$@")
+for idx in "${!args[@]}"; do
+    wid=${args[$idx]}
     window_name=$(xprop -id "$wid" WM_NAME | sed 's/^[^"]*"//' | sed 's/.$//')
-    key="$window_name (0x$(printf '%x' $wid))"
+    key="$idx. $window_name"
+
+    time_output=$(xprop -id "$wid" MINIMIZED_AT)
+    if [[ "$time_output" != *"no such atom"* && "$time_output" != *"not found"* ]]; then
+        time=$(echo "$time_output" | sed 's/^[^=]*= //')
+        key="$key [$(date -d "@$time" +'%I:%M:%S %p')]"
+    fi
+
     windows[$key]=$wid
-    if [[ -z "$entry" ]]; then
-        entry="$key"
+    if [[ -z "$choices" ]]; then
+        choices="$key"
     else
-        printf -v entry "$entry\n$key"
+        printf -v choices "$choices\n$key"
     fi
 done
-result=$(echo "$entry" | rofi -dmenu -i -l 8 -p "Window")
-echo ${windows[$result]}
+result=$(echo "$choices" | rofi -dmenu -i -l 8 -p "Window")
+[[ -n "$result" ]] && echo ${windows[$result]}

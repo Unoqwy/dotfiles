@@ -33,6 +33,9 @@ import qualified QMonad.Config.Applications as A
 import qualified QMonad.Config.Hooks as Hooks
 import qualified QMonad.Config.Prompt as XP
 
+import Foreign.C.Types (CLong(..))
+import Data.Time.Clock.POSIX (getPOSIXTime)
+
 -- Media controls
 data MediaControl = PlayPause | MNext | MPrevious
 
@@ -67,8 +70,26 @@ chooseWindowToMaximize = do
   window <- runProcessWithInput (xmonad_path ++ "/bin/unhide") (map show hiddenInWS) []
   when (window /= "") (maximizeWindowAndFocus (read window))
 
+minimizeWindow' :: Window -> X()
+minimizeWindow' win = do
+  minimizeWindow win
+  withDisplay $ \dpy -> do
+    atom <- getAtom "MINIMIZED_AT"
+    io $ do
+      timestamp <- round <$> getPOSIXTime
+      changeProperty32 dpy win atom cARDINAL propModeReplace [CLong timestamp]
+
 minimizeCurrentWindow :: X()
-minimizeCurrentWindow = withFocused minimizeWindow <+> BW.focusUp
+minimizeCurrentWindow = withFocused minimizeWindow' <+> BW.focusUp
+
+fixFocus :: X()
+fixFocus = do
+  return ()
+
+checkFocus :: Window -> X()
+checkFocus w = do
+  minimized <- XS.gets minimizedStack
+  when (w `elem` minimized) fixFocus
 
 -- Keybindings
 keybindings conf@XConfig {XMonad.modMask = modm} = M.fromList ([
@@ -95,7 +116,7 @@ keybindings conf@XConfig {XMonad.modMask = modm} = M.fromList ([
   , ((modm, xK_period), sendMessage $ IncMasterN (-1))
 
     -- Focused window
-  , ((modm .|. shiftMask, xK_c), kill)
+  , ((modm .|. shiftMask, xK_c), kill <+> withFocused checkFocus)
   , ((modm, xK_h), sendMessage Shrink)
   , ((modm, xK_l), sendMessage Expand)
   , ((modm, xK_t), withFocused $ windows . W.sink)

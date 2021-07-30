@@ -15,6 +15,7 @@ library
     containers,
     bifunctors,
     X11 >=1.10,
+    time,
     xmonad >=0.16.9999,
     xmonad-contrib >=0.16.999
 
@@ -37,6 +38,7 @@ executable qmonad
     containers,
     bifunctors,
     X11,
+    time,
     xmonad,
     xmonad-contrib
 
