@@ -6,7 +6,6 @@ import XMonad.Util.Run
 import XMonad.Hooks.EwmhDesktops (ewmh)
 import XMonad.Hooks.InsertPosition (insertPosition, Focus(..), Position(..))
 import XMonad.Hooks.ManageDocks (docks)
-import XMonad.Layout.NoBorders (smartBorders)
 
 import GHC.IO.Handle.FD (openFileBlocking)
 import System.IO (Handle, IOMode(WriteMode), hSetBuffering, BufferMode(LineBuffering))
@@ -40,7 +39,7 @@ main = do
     , normalBorderColor  = T.bgColor
 
     , keys               = keybindings
-    , layoutHook = smartBorders Hooks.layouts
+    , layoutHook = Hooks.layoutHook
     , startupHook = Hooks.startupHook
     , manageHook = insertPosition Below Newer <+> Hooks.manageHook
     , logHook = xmobarLogHook xmobarStdin infoPipe <+> Hooks.logHook

@@ -6,6 +6,7 @@ import XMonad
 import System.Exit (exitSuccess)
 import qualified Data.Map        as M
 import qualified XMonad.StackSet as W
+import qualified XMonad.Util.ExtensibleState as XS
 
 import XMonad.Actions.Submap (submap)
 import Graphics.X11.ExtraTypes.XF86
@@ -19,6 +20,13 @@ import QMonad.Lib.WorkspaceMasks (
   )
 
 import XMonad.Util.NamedScratchpad (namedScratchpadAction)
+
+import Control.Monad (when)
+import XMonad.Util.Run (runProcessWithInput)
+import XMonad.Util.Minimize (Minimized(minimizedStack))
+import XMonad.Actions.Minimize (minimizeWindow, maximizeWindow)
+
+import System.Environment
 
 import qualified QMonad.Config.Applications as A
 import qualified QMonad.Config.Hooks as Hooks
@@ -47,6 +55,13 @@ toggleGaps :: X()
 toggleGaps = do
   toggleScreenSpacingEnabled
   toggleWindowSpacingEnabled
+
+chooseWindowToMaximize :: X()
+chooseWindowToMaximize = do
+  hidden <- XS.gets minimizedStack
+  xmonad_path <- liftIO $ getEnv "XMONAD"
+  window <- runProcessWithInput (xmonad_path ++ "/bin/unhide") (map show hidden) []
+  when (window /= "") (maximizeWindow (read window))
 
 -- Keybindings
 keybindings conf@XConfig {XMonad.modMask = modm} = M.fromList ([
@@ -84,7 +99,11 @@ keybindings conf@XConfig {XMonad.modMask = modm} = M.fromList ([
   , ((modm,               xK_m), windows W.focusMaster)
   , ((modm .|. shiftMask, xK_j), windows W.swapDown   )
   , ((modm .|. shiftMask, xK_k), windows W.swapUp     )
-  , ((modm .|. shiftMask, xK_m), windows W.swapMaster )
+  -- don't care about swap to master
+
+  -- Hidden (minimized) windows
+  , ((modm, xK_u), chooseWindowToMaximize)
+  , ((modm, xK_i), withFocused minimizeWindow)
 
   -- Scratchpads
   , ((modm, xK_f), namedScratchpadAction Hooks.scratchpads "floaterm-min")

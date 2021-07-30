@@ -1,0 +1,15 @@
+#!/bin/sh
+declare -A windows
+declare entry
+for wid in "$@"; do
+    window_name=$(xprop -id "$wid" WM_NAME | sed 's/^[^"]*"//' | sed 's/.$//')
+    key="$window_name (0x$(printf '%x' $wid))"
+    windows[$key]=$wid
+    if [[ -z "$entry" ]]; then
+        entry="$key"
+    else
+        printf -v entry "$entry\n$key"
+    fi
+done
+result=$(echo "$entry" | rofi -dmenu -i -l 8 -p "Window")
+echo ${windows[$result]}
