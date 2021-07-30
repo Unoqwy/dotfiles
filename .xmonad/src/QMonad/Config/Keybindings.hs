@@ -25,6 +25,7 @@ import Control.Monad (when)
 import XMonad.Util.Run (runProcessWithInput)
 import XMonad.Util.Minimize (Minimized(minimizedStack))
 import XMonad.Actions.Minimize (minimizeWindow, maximizeWindow)
+import qualified XMonad.Layout.BoringWindows as BW
 
 import System.Environment
 
@@ -94,11 +95,11 @@ keybindings conf@XConfig {XMonad.modMask = modm} = M.fromList ([
   , ((modm, xK_t), withFocused $ windows . W.sink)
 
   -- Focus and swap
-  , ((modm,               xK_j), windows W.focusDown  )
-  , ((modm,               xK_k), windows W.focusUp    )
-  , ((modm,               xK_m), windows W.focusMaster)
-  , ((modm .|. shiftMask, xK_j), windows W.swapDown   )
-  , ((modm .|. shiftMask, xK_k), windows W.swapUp     )
+  , ((modm,               xK_j), BW.focusDown  )
+  , ((modm,               xK_k), BW.focusUp    )
+  , ((modm,               xK_m), BW.focusMaster)
+  , ((modm .|. shiftMask, xK_j), BW.swapDown   )
+  , ((modm .|. shiftMask, xK_k), BW.swapUp     )
   -- don't care about swap to master
 
   -- Hidden (minimized) windows

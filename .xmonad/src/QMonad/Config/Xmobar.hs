@@ -46,7 +46,8 @@ infoLogHook infoPipe = dynamicLogWithPP def {
       ppOutput = hPutStrLn infoPipe
     , ppOrder  = \(_:l:t:_) -> [l,t]
 
-    , ppLayout = wrap ("<box type=Bottom width=2 color=" ++ T.secondColor ++ "><fc=" ++ T.secondColor ++ ">") "</fc></box>"
+    -- drop 9 strips "Minimize " prefix from layout
+    , ppLayout = wrap ("<box type=Bottom width=2 color=" ++ T.secondColor ++ "><fc=" ++ T.secondColor ++ ">") "</fc></box>" . drop 9
     , ppTitle  = wrap ("<fc=" ++ T.darkFgColor ++ ">") "</fc>" . xmobarStrip . shorten 40
     , ppSep    = " "
   }
