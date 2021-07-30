@@ -32,22 +32,26 @@ xmobarStrip = xmobarStripTags ["fc","icon","action","box"]
 cwrap :: WorkspaceId -> String -> String -> String -> String
 cwrap wks a b c = wrap a b (wrap ("<action=`xdotool key super+" ++ wks ++ "`><fn=1> </fn>") "<fn=1> </fn></action>" c)
 
+infoBorders :: Bool -> String -> String
+infoBorders False s = s
+infoBorders _ s = wrap ("<box type=Right width=2 color=" ++ T.brightFgColor ++ " offset=L22>") "</box>" s
+
 -- Goal of this log hook:
 --   Send the workspaces to xmobar and read it there using the unsafe stdin reader
 --   Bind the title + layout to a FIFO so it can be severed from workspaces
 --
 -- If all windows in a hidden workspace are minimized, display it as a hiddenNoWindows ws.
-wsLogHook :: Handle -> (WorkspaceId -> Bool) -> X()
-wsLogHook xmobarStdin lookup = workspaceMasksPP (def {
+wsLogHook :: Handle -> (WorkspaceId -> Bool) -> (WorkspaceId -> Bool) -> X()
+wsLogHook xmobarStdin isEmpty containsMinimized = workspaceMasksPP (def {
       ppOutput  = hPutStrLn xmobarStdin
     , ppOrder   = \(ws:_) -> [ws]
     , ppWsSep   = ""
   }) (def {
-      wsppCurrent = \(WorkspaceMask w visible n) _ -> if visible
+      wsppCurrent = \(WorkspaceMask w visible n) _ -> infoBorders (containsMinimized w) $ if visible
         then cwrap w ("<box type=Top width=1 offset=C10 color=" ++ T.primaryColor ++ "><fc=" ++ T.primaryColor ++ ">") "</fc></box>" n
         else cwrap w ("<box type=Top width=1 offset=C10 color=" ++ T.secondColor ++ "><fc=" ++ T.secondColor ++ ">") "</fc></box>" n
     , wsppHidden  = \(WorkspaceMask w visible n) _ -> if visible
-        then if lookup w then cwrap w "" "" n else cwrap w "<fc=#49464e>" "</fc>" n
+        then infoBorders (containsMinimized w ) $ if isEmpty w then cwrap w "" "" n else cwrap w "<fc=#49464e>" "</fc>" n
         else ""
     , wsppHiddenNoWindows  = \(WorkspaceMask w visible n) _ -> if visible
         then cwrap w "<fc=#49464e>" "</fc>" n else ""
@@ -70,9 +74,11 @@ xmobarLogHook xmobarStdin infoPipe = do
   minimized <- XS.gets minimizedStack
   wset <- gets windowset
 
-  let allMinimizedWS = map W.tag $
+  let wsWithMinimized = map W.tag $
+        filter (\w -> any (`elem` minimized) (W.integrate' $ W.stack w)) (W.workspaces wset)
+  let wsWithOnlyMinimized = map W.tag $
         filter (\w -> not $ any (`notElem` minimized) (W.integrate' $ W.stack w)) (W.workspaces wset)
-  wsLogHook xmobarStdin (`notElem` allMinimizedWS)
+  wsLogHook xmobarStdin (`notElem` wsWithOnlyMinimized) (`elem` wsWithMinimized)
 
   -- don't show title in status bar if all windows are minimized
   let currentWS = W.workspace $ W.current wset
