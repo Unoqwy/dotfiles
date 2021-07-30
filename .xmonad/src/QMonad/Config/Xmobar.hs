@@ -45,9 +45,9 @@ wsLogHook xmobarStdin isEmpty containsMinimized = workspaceMasksPP (def {
     , ppOrder   = \(ws:_) -> [ws]
     , ppWsSep   = ""
   }) (def {
-      wsppCurrent = \(WorkspaceMask w visible n) _ -> infoBorders (containsMinimized w) $ if visible
-        then cwrap w ("<box type=Top width=1 offset=C10 color=" ++ T.primaryColor ++ "><fc=" ++ T.primaryColor ++ ">") "</fc></box>" n
-        else cwrap w ("<box type=Top width=1 offset=C10 color=" ++ T.secondColor ++ "><fc=" ++ T.secondColor ++ ">") "</fc></box>" n
+      wsppCurrent = \(WorkspaceMask w visible n) _ -> infoBorders (containsMinimized w) $
+          let color = if visible then T.primaryColor else T.secondaryColor
+          in cwrap w ("<box type=Top width=1 offset=C10 color=" ++ color ++ "><fc=" ++ color ++ ">") "</fc></box>" n
     , wsppHidden  = \(WorkspaceMask w visible n) _ -> if visible
         then infoBorders (containsMinimized w ) $ if isEmpty w then cwrap w "" "" n else cwrap w "<fc=#49464e>" "</fc>" n
         else ""
@@ -62,7 +62,7 @@ infoLogHook infoPipe showTitle = do
     , ppOrder  = \(_:l:t:_) -> [l,t]
 
     -- drop 9 strips "Minimize " prefix from layout
-    , ppLayout = wrap ("<box type=Bottom width=2 color=" ++ T.secondColor ++ "><fc=" ++ T.secondColor ++ ">") "</fc></box>" . drop 9
+    , ppLayout = wrap ("<box type=Bottom width=2 color=" ++ T.secondaryColor ++ "><fc=" ++ T.secondaryColor ++ ">") "</fc></box>" . drop 9
     , ppTitle = \title -> if showTitle then shorten 40 . xmobarStrip $ wrap ("<fc=" ++ T.darkFgColor ++ ">") "</fc>" title else ""
     , ppSep  = " "
   }

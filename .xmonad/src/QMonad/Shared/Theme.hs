@@ -8,7 +8,7 @@ secondFont s = "xft:Ubuntu Nerd Font:size=10:antialias=true"
 
 ---------------------- Colors ----------------------
 primaryColor  = "#85dacc"
-secondColor   = "#948ae3"
+secondaryColor = "#948ae3"
 
 fgColor       = "#848089"
 fgOnPrimColor = "#303030"
