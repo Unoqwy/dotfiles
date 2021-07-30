@@ -27,8 +27,11 @@ import qualified QMonad.Shared.Theme as T
 xmobarStrip :: String -> String
 xmobarStrip = xmobarStripTags ["fc","icon","action","box"]
 
-cwrap :: WorkspaceId -> String -> String -> String -> String
-cwrap wks a b c = wrap a b (wrap ("<action=`xdotool key super+" ++ wks ++ "`><fn=1> </fn>") "<fn=1> </fn></action>" c)
+awrap :: WorkspaceId -> String -> String
+awrap wks = wrap ("<action=`xdotool key super+" ++ wks ++ "`><fn=1> </fn>") "<fn=1> </fn></action>"
+
+awrap' :: WorkspaceId -> String -> String -> String -> String
+awrap' wks l r name = wrap l r (awrap wks name)
 
 infoBorders :: Bool -> String -> String
 infoBorders False s = s
@@ -45,14 +48,15 @@ wsLogHook xmobarStdin isEmpty containsMinimized = workspaceMasksPP (def {
     , ppOrder   = \(ws:_) -> [ws]
     , ppWsSep   = ""
   }) (def {
-      wsppCurrent = \(WorkspaceMask w visible n) _ -> infoBorders (containsMinimized w) $
+      wsppCurrent = \(WorkspaceMask w visible n) _ ->
           let color = if visible then T.primaryColor else T.secondaryColor
-          in cwrap w ("<box type=Top width=1 offset=C10 color=" ++ color ++ "><fc=" ++ color ++ ">") "</fc></box>" n
-    , wsppHidden  = \(WorkspaceMask w visible n) _ -> if visible
-        then infoBorders (containsMinimized w ) $ if isEmpty w then cwrap w "" "" n else cwrap w "<fc=#49464e>" "</fc>" n
+          in awrap' w ("<box type=Top width=1 offset=C10 color=" ++ color ++ "><fc=" ++ color ++ ">") "</fc></box>" (infoBorders (containsMinimized w) n)
+    , wsppHidden  = \(WorkspaceMask w visible n) _ -> if visible then
+          let n' = infoBorders (containsMinimized w) n
+          in if isEmpty w then awrap w n' else awrap' w "<fc=#49464e>" "</fc>" n'
         else ""
     , wsppHiddenNoWindows  = \(WorkspaceMask w visible n) _ -> if visible
-        then cwrap w "<fc=#49464e>" "</fc>" n else ""
+        then awrap' w "<fc=#49464e>" "</fc>" n else ""
   }) >>= dynamicLogWithPP
 
 infoLogHook :: Handle -> Bool -> X()
