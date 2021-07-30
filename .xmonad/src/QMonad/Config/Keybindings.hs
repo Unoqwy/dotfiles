@@ -68,7 +68,15 @@ chooseWindowToMaximize = do
 
   xmonad_path <- liftIO $ getEnv "XMONAD"
   window <- runProcessWithInput (xmonad_path ++ "/bin/unhide") (map show hiddenInWS) []
-  when (window /= "") (maximizeWindowAndFocus (read window))
+  let win = read window :: Window
+  when (window /= "") (maximizeWindow' win)
+
+maximizeWindow' :: Window -> X()
+maximizeWindow' win = do
+  maximizeWindowAndFocus win
+  withDisplay $ \dpy -> do
+    atom <- getAtom "MINIMIZED_AT"
+    io $ deleteProperty dpy win atom
 
 minimizeWindow' :: Window -> X()
 minimizeWindow' win = do
