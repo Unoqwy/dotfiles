@@ -21,8 +21,6 @@ import qualified XMonad.Util.ExtensibleState as XS
 import System.IO (Handle)
 import qualified XMonad.StackSet as W
 
-import Data.List (filter)
-
 -- Imports/ Shared
 import qualified QMonad.Shared.Theme as T
 

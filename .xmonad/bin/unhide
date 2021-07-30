@@ -1,4 +1,7 @@
 #!/bin/sh
+if [[ -z "$1" ]]; then
+    exit 0
+fi
 declare -A windows
 declare entry
 for wid in "$@"; do

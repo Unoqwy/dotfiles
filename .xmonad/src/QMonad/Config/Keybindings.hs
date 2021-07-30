@@ -24,7 +24,7 @@ import XMonad.Util.NamedScratchpad (namedScratchpadAction)
 import Control.Monad (when)
 import XMonad.Util.Run (runProcessWithInput)
 import XMonad.Util.Minimize (Minimized(minimizedStack))
-import XMonad.Actions.Minimize (minimizeWindow, maximizeWindow)
+import XMonad.Actions.Minimize (minimizeWindow, maximizeWindowAndFocus)
 import qualified XMonad.Layout.BoringWindows as BW
 
 import System.Environment
@@ -59,10 +59,16 @@ toggleGaps = do
 
 chooseWindowToMaximize :: X()
 chooseWindowToMaximize = do
-  hidden <- XS.gets minimizedStack
+  minimized <- XS.gets minimizedStack
+  wset <- gets windowset
+  let hiddenInWS = filter (`elem` minimized) (W.integrate' $ W.stack (W.workspace $ W.current wset))
+
   xmonad_path <- liftIO $ getEnv "XMONAD"
-  window <- runProcessWithInput (xmonad_path ++ "/bin/unhide") (map show hidden) []
-  when (window /= "") (maximizeWindow (read window))
+  window <- runProcessWithInput (xmonad_path ++ "/bin/unhide") (map show hiddenInWS) []
+  when (window /= "") (maximizeWindowAndFocus (read window))
+
+minimizeCurrentWindow :: X()
+minimizeCurrentWindow = withFocused minimizeWindow <+> BW.focusUp
 
 -- Keybindings
 keybindings conf@XConfig {XMonad.modMask = modm} = M.fromList ([
@@ -104,7 +110,7 @@ keybindings conf@XConfig {XMonad.modMask = modm} = M.fromList ([
 
   -- Hidden (minimized) windows
   , ((modm, xK_u), chooseWindowToMaximize)
-  , ((modm, xK_i), withFocused minimizeWindow)
+  , ((modm, xK_i), minimizeCurrentWindow)
 
   -- Scratchpads
   , ((modm, xK_f), namedScratchpadAction Hooks.scratchpads "floaterm-min")
