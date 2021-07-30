@@ -35,6 +35,7 @@ import qualified QMonad.Config.Prompt as XP
 
 import Foreign.C.Types (CLong(..))
 import Data.Time.Clock.POSIX (getPOSIXTime)
+import Data.List (sortBy)
 
 -- Media controls
 data MediaControl = PlayPause | MNext | MPrevious
@@ -60,16 +61,40 @@ toggleGaps = do
   toggleScreenSpacingEnabled
   toggleWindowSpacingEnabled
 
-chooseWindowToMaximize :: X()
-chooseWindowToMaximize = do
+sortMinimizedWindows :: X [Window]
+sortMinimizedWindows = do
   minimized <- XS.gets minimizedStack
   wset <- gets windowset
-  let hiddenInWS = filter (`elem` minimized) (W.integrate' $ W.stack (W.workspace $ W.current wset))
 
+  let minimized' = filter (`elem` minimized) (W.integrate' $ W.stack (W.workspace $ W.current wset))
+  withTime <- mapM (\w -> do
+      time <- getMinimizeTime w
+      return (w, time)
+    ) minimized'
+  let sorted = sortBy sortTimestamp withTime
+  return $ map fst (sortBy sortTimestamp sorted)
+
+sortTimestamp a b
+  | snd a > snd b = LT
+  | snd a < snd b = GT
+  | otherwise = EQ
+
+chooseWindowToMaximize :: X()
+chooseWindowToMaximize = do
+  minimized <- sortMinimizedWindows
   xmonad_path <- liftIO $ getEnv "XMONAD"
-  window <- runProcessWithInput (xmonad_path ++ "/bin/unhide") (map show hiddenInWS) []
+  window <- runProcessWithInput (xmonad_path ++ "/bin/unhide") (map show minimized) []
   let win = read window :: Window
   when (window /= "") (maximizeWindow' win)
+
+getMinimizeTime :: Window -> X CLong
+getMinimizeTime win =
+  withDisplay $ \dpy -> do
+    atom <- getAtom "MINIMIZED_AT"
+    prop <- liftIO $ getWindowProperty32 dpy atom win
+    return $ case prop of
+          Just [a] -> a
+          _ -> 0
 
 maximizeWindow' :: Window -> X()
 maximizeWindow' win = do
@@ -91,7 +116,7 @@ minimizeCurrentWindow :: X()
 minimizeCurrentWindow = withFocused minimizeWindow' <+> BW.focusUp
 
 fixFocus :: X()
-fixFocus = do
+fixFocus =
   return ()
 
 checkFocus :: Window -> X()
