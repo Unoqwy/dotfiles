@@ -67,7 +67,7 @@ config (scriptsDir, weatherStation, networkCards) = defaultConfig {
 
     , Run $ Weather weatherStation ["-t", "<tempC>°C", "-x", "<fn=0></fn>"] 18000
     , Run $ Battery ["-t", "<acstatus>", "--", "-o", "<fn=2>\xf242</fn><fn=1> </fn><left>%", "-O", "<fn=2>\xf376</fn> <left>%", "-i", ""] 50
-    , Run $ Com "sh" [scriptsDir ++ "pulseaudio-display.sh"] "vol" 30
+    , Run $ Com "sh" [scriptsDir ++ "get-volume"] "vol" 30
     , Run $ Date ("<fc=" ++ T.brightFgColor ++ "><fn=2>\xf017</fn><fn=1> </fn>%I:%M:%S<fn=1> </fn>%p</fc> %a-%d") "formattedTime" 2
 
   -- Network cards dynamic commands
@@ -91,7 +91,7 @@ main = do
   networkCards'  <- getEnvDefault "NETWORK_CARDS"   "eth0:\xf108"
 
   xmonadDir <- getEnvDefault "XMONAD" "../.."
-  xmobar $ config (xmonadDir ++ "/scripts/",
+  xmobar $ config (xmonadDir ++ "/bin/statusbar/",
                    weatherStation,
                    map (mkTuple . splitOn ":") (splitOn "," networkCards'))
 
