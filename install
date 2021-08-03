@@ -1,0 +1,25 @@
+#!/bin/sh
+
+function install {
+    ln -s "$(pwd)/$1" "$HOME/${2:-$1}"
+}
+
+function install_all {
+    ln -s "$(pwd)/$1"/* "$HOME/${2:-$1}/"
+}
+
+install .xmonad
+install .config/alacritty
+install .config/wezterm
+install .zshrc
+install .zshenv
+install .Xresources
+install .Xmodmap
+install .ideavimrc
+install .vimrc
+install .xinitrc
+
+install_all .config
+install_all .local/bin
+
+# TODO: qdf.toml once QDF becomes usable
