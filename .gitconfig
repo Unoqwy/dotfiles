@@ -1,0 +1,13 @@
+[user]
+	name = Unoqwy
+	email = julien.qwy@gmail.com
+[commit]
+	gpgsign = true
+[credential]
+	helper = store
+[pull]
+	rebase = false
+[advice]
+	addIgnoredFile = false
+[init]
+	defaultBranch = master

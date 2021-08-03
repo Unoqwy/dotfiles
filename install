@@ -1,11 +1,11 @@
 #!/bin/sh
 
 function install {
-    ln -s "$(pwd)/$1" "$HOME/${2:-$1}"
+    ln -s "$(pwd)/$1" "$HOME/${2:-$1}" 2>/dev/null
 }
 
 function install_all {
-    ln -s "$(pwd)/$1"/* "$HOME/${2:-$1}/"
+    ln -s "$(pwd)/$1"/* "$HOME/${2:-$1}/" 2>/dev/null
 }
 
 install .xmonad
@@ -18,8 +18,11 @@ install .Xmodmap
 install .ideavimrc
 install .vimrc
 install .xinitrc
+install .gitconfig
 
 install_all .config
 install_all .local/bin
+
+echo "Done"
 
 # TODO: qdf.toml once QDF becomes usable
