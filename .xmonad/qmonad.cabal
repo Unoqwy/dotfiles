@@ -56,5 +56,5 @@ executable qmobar
     directory,
     split,
     dotenv,
-    xmobar ==0.38.*
+    xmobar ==0.39.*
 

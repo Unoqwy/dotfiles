@@ -6,4 +6,9 @@ source-repository-package
   type: git
   location: git://github.com/xmonad/xmonad-contrib
 
+source-repository-package
+  type: git
+  tag: 08b2ba6ec37a31b293c6e29cb4387849da153af1
+  location: git://github.com/Unoqwy/xmobar
+
 packages: ./qmonad.cabal

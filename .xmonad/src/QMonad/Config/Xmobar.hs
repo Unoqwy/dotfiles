@@ -35,7 +35,7 @@ awrap' wks l r name = wrap l r (awrap wks name)
 
 infoBorders :: Bool -> String -> String
 infoBorders False s = s
-infoBorders _ s = wrap ("<box type=Right width=2 color=" ++ T.brightFgColor ++ " offset=L22>") "</box>" s
+infoBorders _ s = wrap ("<box type=Right width=2 align=L maxlen=2 color=" ++ T.brightFgColor ++ ">") "</box>" s
 
 -- Goal of this log hook:
 --   Send the workspaces to xmobar and read it there using the unsafe stdin reader
@@ -50,7 +50,7 @@ wsLogHook xmobarStdin isEmpty containsMinimized = workspaceMasksPP (def {
   }) (def {
       wsppCurrent = \(WorkspaceMask w visible n) _ ->
           let color = if visible then T.primaryColor else T.secondaryColor
-          in awrap' w ("<box type=Top width=1 offset=C10 color=" ++ color ++ "><fc=" ++ color ++ ">") "</fc></box>" (infoBorders (containsMinimized w) n)
+          in awrap' w ("<box type=Top width=1 ml=10 mr=10 color=" ++ color ++ "><fc=" ++ color ++ ">") "</fc></box>" (infoBorders (containsMinimized w) n)
     , wsppHidden  = \(WorkspaceMask w visible n) _ -> if visible then
           let n' = infoBorders (containsMinimized w) n
           in if isEmpty w then awrap w n' else awrap' w "<fc=#49464e>" "</fc>" n'
