@@ -10,8 +10,8 @@ import qualified Configuration.Dotenv as Dotenv
 import qualified QMonad.Shared.Theme as T
 
 -- Config
-config :: (String, String, [(String, String)]) -> Config
-config (scriptsDir, weatherStation, networkCards) = defaultConfig {
+config :: (String, String, [(String, String)], Int) -> Config
+config (scriptsDir, weatherStation, networkCards, fontTailor) = defaultConfig {
   -- General behavior
     hideOnStart      = False
   , allDesktops      = True
@@ -19,10 +19,10 @@ config (scriptsDir, weatherStation, networkCards) = defaultConfig {
   , persistent       = False
 
   -- Appearance
-  , font            = "xft:Jetbrains Mono:size=11:antialias=true:hinting=true"
+  , font            = "xft:Jetbrains Mono:size=" ++ show (11 + fontTailor) ++ ":antialias=true:hinting=true"
   , additionalFonts = [
-      "xft:Ubuntu Nerd Font:size=10"
-    , "xft:Font Awesome 5 Pro:size=10:style=Solid"
+      "xft:Ubuntu Nerd Font:size=" ++ show (10 + fontTailor)
+    , "xft:Font Awesome 5 Pro:size=" ++ show (10 + fontTailor) ++ ":style=Solid"
   ]
   , textOffset  = 16
   , textOffsets = [-1, 16]
@@ -89,11 +89,13 @@ main = do
     void $ Dotenv.loadFile envCfg
   weatherStation <- getEnvDefault "WEATHER_STATION" "LFLY"
   networkCards'  <- getEnvDefault "NETWORK_CARDS"   "eth0:\xf108"
+  fontTailor <- getEnvDefault "FONT_TAILOR" "0"
 
   xmonadDir <- getEnvDefault "XMONAD" "../.."
   xmobar $ config (xmonadDir ++ "/bin/statusbar/",
                    weatherStation,
-                   map (mkTuple . splitOn ":") (splitOn "," networkCards'))
+                   map (mkTuple . splitOn ":") (splitOn "," networkCards'),
+                   read fontTailor)
 
 mkTuple :: [String] -> (String, String)
 mkTuple [a,b] = (a,b)
