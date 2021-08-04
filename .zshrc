@@ -69,7 +69,11 @@ alias yank="xclip -selection clipboard"
 alias g="git"
 alias gc="git commit"
 alias gs="git status"
+alias gcl="git clone"
 alias lg="lazygit"
+
+function gclh { git clone "https://github.com/$1" ${@:2} }
+function gclb { git clone "https://gitlab.com/$1.git" ${@:2} }
 
 # tmux
 alias ta="tmux attach -t"
