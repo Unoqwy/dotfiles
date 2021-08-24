@@ -48,7 +48,7 @@ nnoremap <SPACE> <Nop>
 let mapleader=" "
 
 nnoremap <leader>fs :w<CR>
-nnoremap <leader>, <C-^>
+nnoremap <leader>, :e#<CR>
 
 nnoremap <leader>d "_d
 nnoremap <leader>D "_D
