@@ -63,6 +63,7 @@ alias grep="grep --color=auto"
 alias cl="clear"
 alias la="ls -a"
 alias ll="ls -lh"
+alias lh="ls -lah"
 alias yank="xclip -selection clipboard"
 
 # git
