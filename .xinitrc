@@ -13,9 +13,11 @@
 xset r rate 600 35
 
 [[ -f "$HOME/.Xmodmap" ]] && xmodmap "$HOME/.Xmodmap"
+[[ -f "$HOME/.xbindkeysrc.scm" ]] && xbindkeys -f "$HOME/.xbindkeysrc.scm"
 [[ -f "$HOME/.Xresources" ]] && xrdb -load "$HOME/.Xresources"
 
 [[ -f "$HOME/.xinitrc-local" ]] && sh "$HOME/.xinitrc-local"
+[[ -f "$HOME/.inputremap" ]] && sh "$HOME/.inputremap"
 
 # Variables used in xmonad config
 export XDG_CONFIG_HOME=$HOME/.config
