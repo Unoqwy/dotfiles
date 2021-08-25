@@ -18,7 +18,7 @@ font:
     style: Regular
   bold:
     family: Jetbrains Mono
-    style: Medium
+    style: Bold
   italic:
     family: Jetbrains Mono
     style: Italic
