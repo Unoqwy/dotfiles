@@ -45,7 +45,7 @@ bindkey "^k" up-line-or-beginning-search
 bindkey "^j" down-line-or-beginning-search
 
 alias hist="history"
-alias inhist="history | grep -i"
+alias inhist="history 0 | grep -i"
 
 # Syntax highlighting
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
@@ -81,6 +81,9 @@ alias ta="tmux attach -t"
 alias th="tmux command-prompt -I \$PWD -p 'CWD:' 'attach -c %1'"
 alias thc="th && clear"
 alias tml="tmux ls"
+
+# system
+alias synclock="sudo ntpd -gq"
 
 # cargo run test with stdout
 alias cto="cargo test -- --nocapture"
