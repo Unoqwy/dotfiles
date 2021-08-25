@@ -1,2 +1,8 @@
-*
+**/*
 !.gitignore
+
+!xmonad
+!choose-wallpaper
+!viman
+!spotify
+!nscp
