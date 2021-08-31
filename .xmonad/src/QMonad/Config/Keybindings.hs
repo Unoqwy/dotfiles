@@ -166,6 +166,9 @@ keybindings conf@XConfig {XMonad.modMask = modm} = M.fromList ([
   , ((modm, xK_u), chooseWindowToMaximize)
   , ((modm, xK_i), minimizeCurrentWindow)
 
+  -- Misc
+  , ((modm, xK_r), spawn "zsh -c 'sleep 0.2 && wiazac_client'")
+
   -- Scratchpads
   , ((modm, xK_f), namedScratchpadAction Hooks.scratchpads "floaterm-min")
   , ((modm .|. shiftMask, xK_f), namedScratchpadAction Hooks.scratchpads "floaterm")
