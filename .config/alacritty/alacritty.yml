@@ -12,7 +12,7 @@ scrolling:
 font:
   size: 9
   offset:
-    y: 2
+    y: 1
   normal:
     family: Jetbrains Mono
     style: Regular
