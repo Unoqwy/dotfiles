@@ -7,3 +7,5 @@
 
 (xbindkey '(release "b:26") "xdotool key bracketright")
 (xbindkey '(release "b:27") "xdotool key bracketleft")
+
+(xbindkey '(release "b:10") "sh -c \"xdotool mouseup 10 && wiazac_client\"")
