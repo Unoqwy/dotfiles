@@ -82,6 +82,11 @@ alias th="tmux command-prompt -I \$PWD -p 'CWD:' 'attach -c %1'"
 alias thc="th && clear"
 alias tml="tmux ls"
 
+if type nvim > /dev/null; then
+    alias vim="nvim"
+    alias vi="nvim"
+fi
+
 # system
 alias synclock="sudo ntpd -gq"
 
