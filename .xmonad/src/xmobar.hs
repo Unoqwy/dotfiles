@@ -73,7 +73,7 @@ config (scriptsDir, weatherStation, networkCards, fontTailor) = defaultConfig {
   -- Network cards dynamic commands
   ] ++ map (\(networkCard, icon) -> Run $ Network networkCard [
       "-t", "<fc=#72beb3><rx>kB<fn=1> </fn><fn=2>\xf063</fn></fc>"
-         ++ "<fn=1> </fn><fc=" ++ T.darkFgColor ++ "><fn=2>" ++ icon ++ "</fn></fc><fn=1> </fn>"
+         ++ "<fn=1> </fn><fc=" ++ T.darkFgColor ++ "><fn=2>" ++ defIcon icon ++ "</fn></fc><fn=1> </fn>"
          ++ "<fn=2>\xf062</fn><fn=1> </fn><tx>kB"
     , "-m", "2", "-c", " ", "-x", "~" ++ networkCard ++ "~"
   ] 10) networkCards
@@ -88,7 +88,7 @@ main = do
   when exists $
     void $ Dotenv.loadFile envCfg
   weatherStation <- getEnvDefault "WEATHER_STATION" "LFLY"
-  networkCards'  <- getEnvDefault "NETWORK_CARDS"   "eth0:\xf108"
+  networkCards'  <- getEnvDefault "NETWORK_CARDS" "eth0:eth"
   fontTailor <- getEnvDefault "FONT_TAILOR" "0"
 
   xmonadDir <- getEnvDefault "XMONAD" "../.."
@@ -96,6 +96,11 @@ main = do
                    weatherStation,
                    map (mkTuple . splitOn ":") (splitOn "," networkCards'),
                    read fontTailor)
+
+defIcon :: String -> String
+defIcon "eth" = "\xf108"
+defIcon "wifi" = "\xf1eb"
+defIcon icon = icon
 
 mkTuple :: [String] -> (String, String)
 mkTuple [a,b] = (a,b)
