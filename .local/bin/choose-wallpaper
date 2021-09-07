@@ -3,5 +3,5 @@ wallpaper=$(sxiv -brot ~/Wallpapers | head -n1)
 if [ -z "$wallpaper" ]; then
     exit 0
 fi
-feh --bg-scale "$wallpaper"
+feh --bg-fill "$wallpaper"
 notify-send "Wallpaper set" "${wallpaper##*/}"
