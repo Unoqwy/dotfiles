@@ -29,7 +29,7 @@ config (scriptsDir, weatherStation, networkCards, fontTailor) = defaultConfig {
 
   , fgColor  = "#848089"
   , bgColor  = "#191919"
-  , alpha    = 210
+  , alpha    = 230
   , position = Top
   , border   = NoBorder
 
