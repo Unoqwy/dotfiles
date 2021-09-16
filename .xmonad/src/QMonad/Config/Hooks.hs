@@ -45,10 +45,14 @@ setupDefaultWorkspaces = do
 
 startupHook :: X()
 startupHook = do
-  spawnOnce "flameshot &" -- Flameshot needs to be running in order to open the GUI
-  spawnOnce "picom --config $XDG_CONFIG_HOME/picom/picom.conf &"
+  -- start daemons
+  spawnOnce "flameshot &"
+  spawnOnce "greenclip daemon &"
   spawnOnce "dunst &"
   spawnOnce "unread-bell &"
+
+  -- compositor
+  spawnOnce "picom --config $XDG_CONFIG_HOME/picom/picom.conf &"
 
   xmonad_started <- liftIO $ lookupEnv "XMONAD_STARTED"
   case xmonad_started of
