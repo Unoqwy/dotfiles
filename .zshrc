@@ -87,6 +87,10 @@ if type nvim > /dev/null; then
     alias vi="nvim"
 fi
 
+# misc tools
+alias ts="tree-sitter"
+alias f="xplr"
+
 # system
 alias synclock="sudo ntpd -gq"
 
