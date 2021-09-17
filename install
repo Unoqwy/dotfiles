@@ -1,16 +1,17 @@
 #!/bin/sh
 
 function install {
-    ln -s "$(pwd)/$1" "$HOME/${2:-$1}" 2>/dev/null
+    ln -sn "$(pwd)/$1" "$HOME/${2:-$1}" 2>/dev/null
 }
 
 function install_all {
-    ln -s "$(pwd)/$1"/* "$HOME/${2:-$1}/" 2>/dev/null
+    ln -sn "$(pwd)/$1"/* "$HOME/${2:-$1}/" 2>/dev/null
 }
 
 install .xmonad
 install .config/alacritty
 install .config/wezterm
+install .config/greenclip.toml
 install .zshrc
 install .zshenv
 install .Xresources
