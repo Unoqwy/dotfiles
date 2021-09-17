@@ -1,5 +1,5 @@
 #!/bin/sh
-cd ../..
+cd $XMONAD
 if [ "$XMONAD_FORCE_BUILD" == "1" ]; then
     echo "Rebuilding xmonad.."
     cabal build exe:qmonad || exit 1

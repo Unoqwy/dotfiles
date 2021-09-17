@@ -19,9 +19,9 @@ xset r rate 600 35
 [[ -f "$HOME/.xinitrc-local" ]] && sh "$HOME/.xinitrc-local"
 [[ -f "$HOME/.inputremap" ]] && sh "$HOME/.inputremap"
 
-# Variables used in xmonad config
+# XDG
 export XDG_CONFIG_HOME=$HOME/.config
-export XMONAD=$HOME/.xmonad
+export XDG_CACHE_HOME=$HOME/.cache
 
 # Reset pipes
 function mkpipe {
@@ -37,9 +37,13 @@ mkpipe "/tmp/discord.pipe"
 # Set wallpaper
 [[ -f $HOME/.fehbg ]] && sh $HOME/.fehbg
 
-# Start xmonad
+# Variables used in xmonad config
+export XMONAD=$HOME/.xmonad
 export XMONAD_CONFIG_DIR=$XMONAD/bin/xmonad
-export XMOBAR_CONFIG_DIR=$XMONAD/bin/xmobar
 export XMONAD_DATA_DIR=$XMONAD_CONFIG_DIR
-exec qmonad
+export XMONAD_CACHE_DIR=$XDG_CACHE_HOME/xmonad
 
+export XMOBAR_CONFIG_DIR=$XMONAD/bin/xmobar
+
+# Start xmonad
+exec qmonad
