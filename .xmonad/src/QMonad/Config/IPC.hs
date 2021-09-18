@@ -43,10 +43,14 @@ dbusXmobar action = spawn
   ++ " /org/Xmobar/Control org.Xmobar.Control.SendSignal \"string:" ++ action ++ "\""
 
 hideStatusBar :: X()
-hideStatusBar = dbusXmobar "Hide 0"
+hideStatusBar = do
+  dbusXmobar "Hide 0"
+  XS.put $ StatusBar False
 
 showStatusBar :: X()
-showStatusBar = dbusXmobar "Reveal 0"
+showStatusBar = do
+  dbusXmobar "Reveal 0"
+  XS.put $ StatusBar True
 
 toggleStatusBar :: X()
 toggleStatusBar = do
@@ -54,4 +58,3 @@ toggleStatusBar = do
   if state
     then hideStatusBar
     else showStatusBar
-  XS.put $ StatusBar (not state)
