@@ -35,7 +35,7 @@ main = do
     , workspaces         = map show [0..9]
 
     , borderWidth        = 1
-    , focusedBorderColor = T.secondaryColor
+    , focusedBorderColor = T.fgColor
     , normalBorderColor  = T.bgColor
 
     , keys               = keybindings
