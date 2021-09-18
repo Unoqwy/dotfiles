@@ -36,24 +36,7 @@ import qualified QMonad.Config.Prompt as XP
 import Foreign.C.Types (CLong(..))
 import Data.Time.Clock.POSIX (getPOSIXTime)
 import Data.List (sortBy)
-
--- Media controls
-data MediaControl = PlayPause | MNext | MPrevious
-
-instance Show MediaControl where
-  show PlayPause = "PlayPause"
-  show MNext = "Next"
-  show MPrevious = "Previous"
-
-mprisCtl :: String -> MediaControl -> X()
-mprisCtl n c = spawn
-  $ "dbus-send --print-reply --dest=org.mpris.MediaPlayer2."  ++ show n
-  ++ " /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player." ++ show c
-
-spotifyCtl :: MediaControl -> X()
-spotifyCtl mediaCtl = do
-  mprisCtl "spotify" mediaCtl
-  mprisCtl "spotifyd" mediaCtl
+import QMonad.Config.IPC (MediaControl(..), mediaAction, toggleStatusBar)
 
 -- Toggles
 toggleGaps :: X()
@@ -131,19 +114,20 @@ keybindings conf@XConfig {XMonad.modMask = modm} = M.fromList ([
   , ((modm, xK_Right), spawn "$XMONAD/bin/brightness  0.1")
 
   -- Media control
-  , ((0, xF86XK_AudioPlay), spotifyCtl PlayPause)
-  , ((0, xF86XK_AudioNext), spotifyCtl MNext    )
-  , ((0, xF86XK_AudioPrev), spotifyCtl MPrevious)
+  , ((0, xF86XK_AudioPlay), mediaAction PlayPause)
+  , ((0, xF86XK_AudioNext), mediaAction MNext    )
+  , ((0, xF86XK_AudioPrev), mediaAction MPrevious)
   , ((modm, xK_s), submap . M.fromList $ [
-        ((0, xK_space), spotifyCtl PlayPause)
-      , ((0, xK_n    ), spotifyCtl MNext    )
-      , ((0, xK_p    ), spotifyCtl MPrevious)
+        ((0, xK_space), mediaAction PlayPause)
+      , ((0, xK_n    ), mediaAction MNext    )
+      , ((0, xK_p    ), mediaAction MPrevious)
       ])
 
   -- Layout
   , ((modm,               xK_space), sendMessage NextLayout)
   , ((modm .|. shiftMask, xK_space), setLayout $ XMonad.layoutHook conf)
   , ((modm,               xK_slash), toggleGaps)
+  , ((modm .|. shiftMask, xK_slash), toggleStatusBar)
 
   , ((modm, xK_comma ), sendMessage $ IncMasterN 1   )
   , ((modm, xK_period), sendMessage $ IncMasterN (-1))
