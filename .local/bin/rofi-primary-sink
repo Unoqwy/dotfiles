@@ -1,0 +1,9 @@
+#!/bin/sh
+choices=$(pamixer --list-sinks | tail +2 | awk -F'"' '{ print substr($1,1,length($1)-1) ". " $4; }')
+result=$(echo "$choices" | rofi -dmenu -i -l 8 -p "Output")
+if [[ -n "$result" ]]; then
+    sink=$(echo "$result" | cut -d "." -f 1)
+    pactl set-default-sink $sink
+    sink_name=$(echo "$result" | sed 's/^.*\.\s//')
+    notify-send "Audio output changed" "$sink_name"
+fi
