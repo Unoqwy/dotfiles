@@ -41,6 +41,7 @@ mkpipe "/tmp/discord.pipe"
 export XMONAD=$HOME/.xmonad
 export XMONAD_CONFIG_DIR=$XMONAD/bin/xmonad
 export XMONAD_DATA_DIR=$XMONAD_CONFIG_DIR
+[[ ! -d $HOME/.cache/xmonad ]] && mkdir -p $HOME/.cache/xmonad
 export XMONAD_CACHE_DIR=$XDG_CACHE_HOME/xmonad
 
 export XMOBAR_CONFIG_DIR=$XMONAD/bin/xmobar
