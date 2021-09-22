@@ -10,6 +10,7 @@ function install_all {
 
 install .xmonad
 install .config/alacritty
+install .config/kitty
 install .config/wezterm
 install .config/greenclip.toml
 install .zshrc
