@@ -23,20 +23,18 @@ import XMonad.Util.NamedScratchpad (namedScratchpadAction)
 
 import Control.Monad (when)
 import XMonad.Util.Run (runProcessWithInput)
-import XMonad.Util.Minimize (Minimized(minimizedStack))
-import XMonad.Actions.Minimize (minimizeWindow, maximizeWindowAndFocus)
 import qualified XMonad.Layout.BoringWindows as BW
 
 import System.Environment
 
-import qualified QMonad.Config.Applications as A
-import qualified QMonad.Config.Hooks as Hooks
-import qualified QMonad.Config.Prompt as XP
+import QMonad.Lib.WindowProp (minimizeWindow, maximizeWindow, sortMinimizedWindows, minimizedStack)
 
-import Foreign.C.Types (CLong(..))
-import Data.Time.Clock.POSIX (getPOSIXTime)
-import Data.List (sortBy)
+import QMonad.Config.Env (EnvConfig(..), localBin)
 import QMonad.Config.IPC (MediaControl(..), mediaAction, toggleStatusBar)
+
+import qualified QMonad.Config.Applications as A
+import qualified QMonad.Config.Prompt as XP
+import qualified QMonad.Config.Hooks as Hooks
 
 -- Toggles
 toggleGaps :: X()
@@ -44,59 +42,16 @@ toggleGaps = do
   toggleScreenSpacingEnabled
   toggleWindowSpacingEnabled
 
-sortMinimizedWindows :: X [Window]
-sortMinimizedWindows = do
-  minimized <- XS.gets minimizedStack
-  wset <- gets windowset
-
-  let minimized' = filter (`elem` minimized) (W.integrate' $ W.stack (W.workspace $ W.current wset))
-  withTime <- mapM (\w -> do
-      time <- getMinimizeTime w
-      return (w, time)
-    ) minimized'
-  let sorted = sortBy sortTimestamp withTime
-  return $ map fst (sortBy sortTimestamp sorted)
-
-sortTimestamp a b
-  | snd a > snd b = LT
-  | snd a < snd b = GT
-  | otherwise = EQ
-
-chooseWindowToMaximize :: X()
-chooseWindowToMaximize = do
+-- Minimizing windows
+chooseWindowToMaximize :: EnvConfig -> X()
+chooseWindowToMaximize conf = do
   minimized <- sortMinimizedWindows
-  xmonad_path <- liftIO $ getEnv "XMONAD"
-  window <- runProcessWithInput (xmonad_path ++ "/bin/unhide") (map show minimized) []
+  window <- runProcessWithInput (localBin conf "unhide") (map show minimized) []
   let win = read window :: Window
-  when (window /= "") (maximizeWindow' win)
-
-getMinimizeTime :: Window -> X CLong
-getMinimizeTime win =
-  withDisplay $ \dpy -> do
-    atom <- getAtom "MINIMIZED_AT"
-    prop <- liftIO $ getWindowProperty32 dpy atom win
-    return $ case prop of
-          Just [a] -> a
-          _ -> 0
-
-maximizeWindow' :: Window -> X()
-maximizeWindow' win = do
-  maximizeWindowAndFocus win
-  withDisplay $ \dpy -> do
-    atom <- getAtom "MINIMIZED_AT"
-    io $ deleteProperty dpy win atom
-
-minimizeWindow' :: Window -> X()
-minimizeWindow' win = do
-  minimizeWindow win
-  withDisplay $ \dpy -> do
-    atom <- getAtom "MINIMIZED_AT"
-    io $ do
-      timestamp <- round <$> getPOSIXTime
-      changeProperty32 dpy win atom cARDINAL propModeReplace [CLong timestamp]
+  when (window /= "") (maximizeWindow win)
 
 minimizeCurrentWindow :: X()
-minimizeCurrentWindow = withFocused minimizeWindow' <+> BW.focusUp
+minimizeCurrentWindow = withFocused minimizeWindow <+> BW.focusUp
 
 fixFocus :: X()
 fixFocus =
@@ -147,7 +102,7 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
   -- don't care about swap to master
 
   -- Hidden (minimized) windows
-  , ((modm, xK_u), chooseWindowToMaximize)
+  , ((modm, xK_u), chooseWindowToMaximize conf)
   , ((modm, xK_i), minimizeCurrentWindow)
 
   -- Misc
