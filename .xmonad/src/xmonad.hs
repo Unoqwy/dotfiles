@@ -1,6 +1,7 @@
 {-# OPTIONS_GHC -fno-warn-missing-signatures #-}
 
-import XMonad
+import XMonad ((<+>), xmonad, def, mod4Mask)
+import qualified XMonad
 import XMonad.Util.Run
 
 import XMonad.Hooks.EwmhDesktops (ewmh)
@@ -12,8 +13,9 @@ import System.IO (Handle, IOMode(WriteMode), hSetBuffering, BufferMode(LineBuffe
 
 import QMonad.Config.Keybindings (keybindings)
 import QMonad.Config.Xmobar (xmobarLogHook)
-import qualified QMonad.Config.Hooks as Hooks
+import QMonad.Config.Env (EnvConfig(..), loadEnvConfig)
 
+import qualified QMonad.Config.Hooks as Hooks
 import qualified QMonad.Shared.Theme as T
 
 -- Open and prepare a Handle to write to a named pipe
@@ -29,19 +31,21 @@ main = do
   xmobarStdin <- spawnPipe "cd $XMONAD/bin/xmobar && ./xmobar"
   infoPipe <- getFIFOHandle "/tmp/xmonad-info"
 
+  conf <- loadEnvConfig
+
   xmonad $ (ewmh . docks) def {
-      terminal           = "alacritty"
-    , modMask            = mod4Mask
-    , workspaces         = map show [0..9]
+      XMonad.terminal = terminal conf
+    , XMonad.modMask = mod4Mask
+    , XMonad.workspaces = map show [0..9]
 
-    , borderWidth        = 1
-    , focusedBorderColor = T.fgColor
-    , normalBorderColor  = T.bgColor
+    , XMonad.borderWidth = 1
+    , XMonad.focusedBorderColor = T.fgColor
+    , XMonad.normalBorderColor = T.bgColor
 
-    , keys               = keybindings
-    , layoutHook = Hooks.layoutHook
-    , startupHook = Hooks.startupHook
-    , manageHook = insertPosition Below Newer <+> Hooks.manageHook
-    , logHook = xmobarLogHook xmobarStdin infoPipe <+> Hooks.logHook
+    , XMonad.keys = keybindings conf
+    , XMonad.layoutHook = Hooks.layoutHook
+    , XMonad.startupHook = Hooks.startupHook
+    , XMonad.manageHook = insertPosition Below Newer <+> Hooks.manageHook conf
+    , XMonad.logHook = xmobarLogHook xmobarStdin infoPipe <+> Hooks.logHook
     }
 

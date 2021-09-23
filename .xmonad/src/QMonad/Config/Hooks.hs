@@ -24,6 +24,8 @@ import QMonad.Lib.WorkspaceMasks (setWorkspaceMask)
 
 import System.Environment (lookupEnv, setEnv)
 
+import QMonad.Config.Env (EnvConfig)
+
 import qualified QMonad.Config.Applications as A
 -- Startup hook
 setupDefaultWorkspaces :: X()
@@ -94,18 +96,18 @@ logHook = do
     return ()
 
 -- Named scratchpads
-scratchpads = [
-      NS "floaterm" (A.spawnTermWithClass "floaterm" Nothing) (resource =? "floaterm") float
-    , NS "floaterm-min" (A.spawnTermWithClass "floaterm-min" Nothing) (resource =? "floaterm-min") floatMin
+scratchpads conf = [
+      NS "floaterm" (A.spawnTermWithClass conf "floaterm" Nothing) (resource =? "floaterm") float
+    , NS "floaterm-min" (A.spawnTermWithClass conf "floaterm-min" Nothing) (resource =? "floaterm-min") floatMin
     , NS "quicksearch" "vimb --name quicksearch" (resource =? "quicksearch") float
-    , NS "filexplorer" (A.spawnTermWithClass "floatfe" (Just "xplr")) (resource =? "floatfe") float
+    , NS "filexplorer" (A.spawnTermWithClass conf "floatfe" (Just "xplr")) (resource =? "floatfe") float
   ] where
       float = customFloating $ W.RationalRect 0.1 0.1 0.8 0.8
       floatMin = customFloating $ W.RationalRect 0.15 0.15 0.7 0.7
 
 -- Manage hook
-manageHook :: ManageHook
-manageHook = namedScratchpadManageHook scratchpads <+> composeAll [
+manageHook :: EnvConfig -> ManageHook
+manageHook conf = namedScratchpadManageHook (scratchpads conf) <+> composeAll [
     isDialog --> doF W.swapUp
 
   -- Organized applications

@@ -25,6 +25,7 @@ executable qmonad
 
   other-modules:
     QMonad.Config.Applications
+    QMonad.Config.Env
     QMonad.Config.Hooks
     QMonad.Config.IPC
     QMonad.Config.Keybindings
