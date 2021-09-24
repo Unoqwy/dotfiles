@@ -1,6 +1,6 @@
 module QMonad.Config.Hooks.General (hooks) where
 
-import XMonad hiding (startupHook, layoutHook, manageHook)
+import XMonad hiding (startupHook, layoutHook)
 import qualified XMonad
 
 import XMonad.Hooks.InsertPosition (insertPosition, Focus(..), Position(..))
@@ -10,7 +10,7 @@ import System.Environment (lookupEnv, setEnv)
 import qualified Data.Bifunctor
 
 import QMonad.Config.Hooks.Layouts (layoutHook)
-import QMonad.Config.Hooks.Manage (manageHook)
+import qualified QMonad.Config.Hooks.Manage as Hooks.Manage
 import QMonad.Config.Env (EnvConfig)
 
 import QMonad.Lib.WorkspaceMasks (setWorkspaceMask)
@@ -55,5 +55,6 @@ startupHook = do
 hooks :: EnvConfig -> XConfig a -> XConfig a
 hooks conf xconf = xconf {
     XMonad.startupHook = startupHook
-  , XMonad.manageHook  = insertPosition Below Newer <+> manageHook conf
+  , XMonad.handleEventHook = Hooks.Manage.handleEventHook
+  , XMonad.manageHook  = insertPosition Below Newer <+> Hooks.Manage.manageHook conf
   }

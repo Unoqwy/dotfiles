@@ -1,21 +1,39 @@
-module QMonad.Config.Hooks.Manage (manageHook) where
+module QMonad.Config.Hooks.Manage (
+  manageHook,
+  handleEventHook,
+) where
 
-import XMonad hiding (manageHook)
+import XMonad hiding (manageHook, handleEventHook)
+import XMonad.Prelude
 import QMonad.Config.Scratchpads (scratchpads)
-import XMonad.Hooks.ManageHelpers (isDialog, doCenterFloat)
+import XMonad.Hooks.ManageHelpers (isDialog, doCenterFloat, doRectFloat)
 import XMonad.Util.NamedScratchpad (namedScratchpadManageHook)
 import qualified XMonad.StackSet as W
 
-import QMonad.Config.Env (EnvConfig(..))
+import Data.Monoid (All)
 
+import QMonad.Config.Env (EnvConfig(..))
 import QMonad.Lib.Window.Opacity (setWindowOpacity)
 
 wmName = stringProperty "WM_NAME"
 wmRole = stringProperty "WM_WINDOW_ROLE"
 
--- Manage hook
+doCenteredFloat = doRectFloat $ W.RationalRect 0.25 0.25 0.5 0.5
+
 manageHook :: EnvConfig -> ManageHook
-manageHook conf = namedScratchpadManageHook (scratchpads conf) <+> windowRules <+> opacityHook conf
+manageHook conf = namedScratchpadManageHook (scratchpads conf) <+> windowRules <+> opacityHook
+
+handleEventHook :: Event -> X All
+handleEventHook PropertyEvent { ev_event_type = t, ev_atom = a, ev_window = win }
+            | t == propertyNotify && a == wM_CLASS = do
+  mh <- asks (handleEvent . config)
+  g <- appEndo <$> userCodeDef (Endo id) (runQuery mh win)
+  windows g
+  return $ All True
+handleEventHook _ = return $ All True
+
+handleEvent :: XConfig l -> ManageHook
+handleEvent _ = windowRules <+> opacityHook
 
 windowRules :: ManageHook
 windowRules = composeAll [
@@ -30,7 +48,7 @@ windowRules = composeAll [
   , className =? "jetbrains-idea-ce" <&&> title =? "win0" --> doCenterFloat
 
   -- Settings apps
-  , className =? "Pavucontrol" --> doCenterFloat
+  , className =? "Pavucontrol" --> doCenteredFloat
   , className =? "flameshot" <&&> title =? "Configuration" --> doCenterFloat
   , resource =? "sxiv" --> doCenterFloat
 
@@ -38,21 +56,21 @@ windowRules = composeAll [
   , wmName =? "Picture-in-Picture" --> doFloat
 
   -- Misc
-  , resource =? "Godot_Engine" --> doFloat
-  , wmRole =? "GtkFileChooserDialog" --> doCenterFloat
+  , resource =? "Godot_ProjectList" --> doCenteredFloat
+  , wmRole =? "GtkFileChooserDialog" --> doCenteredFloat
   ]
 
 -- Opacity hook
-opacityHook :: EnvConfig -> ManageHook
-opacityHook EnvConfig{default_opacity=opac} = composeAll $
+opacityHook :: ManageHook
+opacityHook = composeAll $
     [ resource =? r --> makeTransparent | r <- defaultTransparent ]
-  where makeTransparent = doSetOpacity (fromIntegral opac / 100.0)
+  where makeTransparent = doSetOpacity (95 / 100.0)
         defaultTransparent = [
             "kitty"
           , "Alacritty"
           , "org.wezfurlong.wezterm"
           , "jetbrains-idea-ce"
-          , "Spotify"
+          , "spotify"
           , "discord"
           ]
 
