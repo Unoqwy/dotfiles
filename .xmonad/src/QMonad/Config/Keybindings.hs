@@ -31,10 +31,10 @@ import QMonad.Lib.Window.Minimize (minimizeWindow, maximizeWindow, sortMinimized
 
 import QMonad.Config.Env (EnvConfig(..), localBin)
 import QMonad.Config.IPC (MediaControl(..), mediaAction, toggleStatusBar)
+import qualified QMonad.Config.Scratchpads as Scratchpads
 
 import qualified QMonad.Config.Applications as A
 import qualified QMonad.Config.Prompt as XP
-import qualified QMonad.Config.Hooks as Hooks
 
 -- Toggles
 toggleGaps :: X()
@@ -63,6 +63,7 @@ checkFocus w = do
   when (w `elem` minimized) fixFocus
 
 -- Keybindings
+keybindings :: EnvConfig -> XConfig Layout -> M.Map (ButtonMask, KeySym) (X())
 keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
   -- Brightness control
     ((modm, xK_Left ), spawn "$XMONAD/bin/brightness -0.1")
@@ -109,10 +110,10 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
   , ((modm, xK_r), spawn "zsh -c 'sleep 0.2 && wiazac_client'")
 
   -- Scratchpads
-  , ((modm, xK_f), namedScratchpadAction (Hooks.scratchpads conf) "floaterm-min")
-  , ((modm .|. shiftMask, xK_f), namedScratchpadAction (Hooks.scratchpads conf) "floaterm")
-  , ((modm, xK_d), namedScratchpadAction (Hooks.scratchpads conf) "quicksearch")
-  , ((modm, xK_e), namedScratchpadAction (Hooks.scratchpads conf) "filexplorer")
+  , ((modm, xK_f), namedScratchpadAction scratchpads "floaterm-min")
+  , ((modm .|. shiftMask, xK_f), namedScratchpadAction scratchpads "floaterm")
+  , ((modm, xK_d), namedScratchpadAction scratchpads "quicksearch")
+  , ((modm, xK_e), namedScratchpadAction scratchpads "filexplorer")
 
   -- Workspaces
   , ((modm .|. shiftMask, xK_r), renameCurrentWorkspace XP.defaultConfig)
@@ -138,3 +139,5 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
 
   ) <+> A.keybindings xconf
 
+  where
+    scratchpads = Scratchpads.scratchpads conf

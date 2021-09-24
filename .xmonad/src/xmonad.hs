@@ -5,17 +5,17 @@ import qualified XMonad
 import XMonad.Util.Run (spawnPipe)
 
 import XMonad.Hooks.EwmhDesktops (ewmh)
-import XMonad.Hooks.InsertPosition (insertPosition, Focus(..), Position(..))
 import XMonad.Hooks.ManageDocks (docks)
 
 import GHC.IO.Handle.FD (openFileBlocking)
 import System.IO (Handle, IOMode(WriteMode), hSetBuffering, BufferMode(LineBuffering))
 
+import QMonad.Config.Hooks.Layouts (layoutHook)
 import QMonad.Config.Keybindings (keybindings)
 import QMonad.Config.Xmobar (xmobarLogHook)
 import QMonad.Config.Env (EnvConfig(..), loadEnvConfig)
+import QMonad.Config.Hooks.General (hooks)
 
-import qualified QMonad.Config.Hooks as Hooks
 import qualified QMonad.Shared.Theme as T
 
 -- Open and prepare a Handle to write to a named pipe
@@ -32,7 +32,7 @@ main = do
   infoPipe <- getFIFOHandle "/tmp/xmonad-info"
 
   conf <- loadEnvConfig
-  xmonad $ (ewmh . docks) def {
+  xmonad $ (ewmh . docks . hooks conf) def {
       XMonad.terminal = terminal conf
     , XMonad.modMask = mod4Mask
     , XMonad.workspaces = map show [0..9]
@@ -42,9 +42,6 @@ main = do
     , XMonad.normalBorderColor = T.bgColor
 
     , XMonad.keys = keybindings conf
-    , XMonad.layoutHook = Hooks.layoutHook
-    , XMonad.startupHook = Hooks.startupHook
-    , XMonad.manageHook = insertPosition Below Newer <+> Hooks.manageHook conf
-    , XMonad.logHook = xmobarLogHook xmobarStdin infoPipe <+> Hooks.logHook
+    , XMonad.layoutHook = layoutHook
+    , XMonad.logHook = xmobarLogHook xmobarStdin infoPipe
     }
-
