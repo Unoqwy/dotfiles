@@ -32,10 +32,11 @@ mediaAction action = do
 
 -- Status bar
 newtype StatusBar = StatusBar Bool
-    deriving Typeable
+    deriving (Read, Show, Typeable)
 
 instance ExtensionClass StatusBar where
   initialValue = StatusBar True
+  extensionType = PersistentExtension
 
 dbusXmobar :: String -> X()
 dbusXmobar action = spawn

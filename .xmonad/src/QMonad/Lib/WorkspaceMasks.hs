@@ -38,10 +38,11 @@ import qualified XMonad.Util.ExtensibleState as XS
 
 type MaskState = (String, Bool)
 newtype WorkspaceMasks = WorkspaceMasks (M.Map WorkspaceId MaskState)
-    deriving Typeable
+    deriving (Read, Show, Typeable)
 
 instance ExtensionClass WorkspaceMasks where
     initialValue = WorkspaceMasks M.empty
+    extensionType = PersistentExtension
 
 data WorkspaceMask = WorkspaceMask WorkspaceId Bool String
 
