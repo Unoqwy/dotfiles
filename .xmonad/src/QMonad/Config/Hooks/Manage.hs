@@ -42,6 +42,7 @@ windowRules = composeAll [
     isDialog --> doF W.swapUp
 
   -- Organized applications
+  , className =? "Spotify" --> doShift "1"
   , className =? "discord" --> doShift "6"
   , className =? "TeamSpeak 3" --> doShift "7"
   , className =? "Notion" --> doShift "8"
