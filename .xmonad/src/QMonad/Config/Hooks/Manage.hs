@@ -70,14 +70,14 @@ opacityHook EnvConfig{default_opacity=opac} = composeAll $
     ++ [ className =? c --> makeTransparent | c <- classNames ]
   where makeTransparent = doSetOpacity (fromIntegral opac / 100.0)
         appNames = [
-            "kitty"
-          , "org.wezfurlong.wezterm"
-          , "jetbrains-idea-ce"
+            "jetbrains-idea-ce"
           , "spotify"
           , "discord"
           ]
         classNames = [
             "Alacritty"
+          , "kitty"
+          , "org.wezfurlong.wezterm"
           ]
 
 doSetOpacity :: Float -> ManageHook
