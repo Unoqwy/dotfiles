@@ -65,15 +65,18 @@ windowRules = composeAll [
 -- Opacity hook
 opacityHook :: EnvConfig -> ManageHook
 opacityHook EnvConfig{default_opacity=opac} = composeAll $
-    [ resource =? r --> makeTransparent | r <- defaultTransparent ]
+    [ resource =? r --> makeTransparent | r <- appNames ]
+    ++ [ className =? c --> makeTransparent | c <- classNames ]
   where makeTransparent = doSetOpacity (fromIntegral opac / 100.0)
-        defaultTransparent = [
+        appNames = [
             "kitty"
-          , "Alacritty"
           , "org.wezfurlong.wezterm"
           , "jetbrains-idea-ce"
           , "spotify"
           , "discord"
+          ]
+        classNames = [
+            "Alacritty"
           ]
 
 doSetOpacity :: Float -> ManageHook
