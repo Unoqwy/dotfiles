@@ -27,7 +27,7 @@ import qualified XMonad.Layout.BoringWindows as BW
 
 import System.Environment
 
-import QMonad.Lib.WindowProp (minimizeWindow, maximizeWindow, sortMinimizedWindows, minimizedStack)
+import QMonad.Lib.Window.Minimize (minimizeWindow, maximizeWindow, sortMinimizedWindows, minimizedStack)
 
 import QMonad.Config.Env (EnvConfig(..), localBin)
 import QMonad.Config.IPC (MediaControl(..), mediaAction, toggleStatusBar)

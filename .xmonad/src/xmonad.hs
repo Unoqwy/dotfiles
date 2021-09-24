@@ -2,7 +2,7 @@
 
 import XMonad ((<+>), xmonad, def, mod4Mask)
 import qualified XMonad
-import XMonad.Util.Run
+import XMonad.Util.Run (spawnPipe)
 
 import XMonad.Hooks.EwmhDesktops (ewmh)
 import XMonad.Hooks.InsertPosition (insertPosition, Focus(..), Position(..))
@@ -32,7 +32,6 @@ main = do
   infoPipe <- getFIFOHandle "/tmp/xmonad-info"
 
   conf <- loadEnvConfig
-
   xmonad $ (ewmh . docks) def {
       XMonad.terminal = terminal conf
     , XMonad.modMask = mod4Mask

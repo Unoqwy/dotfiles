@@ -24,9 +24,13 @@ import QMonad.Lib.WorkspaceMasks (setWorkspaceMask)
 
 import System.Environment (lookupEnv, setEnv)
 
-import QMonad.Config.Env (EnvConfig)
+import QMonad.Config.Env (EnvConfig(..))
 
 import qualified QMonad.Config.Applications as A
+import Data.Monoid (All)
+import QMonad.Lib.Window.Opacity (setWindowOpacity)
+import Foreign.C (CLong)
+
 -- Startup hook
 setupDefaultWorkspaces :: X()
 setupDefaultWorkspaces = do
@@ -107,7 +111,7 @@ scratchpads conf = [
 
 -- Manage hook
 manageHook :: EnvConfig -> ManageHook
-manageHook conf = namedScratchpadManageHook (scratchpads conf) <+> composeAll [
+manageHook conf = namedScratchpadManageHook (scratchpads conf) <+> opacityHook conf <+> composeAll [
     isDialog --> doF W.swapUp
 
   -- Organized applications
@@ -132,3 +136,14 @@ manageHook conf = namedScratchpadManageHook (scratchpads conf) <+> composeAll [
   ] where
       wmName = stringProperty "WM_NAME"
       wmRole = stringProperty "WM_WINDOW_ROLE"
+
+
+-- Opacity hook
+opacityHook :: EnvConfig -> ManageHook
+opacityHook EnvConfig{default_opacity=opac} = composeAll [
+    resource =? "kitty" --> makeTransparent
+  ] where
+      makeTransparent = doSetOpacity (fromIntegral opac / 100.0)
+
+doSetOpacity :: Float -> ManageHook
+doSetOpacity opacity = ask >>= \w -> liftX (setWindowOpacity w opacity) >> doF id

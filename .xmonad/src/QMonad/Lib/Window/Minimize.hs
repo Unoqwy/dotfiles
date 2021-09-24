@@ -1,4 +1,4 @@
-module QMonad.Lib.WindowProp (
+module QMonad.Lib.Window.Minimize (
     minimizedStack,
     minimizeWindow,
     maximizeWindow,
@@ -12,7 +12,7 @@ import Foreign.C.Types (CLong(..))
 import Data.Time.Clock.POSIX (getPOSIXTime)
 import Data.List (sortBy)
 
-import qualified XMonad.Actions.Minimize as Minimize (minimizeWindow, maximizeWindowAndFocus)
+import qualified XMonad.Actions.Minimize as X.A.Minimize (minimizeWindow, maximizeWindowAndFocus)
 
 import qualified XMonad.StackSet as W
 import qualified XMonad.Util.ExtensibleState as XS
@@ -46,7 +46,7 @@ getMinimizeTime win =
 
 minimizeWindow :: Window -> X()
 minimizeWindow win = do
-  Minimize.minimizeWindow win
+  X.A.Minimize.minimizeWindow win
   withDisplay $ \dpy -> do
     atom <- getAtom "MINIMIZED_AT"
     io $ do
@@ -55,7 +55,7 @@ minimizeWindow win = do
 
 maximizeWindow :: Window -> X()
 maximizeWindow win = do
-  Minimize.maximizeWindowAndFocus win
+  X.A.Minimize.maximizeWindowAndFocus win
   withDisplay $ \dpy -> do
     atom <- getAtom "MINIMIZED_AT"
     io $ deleteProperty dpy win atom

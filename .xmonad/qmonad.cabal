@@ -31,8 +31,8 @@ executable qmonad
     QMonad.Config.Keybindings
     QMonad.Config.Prompt
     QMonad.Config.Xmobar
-    QMonad.Lib.WindowMeta
-    QMonad.Lib.WindowProp
+    QMonad.Lib.Window.Minimize
+    QMonad.Lib.Window.Opacity
     QMonad.Lib.WorkspaceMasks
     QMonad.Shared.Theme
 
