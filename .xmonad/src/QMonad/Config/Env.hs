@@ -14,7 +14,7 @@ loadEnvConfig :: IO EnvConfig
 loadEnvConfig = do
   xmonad_path' <- getEnvDefault "XMONAD" "~/.xmonad"
   terminal' <- getEnvDefault "XMONAD_TERMINAL" "kitty"
-  default_opacity' <- getEnvDefault "XMONAD_DEFAULT_OPACITY" "95"
+  default_opacity' <- getEnvDefault "XMONAD_DEFAULT_OPACITY" "98"
   return EnvConfig {
       xmonad_path = xmonad_path',
       terminal = terminal',

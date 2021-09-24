@@ -10,12 +10,12 @@ import QMonad.Config.Env (EnvConfig(..))
 
 import QMonad.Lib.Window.Opacity (setWindowOpacity)
 
--- Manage hook
-manageHook :: EnvConfig -> ManageHook
-manageHook conf = namedScratchpadManageHook (scratchpads conf) <+> opacityHook conf
-
 wmName = stringProperty "WM_NAME"
 wmRole = stringProperty "WM_WINDOW_ROLE"
+
+-- Manage hook
+manageHook :: EnvConfig -> ManageHook
+manageHook conf = namedScratchpadManageHook (scratchpads conf) <+> windowRules <+> opacityHook conf
 
 windowRules :: ManageHook
 windowRules = composeAll [
@@ -44,10 +44,17 @@ windowRules = composeAll [
 
 -- Opacity hook
 opacityHook :: EnvConfig -> ManageHook
-opacityHook EnvConfig{default_opacity=opac} = composeAll [
-    resource =? "kitty" --> makeTransparent
-  ] where
-      makeTransparent = doSetOpacity (fromIntegral opac / 100.0)
+opacityHook EnvConfig{default_opacity=opac} = composeAll $
+    [ resource =? r --> makeTransparent | r <- defaultTransparent ]
+  where makeTransparent = doSetOpacity (fromIntegral opac / 100.0)
+        defaultTransparent = [
+            "kitty"
+          , "Alacritty"
+          , "org.wezfurlong.wezterm"
+          , "jetbrains-idea-ce"
+          , "Spotify"
+          , "discord"
+          ]
 
 doSetOpacity :: Float -> ManageHook
 doSetOpacity opacity = ask >>= \w -> liftX (setWindowOpacity w opacity) >> doF id

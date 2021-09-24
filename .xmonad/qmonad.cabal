@@ -2,7 +2,7 @@ cabal-version: >=1.10
 build-type: Simple
 
 name: qmonad
-version: 1.3.2
+version: 1.4.0
 author: Unoqwy <julien.qwy@gmail.com>
 license: MIT
 
