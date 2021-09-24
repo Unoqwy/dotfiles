@@ -1,6 +1,6 @@
 module QMonad.Config.Hooks.General (hooks) where
 
-import XMonad hiding (startupHook, layoutHook)
+import XMonad ((<+>), XConfig, X, liftIO, spawn)
 import qualified XMonad
 
 import XMonad.Hooks.InsertPosition (insertPosition, Focus(..), Position(..))
@@ -54,7 +54,7 @@ startupHook = do
 -- Main hooks
 hooks :: EnvConfig -> XConfig a -> XConfig a
 hooks conf xconf = xconf {
-    XMonad.startupHook = startupHook
+    XMonad.startupHook = startupHook <+> XMonad.startupHook xconf
   , XMonad.handleEventHook = Hooks.Manage.handleEventHook
   , XMonad.manageHook  = insertPosition Below Newer <+> Hooks.Manage.manageHook conf
   }

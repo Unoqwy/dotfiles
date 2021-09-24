@@ -9,10 +9,11 @@ import QMonad.Config.Scratchpads (scratchpads)
 import XMonad.Hooks.ManageHelpers (isDialog, doCenterFloat, doRectFloat)
 import XMonad.Util.NamedScratchpad (namedScratchpadManageHook)
 import qualified XMonad.StackSet as W
+import qualified XMonad.Util.ExtensibleState as XS
 
 import Data.Monoid (All)
 
-import QMonad.Config.Env (EnvConfig(..))
+import QMonad.Config.Env (EnvConfig(..), EnvConfig'(envConfig))
 import QMonad.Lib.Window.Opacity (setWindowOpacity)
 
 wmName = stringProperty "WM_NAME"
@@ -21,19 +22,20 @@ wmRole = stringProperty "WM_WINDOW_ROLE"
 doCenteredFloat = doRectFloat $ W.RationalRect 0.25 0.25 0.5 0.5
 
 manageHook :: EnvConfig -> ManageHook
-manageHook conf = namedScratchpadManageHook (scratchpads conf) <+> windowRules <+> opacityHook
+manageHook conf = namedScratchpadManageHook (scratchpads conf) <+> windowRules <+> opacityHook conf
 
 handleEventHook :: Event -> X All
 handleEventHook PropertyEvent { ev_event_type = t, ev_atom = a, ev_window = win }
             | t == propertyNotify && a == wM_CLASS = do
-  mh <- asks (handleEvent . config)
+  conf <- XS.gets envConfig
+  mh <- asks (handleEvent conf . config)
   g <- appEndo <$> userCodeDef (Endo id) (runQuery mh win)
   windows g
   return $ All True
 handleEventHook _ = return $ All True
 
-handleEvent :: XConfig l -> ManageHook
-handleEvent _ = windowRules <+> opacityHook
+handleEvent :: EnvConfig -> XConfig l -> ManageHook
+handleEvent conf _ = windowRules <+> opacityHook conf
 
 windowRules :: ManageHook
 windowRules = composeAll [
@@ -61,10 +63,10 @@ windowRules = composeAll [
   ]
 
 -- Opacity hook
-opacityHook :: ManageHook
-opacityHook = composeAll $
+opacityHook :: EnvConfig -> ManageHook
+opacityHook EnvConfig{default_opacity=opac} = composeAll $
     [ resource =? r --> makeTransparent | r <- defaultTransparent ]
-  where makeTransparent = doSetOpacity (95 / 100.0)
+  where makeTransparent = doSetOpacity (fromIntegral opac / 100.0)
         defaultTransparent = [
             "kitty"
           , "Alacritty"

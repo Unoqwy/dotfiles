@@ -1,22 +1,23 @@
-{-# OPTIONS_GHC -fno-warn-missing-signatures #-}
-
-import XMonad ((<+>), xmonad, def, mod4Mask)
+import XMonad (xmonad, def, mod4Mask, extensionType)
 import qualified XMonad
 import XMonad.Util.Run (spawnPipe)
 
 import XMonad.Hooks.EwmhDesktops (ewmh)
 import XMonad.Hooks.ManageDocks (docks)
+import qualified XMonad.Util.ExtensibleState as XS
 
 import GHC.IO.Handle.FD (openFileBlocking)
 import System.IO (Handle, IOMode(WriteMode), hSetBuffering, BufferMode(LineBuffering))
+import qualified Data.Map as M
 
 import QMonad.Config.Hooks.Layouts (layoutHook)
 import QMonad.Config.Keybindings (keybindings)
 import QMonad.Config.Xmobar (xmobarLogHook)
-import QMonad.Config.Env (EnvConfig(..), loadEnvConfig)
+import QMonad.Config.Env (EnvConfig(..), EnvConfig'(..), loadEnvConfig)
 import QMonad.Config.Hooks.General (hooks)
 
 import qualified QMonad.Shared.Theme as T
+import Data.Typeable (typeOf)
 
 -- Open and prepare a Handle to write to a named pipe
 getFIFOHandle :: String -> IO Handle
@@ -42,6 +43,7 @@ main = do
     , XMonad.normalBorderColor = T.bgColor
 
     , XMonad.keys = keybindings conf
+    , XMonad.startupHook = XS.put $ EnvConfig' { envConfig = conf }
     , XMonad.layoutHook = layoutHook
     , XMonad.logHook = xmobarLogHook xmobarStdin infoPipe
     }
