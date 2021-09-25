@@ -5,8 +5,8 @@ module QMonad.Config.Hooks.Manage (
 
 import XMonad hiding (manageHook, handleEventHook)
 import XMonad.Prelude
-import QMonad.Config.Scratchpads (scratchpads)
-import XMonad.Hooks.ManageHelpers (isDialog, doCenterFloat, doRectFloat)
+import QMonad.Config.Scratchpads (scratchpads, transparentScratchpads)
+import XMonad.Hooks.ManageHelpers (isDialog, doCenterFloat, doRectFloat, composeOne, (-?>))
 import XMonad.Util.NamedScratchpad (namedScratchpadManageHook)
 import qualified XMonad.StackSet as W
 import qualified XMonad.Util.ExtensibleState as XS
@@ -65,15 +65,15 @@ windowRules = composeAll [
 
 -- Opacity hook
 opacityHook :: EnvConfig -> ManageHook
-opacityHook EnvConfig{default_opacity=opac} = composeAll $
-    [ resource =? r --> makeTransparent | r <- appNames ]
-    ++ [ className =? c --> makeTransparent | c <- classNames ]
+opacityHook EnvConfig{default_opacity=opac} = composeOne $
+    [ resource =? r -?> makeTransparent | r <- appNames ]
+    ++ [ className =? c -?> makeTransparent | c <- classNames ]
   where makeTransparent = doSetOpacity (fromIntegral opac / 100.0)
         appNames = [
             "jetbrains-idea-ce"
           , "spotify"
           , "discord"
-          ]
+          ] ++ transparentScratchpads
         classNames = [
             "Alacritty"
           , "kitty"

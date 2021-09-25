@@ -1,5 +1,6 @@
 module QMonad.Config.Scratchpads (
   scratchpads,
+  transparentScratchpads,
 ) where
 
 import XMonad
@@ -19,6 +20,9 @@ scratchpads conf = [
     , NS "quicksearch" "vimb --name quicksearch" (resource =? "quicksearch") doRectFloatEighty
     , NS "filexplorer" (A.spawnTermWithClass conf "floatfe" (Just "xplr")) (resource =? "floatfe") doRectFloatEighty
   ]
+
+transparentScratchpads :: [String]
+transparentScratchpads = ["floaterm", "floaterm-min", "floatfe"]
 
 doRectFloatEighty = doRectFloat $ W.RationalRect 0.1 0.1 0.8 0.8
 doRectFloatSeventy = doRectFloat $ W.RationalRect 0.15 0.15 0.7 0.7
