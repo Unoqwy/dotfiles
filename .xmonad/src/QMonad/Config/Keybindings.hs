@@ -35,6 +35,8 @@ import qualified QMonad.Config.Scratchpads as Scratchpads
 
 import qualified QMonad.Config.Applications as A
 import qualified QMonad.Config.Prompt as XP
+import QMonad.Lib.Sliders (sliderIncrease)
+import QMonad.Config.ControlSliders (volumeSlider)
 
 -- Toggles
 toggleGaps :: X()
@@ -62,12 +64,24 @@ checkFocus w = do
   minimized <- XS.gets minimizedStack
   when (w `elem` minimized) fixFocus
 
+-- Control sliders
+increaseVolume :: Int -> X()
+increaseVolume inc = do
+  slider <- volumeSlider 50
+  sliderIncrease slider inc
+  return ()
+
 -- Keybindings
 keybindings :: EnvConfig -> XConfig Layout -> M.Map (ButtonMask, KeySym) (X())
 keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
   -- Brightness control
     ((modm, xK_Left ), spawn "$XMONAD/bin/brightness -0.1")
   , ((modm, xK_Right), spawn "$XMONAD/bin/brightness  0.1")
+
+  -- Control sliders
+  , ((modm, xK_a), submap . M.fromList $ [
+        ((0, xK_v), increaseVolume 5)
+      ])
 
   -- Media control
   , ((0, xF86XK_AudioPlay), mediaAction PlayPause)

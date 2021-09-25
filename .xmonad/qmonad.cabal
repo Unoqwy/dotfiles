@@ -31,11 +31,13 @@ executable qmonad
     QMonad.Config.Prompt
     QMonad.Config.Xmobar
     QMonad.Config.Scratchpads
+    QMonad.Config.ControlSliders
     QMonad.Config.Hooks.General
     QMonad.Config.Hooks.Layouts
     QMonad.Config.Hooks.Manage
     QMonad.Lib.Window.Minimize
     QMonad.Lib.Window.Opacity
+    QMonad.Lib.Sliders
     QMonad.Lib.WorkspaceMasks
     QMonad.Shared.Theme
 
