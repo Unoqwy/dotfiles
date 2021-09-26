@@ -14,24 +14,28 @@ mkSlider = withDisplay $ \dpy -> void . liftIO $ forkIO (initSlider dpy)
 initSlider :: Display -> IO()
 initSlider dpy = do
   let conf = XovConf {
-        width = 250,
+        icon = Just "A",
+        iconWidth = 40,
+        showValue = True,
+        valueWidth = 40,
+        width = 400,
         height = 40,
-        icon = Nothing,
         borderWidth = 2,
+        innerBorderWidth = 2,
+        padding = 3,
         maxValue = 100
       }
-  Just blue <- initColor dpy "green"
-  Just red <- initColor dpy "gray"
-  Just gray <- initColor dpy "blue"
   let style = XovStyle {
-        borderColor = gray,
-        progressColor = blue,
-        emptyColor = red
+        iconFont = "Font Awesome 5 Pro",
+        iconColor = "#e3e1e4",
+        iconSize = 12,
+        borderColor = "#4c516d",
+        innerBorderColor = "#4c516d",
+        progressColor = "#E1BEE7",
+        emptyColor = "#242530",
+        backgroundColor = "#242530"
       }
   overlay <- mkOverlay dpy conf style 100
-  mapM_ (update dpy overlay) [1..100]
+  drawOverlay dpy overlay 35
+  threadDelay 250000
   destroyOverlay dpy overlay
-
-update dpy overlay val = do
-  drawOverlay dpy overlay val
-  threadDelay 50000
