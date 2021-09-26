@@ -1,6 +1,10 @@
 module QMonad.Lib.Xov (
+  XovOverlay(..),
   XovConf(..),
-  xovOverlay,
+  XovStyle(..),
+  mkOverlay,
+  destroyOverlay,
+  drawOverlay,
 ) where
 
 import XMonad hiding (borderWidth)
@@ -9,62 +13,85 @@ import XMonad.Prompt (mkUnmanagedWindow)
 import Control.Concurrent (threadDelay)
 import GHC.Float (int2Float)
 
+data XovOverlay = XovOverlay {
+  conf :: XovConf,
+  style :: XovStyle,
+
+  win :: Window
+  -- width :: Dimension,
+  -- height :: Dimension
+}
+
 data XovConf = XovConf {
   icon :: Maybe String,
+  width :: Dimension,
+  height :: Dimension,
   borderWidth :: Int,
   maxValue :: Int
 }
 
-mkOverlayWin :: Display -> Rectangle -> X Window
+data XovStyle = XovStyle {
+  borderColor :: Pixel,
+  progressColor :: Pixel,
+  emptyColor :: Pixel
+}
+
+mkOverlayWin :: Display -> Rectangle -> IO Window
 mkOverlayWin dpy rect = do
-  rootw <- asks theRoot
   -- scrn <- gets $ W.screen . W.current . windowset
-  liftIO $ mkUnmanagedWindow dpy (defaultScreenOfDisplay dpy) rootw
+  let scrn = defaultScreen dpy
+  rootw <- rootWindow dpy scrn
+  mkUnmanagedWindow dpy (screenOfDisplay dpy scrn) rootw
     (rect_x rect) (rect_y rect) (rect_width rect) (rect_height rect)
 
--- | Create a slider overlay.
-xovOverlay :: XovConf -> Int -> Float -> X()
-xovOverlay xvc val scl =
-  withDisplay $ \dpy -> do
-    let a = \a -> fromIntegral (2 * borderWidth xvc) + floor (a * scl)
-    let bw = fromIntegral $ borderWidth xvc
-        bounds = Rectangle 0 0 (a 100.0) (a 20.0)
-        Rectangle _ _ w h = bounds
+getBounds :: XovConf -> Rectangle
+getBounds conf = Rectangle 0 0 (a $ width conf) (a $ height conf)
+  where a = \a -> fromIntegral (2 * borderWidth conf) + a
 
-    win <- mkOverlayWin dpy bounds
-    liftIO $
-      mapWindow dpy win
-      -- selectInput dpy win (keyPressMask .|. leaveWindowMask)
+mkOverlay :: Display -> XovConf -> XovStyle -> Int -> IO XovOverlay
+mkOverlay dpy conf style val = do
+  win <- mkOverlayWin dpy (getBounds conf)
+  mapWindow dpy win
+  -- selectInput dpy win (keyPressMask .|. leaveWindowMask)
 
-    gc <- liftIO $ createGC dpy win
-    liftIO $ do
-      Just green <- initColor dpy "green"
-      Just red <- initColor dpy "red"
-      Just white <- initColor dpy "white"
+  let overlay = XovOverlay {
+    conf = conf,
+    style = style,
+    win = win
+  }
+  drawOverlay dpy overlay val
+  return overlay
 
-      -- border
-      setForeground dpy gc white
-      fillRectangle dpy win gc 0 0 w h
+destroyOverlay :: Display -> XovOverlay -> IO()
+destroyOverlay dpy XovOverlay{win=win} = do
+  unmapWindow dpy win
+  destroyWindow dpy win
+  sync dpy False
 
-      -- progress
-      setForeground dpy gc green
-      let bsx = fromIntegral bw
-          bsy = fromIntegral bw
-          val' = int2Float val * int2Float (maxValue xvc) / 100.0
-          h' = h - 2 * bw
-          progress = floor $ val' * scl
-          esx = fromIntegral $ bsx + fromIntegral progress
-          empty = floor $ (100 - val') * scl
-      fillRectangle dpy win gc bsx bsy progress h'
-      setForeground dpy gc red
-      fillRectangle dpy win gc esx bsy empty h'
-    liftIO $ freeGC dpy gc
+drawOverlay :: Display -> XovOverlay -> Int -> IO()
+drawOverlay dpy XovOverlay{conf=conf,style=style,win=win} val = do
+    let bw = fromIntegral $ borderWidth conf
+    let boxw = width conf
+    gc <- createGC dpy win
 
-    liftIO $ sync dpy False
-    io $ threadDelay 50000
+    -- outline
+    setForeground dpy gc (borderColor style)
+    fillRectangle dpy win gc 0 0 fw fh
 
-    liftIO $ do
-      unmapWindow dpy win
-      destroyWindow dpy win
-      sync dpy False
-    return ()
+    -- progress
+    let bsx = fromIntegral bw
+        bsy = fromIntegral bw
+        val' = int2Float val * int2Float (maxValue conf) / 100.0
+        h' = fh - 2 * bw
+        progress = floor (val' * (int2Float . fromIntegral $ boxw) / 100.0)
+        esx = fromIntegral $ bsx + fromIntegral progress
+        empty = boxw - progress
+    setForeground dpy gc (progressColor style)
+    fillRectangle dpy win gc bsx bsy progress h'
+    setForeground dpy gc (emptyColor style)
+    fillRectangle dpy win gc esx bsy empty h'
+
+    freeGC dpy gc
+    sync dpy False
+  where
+    Rectangle _ _ fw fh = getBounds conf

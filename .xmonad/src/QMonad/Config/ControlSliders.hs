@@ -1,21 +1,37 @@
 module QMonad.Config.ControlSliders (
-  volumeSlider,
+  mkSlider
 ) where
 
-import XMonad
+import XMonad hiding (borderWidth)
+import Control.Monad (void)
+import Control.Concurrent (threadDelay)
+import GHC.Conc (forkIO)
+import QMonad.Lib.Xov
 
-import QMonad.Lib.Sliders (Slider(..), SliderOverlay, makeSliderOverlay)
+mkSlider :: X()
+mkSlider = withDisplay $ \dpy -> void . liftIO $ forkIO (initSlider dpy)
 
-volumeSlider, brightnessSlider, opacitySlider :: Int -> X SliderOverlay
+initSlider :: Display -> IO()
+initSlider dpy = do
+  let conf = XovConf {
+        width = 250,
+        height = 40,
+        icon = Nothing,
+        borderWidth = 2,
+        maxValue = 100
+      }
+  Just blue <- initColor dpy "green"
+  Just red <- initColor dpy "gray"
+  Just gray <- initColor dpy "blue"
+  let style = XovStyle {
+        borderColor = gray,
+        progressColor = blue,
+        emptyColor = red
+      }
+  overlay <- mkOverlay dpy conf style 100
+  mapM_ (update dpy overlay) [1..100]
+  destroyOverlay dpy overlay
 
-volumeSlider val = makeSliderOverlay $ slider "volume" val
-brightnessSlider val = makeSliderOverlay $ slider "brightness" val
-opacitySlider val = makeSliderOverlay $ slider "opacity" val
-
-slider :: String -> Int -> Slider
-slider id' val = Slider {
-    value = val,
-    identifier = id',
-    customStyle = True,
-    maxValue = Nothing
-  }
+update dpy overlay val = do
+  drawOverlay dpy overlay val
+  threadDelay 50000
