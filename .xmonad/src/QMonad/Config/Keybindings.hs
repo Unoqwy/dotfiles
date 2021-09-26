@@ -37,6 +37,7 @@ import qualified QMonad.Config.Applications as A
 import qualified QMonad.Config.Prompt as XP
 import QMonad.Lib.Sliders (sliderIncrease)
 import QMonad.Config.ControlSliders (volumeSlider)
+import QMonad.Lib.Xov
 
 -- Toggles
 toggleGaps :: X()
@@ -67,9 +68,9 @@ checkFocus w = do
 -- Control sliders
 increaseVolume :: Int -> X()
 increaseVolume inc = do
-  slider <- volumeSlider 50
-  sliderIncrease slider inc
-  return ()
+  -- slider <- volumeSlider 50
+  -- sliderIncrease slider inc
+  mapM_ (\v -> xovOverlay (XovConf { icon = Nothing, QMonad.Lib.Xov.borderWidth = 2, maxValue = 100 }) v 2.5) [1..100]
 
 -- Keybindings
 keybindings :: EnvConfig -> XConfig Layout -> M.Map (ButtonMask, KeySym) (X())
