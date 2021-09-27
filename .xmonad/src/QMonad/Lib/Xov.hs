@@ -12,6 +12,7 @@ module QMonad.Lib.Xov (
 
 import Prelude hiding (Left, Right)
 import XMonad hiding (borderWidth)
+import Control.Monad (when)
 import XMonad.Prompt (mkUnmanagedWindow)
 import GHC.Float (int2Float)
 import Data.Maybe (isJust, fromMaybe)
@@ -150,6 +151,15 @@ drawDim dpy XovOverlay{dimWin=dimWin} fw fh opacity = do
     freeGC dpy gc
     sync dpy False
 
+data XovMarks = Mks (Maybe Int) Int (Maybe Int)
+
+mks :: XovConf -> XovMarks
+mks conf = Mks icn prg vl
+  where bw = fi $ borderWidth conf
+        iw = fi $ innerBorderWidth conf
+        (icn,prg) = if isJust $ icon conf then (Just bw, bw + iconWidth conf + iw) else (Nothing, bw)
+        vl = if showValue conf then Just $ prg + fi (width conf) else Nothing
+
 drawOverlay :: Display -> XovOverlay -> Int -> IO()
 drawOverlay dpy o@XovOverlay{conf=conf,style=style,winScrn=scrnNum,win=win} val = do
     let scrn = screenOfDisplay dpy scrnNum
@@ -182,47 +192,20 @@ drawOverlay dpy o@XovOverlay{conf=conf,style=style,winScrn=scrnNum,win=win} val 
             return $ bw + iconWidth conf + fi iw
           Nothing -> return bw
 
-    -- progress
-    redrawProgress dpy gc o val
-
-    -- value indiactor
-    let x' = x + fi (width conf)
-    x'' <- if showValue conf then do
-      setForeground dpy gc bgc
-      fillRectangle dpy win gc (fi $ x' + fi iw) y (fi $ valueWidth conf) h
-      setForeground dpy gc ibc
-      fillRectangle dpy win gc (fi x') y iw h
-
-      font <- xftFontOpen dpy scrn (valueFont style)
-      printCenteredString dpy scrn win font (Rectangle (fi x') y (fi $ valueWidth conf) h)
-        (valueColor style) (show val ++ fromMaybe "" (valuePrefix conf))
-
-      return $ x' + fi iw + valueWidth conf
-    else
-      return x'
+    drawProgress dpy gc o val
+    when (showValue conf) (drawValue dpy gc o val)
 
     freeGC dpy gc
     sync dpy False
   where
     (fw,fh) = getBounds conf
 
--- TODO: avoid duplicate code, cache colors and fonts
-
-redrawProgress :: Display -> GC -> XovOverlay -> Int -> IO()
-redrawProgress dpy gc XovOverlay{conf=conf,style=style,winScrn=scrnNum,win=win} val = do
-    let scrn = screenOfDisplay dpy scrnNum
-    let bw = fi $ borderWidth conf
-        iw = fi $ innerBorderWidth conf
-        h = fh - 2 * fi bw
-
-    let x = case icon conf of
-          Just icn -> bw + iconWidth conf + fi iw
-          Nothing -> bw
-        y = fi bw
-
+drawProgress :: Display -> GC -> XovOverlay -> Int -> IO()
+drawProgress dpy gc XovOverlay{conf=conf,style=style,winScrn=scrnNum,win=win} val = do
     Just pc <- initColor dpy (progressColor style)
     Just ec <- initColor dpy (emptyColor style)
     Just bgc <- initColor dpy (backgroundColor style)
+
     let boxw = width conf
     setForeground dpy gc bgc
     fillRectangle dpy win gc (fi x) y boxw h
@@ -240,11 +223,39 @@ redrawProgress dpy gc XovOverlay{conf=conf,style=style,winScrn=scrnNum,win=win} 
     setForeground dpy gc ec
     fillRectangle dpy win gc esx bsy empty h'
   where
+    scrn = screenOfDisplay dpy scrnNum
     (fw,fh) = getBounds conf
+    h = fh - 2 * fi bw
+    bw = fi $ borderWidth conf
+    Mks _ x _ = mks conf
+    y = fi bw
+
+drawValue :: Display -> GC -> XovOverlay -> Int -> IO()
+drawValue dpy gc XovOverlay{conf=conf,style=style,winScrn=scrnNum,win=win} val = do
+    Just ibc <- initColor dpy (innerBorderColor style)
+    Just bgc <- initColor dpy (backgroundColor style)
+
+    setForeground dpy gc bgc
+    fillRectangle dpy win gc (fi x + fi iw) y (fi $ valueWidth conf) h
+    setForeground dpy gc ibc
+    fillRectangle dpy win gc (fi x) y iw h
+
+    font <- xftFontOpen dpy scrn (valueFont style)
+    printCenteredString dpy scrn win font (Rectangle (fi x) y (fi $ valueWidth conf) h)
+      (valueColor style) (show val ++ fromMaybe "" (valuePrefix conf))
+  where
+    scrn = screenOfDisplay dpy scrnNum
+    (fw,fh) = getBounds conf
+    h = fh - 2 * fi bw
+    bw = fi $ borderWidth conf
+    iw = fi $ innerBorderWidth conf
+    Mks _ _ (Just x) = mks conf
+    y = fi bw
 
 updateProgress :: Display -> XovOverlay -> Int -> IO()
 updateProgress dpy o val = do
   gc <- createGC dpy (win o)
-  redrawProgress dpy gc o val
+  drawProgress dpy gc o val
+  drawValue dpy gc o val
   freeGC dpy gc
   sync dpy False

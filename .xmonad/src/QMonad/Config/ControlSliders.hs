@@ -77,13 +77,19 @@ eventHandler dpy keymap = allocaXEvent $ \e -> do
       fromMaybe (return . Just) keybinding i
   else eventHandler dpy keymap
 
+quit :: Int -> X (Maybe Int)
+quit _ = return Nothing
+
 incVal :: Int -> Int -> X (Maybe Int)
 incVal inc val = do
   return $ Just (val + inc)
 
 keyBindings :: M.Map (KeyMask, KeySym) (Int -> X (Maybe Int))
 keyBindings = M.fromList
-  [ ((0, xK_Escape), \i -> return Nothing)
+  [ ((0, xK_Escape), quit)
+  , ((0, xK_q), quit)
   , ((0, xK_Left), incVal (-5))
   , ((0, xK_Right), incVal 5)
+  , ((0, xK_h), incVal (-5))
+  , ((0, xK_l), incVal 5)
   ]
