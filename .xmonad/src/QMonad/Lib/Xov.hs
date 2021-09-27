@@ -14,6 +14,7 @@ import XMonad hiding (borderWidth)
 import XMonad.Prompt (mkUnmanagedWindow)
 import GHC.Float (int2Float)
 import Data.Maybe (isJust, fromMaybe)
+import Data.Word (Word32)
 import Control.Concurrent (threadDelay)
 
 import Graphics.X11.Xft
@@ -26,7 +27,8 @@ data XovOverlay = XovOverlay {
   conf :: XovConf,
   style :: XovStyle,
   winScrn :: ScreenNumber,
-  win :: Window
+  win :: Window,
+  dimWin :: Maybe Window
 }
 
 data XovConf = XovConf {
@@ -58,12 +60,6 @@ data XovStyle = XovStyle {
 fi :: (Integral a, Num b) => a -> b
 fi = fromIntegral
 
-mkOverlayWin :: Display -> ScreenNumber -> Position -> Position -> Dimension -> Dimension -> IO Window
-mkOverlayWin dpy scrn x y w h = do
-  rootw <- rootWindow dpy scrn
-  mkUnmanagedWindow dpy (screenOfDisplay dpy scrn) rootw
-    x y w h
-
 getBounds :: XovConf -> (Dimension ,Dimension)
 getBounds conf = (w, h)
   where a = \a -> fi (2 * borderWidth conf) + a
@@ -79,8 +75,8 @@ data XovVAnchor = VCenter | Bottom Int | Top Int
 mkOverlay :: Display -> ScreenId -> XovHAnchor -> XovVAnchor -> XovConf -> XovStyle -> Int -> IO XovOverlay
 mkOverlay dpy (S sid) hac vac conf style val = do
   let scrn = defaultScreen dpy
-  screens <- getScreenInfo dpy
-  let Rectangle sx sy fw fh = screens !! sid
+  sid <- (!! sid) <$> getScreenInfo dpy
+  let Rectangle sx sy fw fh = sid
   let (w,h) = getBounds conf
       x = case hac of
           HCenter -> (fw - fi w) `div` 2
@@ -91,23 +87,34 @@ mkOverlay dpy (S sid) hac vac conf style val = do
           Top a -> fi a
           Bottom a -> fh - fi a - fi h
 
-  win <- mkOverlayWin dpy scrn (sx + fi x) (sy + fi y) w h
-  mapWindow dpy win
-
+  rootw <- rootWindow dpy scrn
+  dimWin <- mkUnmanagedWindow dpy (screenOfDisplay dpy scrn) rootw sx sy fw fh
+  win <- mkUnmanagedWindow dpy (screenOfDisplay dpy scrn) rootw (sx + fi x) (sy + fi y) w h
   let overlay = XovOverlay {
     conf = conf,
     style = style,
     winScrn = scrn,
-    win = win
+    win = win,
+    dimWin = Just dimWin
   }
+
+  mapWindow dpy dimWin
+  drawDim dpy overlay fw fh 30.0
+  mapWindow dpy win
   drawOverlay dpy overlay val
   return overlay
 
 destroyOverlay :: Display -> XovOverlay -> IO()
-destroyOverlay dpy XovOverlay{win=win} = do
+destroyOverlay dpy XovOverlay{win=win,dimWin=dimWin} = do
+  destroyWindow' dpy dimWin
+  destroyWindow' dpy (Just win)
+  sync dpy False
+
+destroyWindow' :: Display -> Maybe Window -> IO()
+destroyWindow' dpy (Just win) = do
   unmapWindow dpy win
   destroyWindow dpy win
-  sync dpy False
+destroyWindow' dpy Nothing = return ()
 
 printCenteredString :: Display -> Screen -> Window -> XftFont -> Rectangle -> String -> String -> IO()
 printCenteredString dpy scrn win font (Rectangle cx cy w h) fg s = do
@@ -122,6 +129,25 @@ printCenteredString dpy scrn win font (Rectangle cx cy w h) fg s = do
     \draw -> withXftColorName dpy visual colormap fg $
       \color -> xftDrawString draw color font (cx + tx) (cy + ty) s
   xftFontClose dpy font
+
+setOpacity :: Display -> Window -> Float -> IO()
+setOpacity dpy win opacity = do
+  let opacity' = fi . floor . (/ 100) $ fi (maxBound :: Word32) * opacity
+  atom <- internAtom dpy "_NET_WM_WINDOW_OPACITY" False
+  changeProperty32 dpy win atom cARDINAL propModeReplace [opacity']
+
+drawDim :: Display -> XovOverlay -> Dimension -> Dimension -> Float -> IO()
+drawDim dpy XovOverlay{dimWin=dimWin} fw fh opacity = do
+    let Just win = dimWin
+    gc <- createGC dpy win
+
+    Just black <- initColor dpy "#000000"
+    setForeground dpy gc black
+    fillRectangle dpy win gc 0 0 fw fh
+    setOpacity dpy win opacity
+
+    freeGC dpy gc
+    sync dpy False
 
 drawOverlay :: Display -> XovOverlay -> Int -> IO()
 drawOverlay dpy XovOverlay{conf=conf,style=style,winScrn=scrnNum,win=win} val = do

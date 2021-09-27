@@ -38,7 +38,7 @@ initSlider dpy sid = do
         valueColor = "#a3a1a4",
         borderColor = "#4c516d",
         innerBorderColor = "#4c516d",
-        progressColor = "#E1BEE7",
+        progressColor = "#6f759b",
         emptyColor = "#242530",
         backgroundColor = "#242530"
       }
