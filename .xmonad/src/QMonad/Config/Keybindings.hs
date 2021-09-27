@@ -67,7 +67,7 @@ increaseVolume :: Int -> X()
 increaseVolume inc = do
   -- slider <- volumeSlider 50
   -- sliderIncrease slider inc
-  mkSlider
+  mkSlider 40
 
 -- Keybindings
 keybindings :: EnvConfig -> XConfig Layout -> M.Map (ButtonMask, KeySym) (X())
