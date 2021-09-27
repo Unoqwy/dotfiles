@@ -61,8 +61,7 @@ promptValue dpy o val = do
   case val' of
      Just v -> do
        let newv = min (max v 0) (maxValue . conf $ o)
-       io $ drawOverlay dpy o newv
-       io $ sync dpy True
+       io $ updateProgress dpy o newv
        promptValue dpy o newv
      Nothing -> return val
 
@@ -80,7 +79,6 @@ eventHandler dpy keymap = allocaXEvent $ \e -> do
 
 incVal :: Int -> Int -> X (Maybe Int)
 incVal inc val = do
-  spawn "notify-send 'test'"
   return $ Just (val + inc)
 
 keyBindings :: M.Map (KeyMask, KeySym) (Int -> X (Maybe Int))
