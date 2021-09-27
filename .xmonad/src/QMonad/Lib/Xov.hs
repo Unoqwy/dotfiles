@@ -2,11 +2,14 @@ module QMonad.Lib.Xov (
   XovOverlay(..),
   XovConf(..),
   XovStyle(..),
+  XovHAnchor(..),
+  XovVAnchor(..),
   mkOverlay,
   destroyOverlay,
   drawOverlay,
 ) where
 
+import Prelude hiding (Left, Right)
 import XMonad hiding (borderWidth)
 import XMonad.Prompt (mkUnmanagedWindow)
 import GHC.Float (int2Float)
@@ -15,6 +18,7 @@ import Control.Concurrent (threadDelay)
 
 import Graphics.X11.Xft
 import Graphics.X11.Xrender
+import Graphics.X11.Xinerama (getScreenInfo)
 
 import qualified XMonad.StackSet as W
 
@@ -69,17 +73,26 @@ getBounds conf = (w, h)
         w = a $ width conf + fi (ibs * innerBorderWidth conf) + fi icn + fi vl
         h = a $ height conf
 
-mkOverlay :: Display -> XovConf -> XovStyle -> Int -> IO XovOverlay
-mkOverlay dpy conf style val = do
+data XovHAnchor = HCenter | Left Int | Right Int
+data XovVAnchor = VCenter | Bottom Int | Top Int
+
+mkOverlay :: Display -> ScreenId -> XovHAnchor -> XovVAnchor -> XovConf -> XovStyle -> Int -> IO XovOverlay
+mkOverlay dpy (S sid) hac vac conf style val = do
   let scrn = defaultScreen dpy
-  let fw = displayWidth dpy scrn
-      fh = displayHeight dpy scrn
+  screens <- getScreenInfo dpy
+  let Rectangle sx sy fw fh = screens !! sid
   let (w,h) = getBounds conf
-      x = fi $ (fw - fi w) `div` 2
-      y = fi $ (fh - fi h) `div` 2
-  win <- mkOverlayWin dpy scrn x y w h
+      x = case hac of
+          HCenter -> (fw - fi w) `div` 2
+          Left a -> fi a
+          Right a -> fw - fi a
+      y = case vac of
+          VCenter -> (fh - fi h) `div` 2
+          Top a -> fi a
+          Bottom a -> fh - fi a - fi h
+
+  win <- mkOverlayWin dpy scrn (sx + fi x) (sy + fi y) w h
   mapWindow dpy win
-  -- selectInput dpy win (keyPressMask .|. leaveWindowMask)
 
   let overlay = XovOverlay {
     conf = conf,

@@ -2,22 +2,27 @@ module QMonad.Config.ControlSliders (
   mkSlider
 ) where
 
+import Prelude hiding (Left, Right)
 import XMonad hiding (borderWidth)
 import Control.Monad (void)
 import Control.Concurrent (threadDelay)
 import GHC.Conc (forkIO)
 import QMonad.Lib.Xov
 
-mkSlider :: X()
-mkSlider = withDisplay $ \dpy -> void . liftIO $ forkIO (initSlider dpy)
+import qualified XMonad.StackSet as W
 
-initSlider :: Display -> IO()
-initSlider dpy = do
+mkSlider :: X()
+mkSlider = do
+  sid <- gets $ W.screen . W.current . windowset
+  withDisplay $ \dpy -> void . liftIO $ initSlider dpy sid
+
+initSlider :: Display -> ScreenId -> IO()
+initSlider dpy sid = do
   let conf = XovConf {
         icon = Just "\xf58f",
         iconWidth = 40,
         showValue = True,
-        valueWidth = 40,
+        valueWidth = 60,
         valuePrefix = Just "%",
         width = 400,
         height = 40,
@@ -37,7 +42,6 @@ initSlider dpy = do
         emptyColor = "#242530",
         backgroundColor = "#242530"
       }
-  overlay <- mkOverlay dpy conf style 100
-  drawOverlay dpy overlay 35
-  threadDelay 250000
+  overlay <- mkOverlay dpy sid HCenter VCenter conf style 35
+  threadDelay 5000000
   destroyOverlay dpy overlay
