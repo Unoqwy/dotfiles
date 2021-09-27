@@ -14,10 +14,11 @@ mkSlider = withDisplay $ \dpy -> void . liftIO $ forkIO (initSlider dpy)
 initSlider :: Display -> IO()
 initSlider dpy = do
   let conf = XovConf {
-        icon = Just "A",
+        icon = Just "\xf58f",
         iconWidth = 40,
         showValue = True,
         valueWidth = 40,
+        valuePrefix = Just "%",
         width = 400,
         height = 40,
         borderWidth = 2,
@@ -26,9 +27,10 @@ initSlider dpy = do
         maxValue = 100
       }
   let style = XovStyle {
-        iconFont = "Font Awesome 5 Pro",
-        iconColor = "#e3e1e4",
-        iconSize = 12,
+        iconFont = "Font Awesome 5 Pro:size=16:style=Solid",
+        iconColor = "#a3a1a4",
+        valueFont = "Jetbrains Mono:size=14",
+        valueColor = "#a3a1a4",
         borderColor = "#4c516d",
         innerBorderColor = "#4c516d",
         progressColor = "#E1BEE7",
