@@ -39,6 +39,7 @@ executable qmonad
     QMonad.Lib.Window.Minimize
     QMonad.Lib.Window.Opacity
     QMonad.Lib.Xov
+    QMonad.Lib.Sliders
     QMonad.Lib.WorkspaceMasks
     QMonad.Shared.Theme
 

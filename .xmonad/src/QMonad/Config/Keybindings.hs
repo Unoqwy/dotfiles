@@ -62,13 +62,6 @@ checkFocus w = do
   minimized <- XS.gets minimizedStack
   when (w `elem` minimized) fixFocus
 
--- Control sliders
-increaseVolume :: Int -> X()
-increaseVolume inc = do
-  -- slider <- volumeSlider 50
-  -- sliderIncrease slider inc
-  mkSlider 40
-
 -- Keybindings
 keybindings :: EnvConfig -> XConfig Layout -> M.Map (ButtonMask, KeySym) (X())
 keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
@@ -78,7 +71,7 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
 
   -- Control sliders
   , ((modm, xK_a), submap . M.fromList $ [
-        ((0, xK_v), increaseVolume 5)
+        ((0, xK_o), opacityControlSlider)
       ])
 
   -- Media control
