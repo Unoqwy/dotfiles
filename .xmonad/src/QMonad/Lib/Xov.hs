@@ -102,8 +102,9 @@ printCenteredString dpy scrn win font (Rectangle cx cy w h) fg s = do
       visual = defaultVisualOfScreen scrn
   tw <- xglyphinfo_xOff <$> xftTextExtents dpy font s
   a <- fi <$> xftfont_ascent font
+  b <- fi <$> xftfont_descent font
   let tx = fi (w `div` 2) - fi (tw `div` 2)
-      ty = fi (h `div` 2) + fi (a `div` 2)
+      ty = fi (h `div` 2) + fi (a `div` 2) - fi (b `div` 2)
   withXftDraw dpy win visual colormap $
     \draw -> withXftColorName dpy visual colormap fg $
       \color -> xftDrawString draw color font (cx + tx) (cy + ty) s
@@ -169,7 +170,6 @@ drawOverlay dpy XovOverlay{conf=conf,style=style,winScrn=scrnNum,win=win} val = 
       setForeground dpy gc ibc
       fillRectangle dpy win gc (fi x') y iw h
 
-      -- TODO: fix font thing
       font <- xftFontOpen dpy scrn (valueFont style)
       printCenteredString dpy scrn win font (Rectangle (fi x') y (fi $ valueWidth conf) h)
         (valueColor style) (show val ++ fromMaybe "" (valuePrefix conf))
