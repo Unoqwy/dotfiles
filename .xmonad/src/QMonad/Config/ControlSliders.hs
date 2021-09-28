@@ -3,9 +3,12 @@ module QMonad.Config.ControlSliders (
 ) where
 
 import XMonad
-import QMonad.Config.Env
-import QMonad.Lib.Sliders
 import qualified XMonad.Util.ExtensibleState as XS
+import qualified XMonad.StackSet as W
+
+import QMonad.Config.Env
+import QMonad.Config.Hooks.Manage (applyOpacityRule)
+import QMonad.Lib.Sliders
 import QMonad.Lib.Xov
 
 controlSlider :: (XovConf -> XovConf) -> X Int -> (Int -> X()) -> X()
@@ -21,7 +24,7 @@ controlSliderHook hk i = do
   return $ Just i
 
 opacityControlSlider :: X()
-opacityControlSlider = controlSlider (\c -> c { icon = Just "\xf186" }) getOpacity opacityHook
+opacityControlSlider = controlSlider (\c -> c { icon = Just "\xf8fb" }) getOpacity opacityHook
 
 getOpacity :: X Int
 getOpacity = do
@@ -34,6 +37,10 @@ opacityHook val = do
       envConfig = envConfig,
       globalOpacity = val
     }
+  withWindowSet $ \ws -> do
+    let wss = map (W.integrate' . W.stack) (W.hidden ws ++ map W.workspace (W.current ws : W.visible ws))
+        windows = foldl1 (++) wss
+    mapM_ applyOpacityRule windows
 
 defConf :: XovConf -> XovConf
 defConf conf = conf {

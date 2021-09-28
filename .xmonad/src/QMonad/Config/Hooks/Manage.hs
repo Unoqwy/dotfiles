@@ -1,6 +1,7 @@
 module QMonad.Config.Hooks.Manage (
   manageHook,
   handleEventHook,
+  applyOpacityRule,
 ) where
 
 import XMonad hiding (manageHook, handleEventHook)
@@ -28,15 +29,18 @@ manageHook conf = namedScratchpadManageHook (scratchpads conf) <+> windowRules <
 handleEventHook :: Event -> X All
 handleEventHook PropertyEvent { ev_event_type = t, ev_atom = a, ev_window = win }
             | t == propertyNotify && a == wM_CLASS = do
-  conf <- XS.gets envConfig
-  mh <- asks (handleEvent conf . config)
-  g <- appEndo <$> userCodeDef (Endo id) (runQuery mh win)
-  windows g
+  applyOpacityRule win
   return $ All True
 handleEventHook _ = return $ All True
 
-handleEvent :: EnvConfig -> XConfig l -> ManageHook
-handleEvent _ _ = windowRules <+> opacityHook
+handleEvent :: XConfig l -> ManageHook
+handleEvent _ = windowRules <+> opacityHook
+
+applyOpacityRule :: Window -> X()
+applyOpacityRule win = do
+  mh <- asks (handleEvent . config)
+  g <- appEndo <$> userCodeDef (Endo id) (runQuery mh win)
+  windows g
 
 windowRules :: ManageHook
 windowRules = composeAll [
