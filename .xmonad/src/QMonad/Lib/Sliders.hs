@@ -109,4 +109,6 @@ keyBindings = M.fromList
   , ((0, xK_Down), incVal (-1))
   , ((0, xK_h), incVal (-5))
   , ((0, xK_l), incVal 5)
+  , ((0, xK_k), incVal 1)
+  , ((0, xK_j), incVal (-1))
   ]

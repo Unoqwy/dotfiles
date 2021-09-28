@@ -1,0 +1,4 @@
+#!/bin/sh
+val=$(brightnessctl get)
+max=$(brightnessctl max)
+echo $((val*100/max))
