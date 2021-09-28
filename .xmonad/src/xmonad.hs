@@ -43,7 +43,7 @@ main = do
     , XMonad.normalBorderColor = T.bgColor
 
     , XMonad.keys = keybindings conf
-    , XMonad.startupHook = XS.put $ EnvConfig' { envConfig = conf }
+    , XMonad.startupHook = XS.put $ EnvConfig' { envConfig = conf, globalOpacity = default_opacity conf }
     , XMonad.layoutHook = layoutHook
     , XMonad.logHook = xmobarLogHook xmobarStdin infoPipe
     }

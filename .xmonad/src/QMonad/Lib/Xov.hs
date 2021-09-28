@@ -38,7 +38,7 @@ data XovConf = XovConf {
   iconWidth :: Int,
   showValue :: Bool,
   valueWidth :: Int,
-  valuePrefix :: Maybe String,
+  valueSuffix :: Maybe String,
   width :: Dimension,
   height :: Dimension,
   padding :: Int,
@@ -242,7 +242,7 @@ drawValue dpy gc XovOverlay{conf=conf,style=style,winScrn=scrnNum,win=win} val =
 
     font <- xftFontOpen dpy scrn (valueFont style)
     printCenteredString dpy scrn win font (Rectangle (fi x) y (fi $ valueWidth conf) h)
-      (valueColor style) (show val ++ fromMaybe "" (valuePrefix conf))
+      (valueColor style) (show val ++ fromMaybe "" (valueSuffix conf))
   where
     scrn = screenOfDisplay dpy scrnNum
     (fw,fh) = getBounds conf

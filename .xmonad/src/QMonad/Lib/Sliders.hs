@@ -18,19 +18,19 @@ import qualified Data.Map as M
 
 type SliderUpdateHook = Int -> X (Maybe Int)
 
-mkSlider :: SliderUpdateHook -> Int -> X()
-mkSlider hk val = do
+mkSlider :: (XovConf -> XovConf) -> SliderUpdateHook -> Int -> X()
+mkSlider defConf hk val = do
   sid <- gets $ W.screen . W.current . windowset
-  withDisplay $ \dpy -> void $ initSlider dpy sid hk val
+  withDisplay $ \dpy -> void $ initSlider dpy sid defConf hk val
 
-initSlider :: Display -> ScreenId -> SliderUpdateHook -> Int -> X Int
-initSlider dpy sid hk val = do
-  let conf = XovConf {
-        icon = Just "\xf58f",
+initSlider :: Display -> ScreenId -> (XovConf -> XovConf) -> SliderUpdateHook -> Int -> X Int
+initSlider dpy sid defConf hk val = do
+  let conf = defConf XovConf {
+        icon = Nothing,
         iconWidth = 40,
-        showValue = True,
+        showValue = False,
         valueWidth = 60,
-        valuePrefix = Just "%",
+        valueSuffix = Nothing,
         width = 400,
         height = 40,
         borderWidth = 2,
@@ -105,6 +105,8 @@ keyBindings = M.fromList
   , ((0, xK_q), sQuit)
   , ((0, xK_Left), incVal (-5))
   , ((0, xK_Right), incVal 5)
+  , ((0, xK_Up), incVal 1)
+  , ((0, xK_Down), incVal (-1))
   , ((0, xK_h), incVal (-5))
   , ((0, xK_l), incVal 5)
   ]

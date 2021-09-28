@@ -12,8 +12,9 @@ import qualified XMonad.StackSet as W
 import qualified XMonad.Util.ExtensibleState as XS
 
 import Data.Monoid (All)
+import GHC.Float (int2Float)
 
-import QMonad.Config.Env (EnvConfig(..), EnvConfig'(envConfig))
+import QMonad.Config.Env (EnvConfig(..), EnvConfig'(envConfig, globalOpacity))
 import QMonad.Lib.Window.Opacity (setWindowOpacity)
 
 wmName = stringProperty "WM_NAME"
@@ -22,7 +23,7 @@ wmRole = stringProperty "WM_WINDOW_ROLE"
 doCenteredFloat = doRectFloat $ W.RationalRect 0.25 0.25 0.5 0.5
 
 manageHook :: EnvConfig -> ManageHook
-manageHook conf = namedScratchpadManageHook (scratchpads conf) <+> windowRules <+> opacityHook conf
+manageHook conf = namedScratchpadManageHook (scratchpads conf) <+> windowRules <+> opacityHook
 
 handleEventHook :: Event -> X All
 handleEventHook PropertyEvent { ev_event_type = t, ev_atom = a, ev_window = win }
@@ -35,7 +36,7 @@ handleEventHook PropertyEvent { ev_event_type = t, ev_atom = a, ev_window = win 
 handleEventHook _ = return $ All True
 
 handleEvent :: EnvConfig -> XConfig l -> ManageHook
-handleEvent conf _ = windowRules <+> opacityHook conf
+handleEvent _ _ = windowRules <+> opacityHook
 
 windowRules :: ManageHook
 windowRules = composeAll [
@@ -64,11 +65,11 @@ windowRules = composeAll [
   ]
 
 -- Opacity hook
-opacityHook :: EnvConfig -> ManageHook
-opacityHook EnvConfig{default_opacity=opac} = composeOne $
+opacityHook :: ManageHook
+opacityHook = composeOne $
     [ resource =? r -?> makeTransparent | r <- appNames ]
     ++ [ className =? c -?> makeTransparent | c <- classNames ]
-  where makeTransparent = doSetOpacity (fromIntegral opac / 100.0)
+  where makeTransparent = doSetOpacity Nothing
         appNames = [
             "jetbrains-idea-ce"
           , "spotify"
@@ -80,5 +81,12 @@ opacityHook EnvConfig{default_opacity=opac} = composeOne $
           , "org.wezfurlong.wezterm"
           ]
 
-doSetOpacity :: Float -> ManageHook
-doSetOpacity opacity = ask >>= \w -> liftX (setWindowOpacity w opacity) >> doF id
+doSetOpacity :: Maybe Float -> ManageHook
+doSetOpacity opacity = do
+  ask >>= \w -> liftX (setOpacity w opacity) >> doF id
+
+setOpacity :: Window -> Maybe Float -> X()
+setOpacity w (Just opac) = setWindowOpacity w (opac / 100.0)
+setOpacity w Nothing = do
+  opac <- XS.gets globalOpacity
+  setWindowOpacity w (int2Float opac / 100.0)

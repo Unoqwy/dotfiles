@@ -6,8 +6,9 @@ import Text.Read (readMaybe)
 import Data.Maybe (fromMaybe)
 import GHC.IO
 
-newtype EnvConfig' = EnvConfig' {
-    envConfig :: EnvConfig
+data EnvConfig' = EnvConfig' {
+    envConfig :: EnvConfig,
+    globalOpacity :: Int
   } deriving Typeable
 
 instance ExtensionClass EnvConfig' where
@@ -16,7 +17,8 @@ instance ExtensionClass EnvConfig' where
           xmonad_path = ""
         , terminal = ""
         , default_opacity = 100
-        }
+        },
+      globalOpacity = 100
     }
 
 data EnvConfig = EnvConfig {
