@@ -2,10 +2,12 @@ module QMonad.Config.ControlSliders (
   opacityControlSlider,
   brightnessControlSlider,
   volumeControlSlider,
+  colorTempControlSlider,
 ) where
 
 import XMonad
 import XMonad.Util.Run (runProcessWithInput)
+import Data.Functor (($>))
 import qualified XMonad.Util.ExtensibleState as XS
 import qualified XMonad.StackSet as W
 
@@ -15,17 +17,15 @@ import QMonad.Lib.Sliders
 import QMonad.Lib.Xov
 
 opacityControlSlider :: X()
-opacityControlSlider = controlSlider (\c -> c { icon = Just "\xf8fb" }) getOpacity opacityHook
+opacityControlSlider = controlSlider (\c -> c { icon = Just "\xf8fb" }) id Nothing getOpacity opacityHook
 
 getOpacity :: X Int
-getOpacity = do
-  XS.gets globalOpacity
+getOpacity = XS.gets globalOpacity
 
 opacityHook :: Int -> X()
 opacityHook val = do
-  envConfig <- XS.gets envConfig
-  XS.put $ EnvConfig' {
-      envConfig = envConfig,
+  state <- XS.get
+  XS.put $ state {
       globalOpacity = val
     }
   withWindowSet $ \ws -> do
@@ -34,7 +34,7 @@ opacityHook val = do
     mapM_ applyOpacityRule windows
 
 brightnessControlSlider :: X()
-brightnessControlSlider = controlSlider (\c -> c { icon = Just "\xf042" }) getBrightness brightnessHook
+brightnessControlSlider = controlSlider (\c -> c { icon = Just "\xf042" }) id Nothing getBrightness brightnessHook
 
 getBrightness :: X Int
 getBrightness = do
@@ -43,32 +43,47 @@ getBrightness = do
   return $ read brightness
 
 brightnessHook :: Int -> X()
-brightnessHook val = do
-  spawn $ "brightnessctl set " ++ show val ++ "%"
+brightnessHook val = spawn $ "brightnessctl set " ++ show val ++ "%"
 
 volumeControlSlider :: X()
-volumeControlSlider = controlSlider (\c -> c { icon = Just "\xf6a8" }) getVolume volumeHook
+volumeControlSlider = controlSlider (\c -> c { icon = Just "\xf6a8" }) id Nothing getVolume volumeHook
 
 getVolume :: X Int
-getVolume = do
-  read <$> runProcessWithInput "/bin/sh" ["-c", "pamixer --get-volume"] []
+getVolume = read <$> runProcessWithInput "/bin/sh" ["-c", "pamixer --get-volume"] []
 
 volumeHook :: Int -> X()
-volumeHook val = do
-  spawn $ "pamixer --set-volume " ++ show val
+volumeHook val = spawn $ "pamixer --set-volume " ++ show val
 
-controlSlider :: (XovConf -> XovConf) -> X Int -> (Int -> X()) -> X()
-controlSlider defConf' get hk = do
+colorTempControlSlider :: X()
+colorTempControlSlider = controlSlider (\c -> c {
+    icon = Just "\xf6df",
+    valueSuffix = Nothing,
+    minValue = 3000,
+    maxValue = 9500
+  }) (\s -> s {
+    progressColor = "#FFCCBC"
+  }) (Just $ defaultKeybindings 100 500) getColorTemp colorTempHook
+
+getColorTemp :: X Int
+getColorTemp = XS.gets colorTemp
+
+colorTempHook :: Int -> X()
+colorTempHook val = do
+  state <- XS.get
+  XS.put $ state {
+      colorTemp = val
+    }
+  spawn $ "redshift -PO " ++ show val
+
+controlSlider :: (XovConf -> XovConf) -> (XovStyle -> XovStyle) -> Maybe SliderKeybindings -> X Int -> (Int -> X()) -> X()
+controlSlider defConf' style (Just kbs) get hk = do
     val <- get
-    mkSlider cfg (controlSliderHook hk) val
-  where cfg = \conf -> do
-          defConf' . defConf $ conf
+    mkSlider cfg style kbs (controlSliderHook hk) val
+  where cfg = defConf' . defConf
+controlSlider defConf' style Nothing get hk = controlSlider defConf' style (Just $ defaultKeybindings 1 5) get hk
 
 controlSliderHook :: (Int -> X()) -> SliderUpdateHook
-controlSliderHook hk i = do
-  hk i
-  return $ Just i
-
+controlSliderHook hk i = hk i $> Just i
 
 defConf :: XovConf -> XovConf
 defConf conf = conf {

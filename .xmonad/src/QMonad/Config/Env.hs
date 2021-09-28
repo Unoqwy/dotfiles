@@ -1,4 +1,4 @@
-module QMonad.Config.Env (EnvConfig(..), EnvConfig'(..), loadEnvConfig, localBin) where
+module QMonad.Config.Env (EnvConfig(..), EnvState(..), loadEnvConfig, localBin) where
 
 import XMonad (Typeable, ExtensionClass(..))
 import System.Environment.Blank (getEnvDefault)
@@ -6,19 +6,21 @@ import Text.Read (readMaybe)
 import Data.Maybe (fromMaybe)
 import GHC.IO
 
-data EnvConfig' = EnvConfig' {
+data EnvState = EnvState {
     envConfig :: EnvConfig,
-    globalOpacity :: Int
+    globalOpacity :: Int,
+    colorTemp :: Int
   } deriving Typeable
 
-instance ExtensionClass EnvConfig' where
-  initialValue = EnvConfig' {
+instance ExtensionClass EnvState where
+  initialValue = EnvState {
       envConfig = EnvConfig {
           xmonad_path = ""
         , terminal = ""
         , default_opacity = 100
         },
-      globalOpacity = 100
+      globalOpacity = 100,
+      colorTemp = 6500
     }
 
 data EnvConfig = EnvConfig {

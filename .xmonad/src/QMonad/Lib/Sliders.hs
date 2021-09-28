@@ -1,6 +1,8 @@
 module QMonad.Lib.Sliders (
   SliderUpdateHook(..),
+  SliderKeybindings(..),
   mkSlider,
+  defaultKeybindings,
 
   sId,
   sQuit,
@@ -17,14 +19,15 @@ import qualified XMonad.StackSet as W
 import qualified Data.Map as M
 
 type SliderUpdateHook = Int -> X (Maybe Int)
+type SliderKeybindings = M.Map (KeyMask, KeySym) SliderUpdateHook
 
-mkSlider :: (XovConf -> XovConf) -> SliderUpdateHook -> Int -> X()
-mkSlider defConf hk val = do
+mkSlider :: (XovConf -> XovConf) -> (XovStyle -> XovStyle) -> SliderKeybindings -> SliderUpdateHook -> Int -> X()
+mkSlider defConf style kbs hk val = do
   sid <- gets $ W.screen . W.current . windowset
-  withDisplay $ \dpy -> void $ initSlider dpy sid defConf hk val
+  withDisplay $ \dpy -> void $ initSlider dpy sid defConf style kbs hk val
 
-initSlider :: Display -> ScreenId -> (XovConf -> XovConf) -> SliderUpdateHook -> Int -> X Int
-initSlider dpy sid defConf hk val = do
+initSlider :: Display -> ScreenId -> (XovConf -> XovConf) -> (XovStyle -> XovStyle) -> SliderKeybindings -> SliderUpdateHook -> Int -> X Int
+initSlider dpy sid defConf defStyle kbs hk val = do
   let conf = defConf XovConf {
         icon = Nothing,
         iconWidth = 40,
@@ -36,9 +39,10 @@ initSlider dpy sid defConf hk val = do
         borderWidth = 2,
         innerBorderWidth = 2,
         padding = 3,
+        minValue = 0,
         maxValue = 100
       }
-  let style = XovStyle {
+  let style = defStyle XovStyle {
         iconFont = "Font Awesome 5 Pro:size=16:style=Solid",
         iconColor = "#a3a1a4",
         valueFont = "Jetbrains Mono:size=14",
@@ -54,14 +58,14 @@ initSlider dpy sid defConf hk val = do
   let w = win overlay
   io $ selectInput dpy w keyPressMask
   status <- liftIO $ grabKeyboard dpy w True grabModeAsync grabModeAsync currentTime
-  val' <- promptValue dpy overlay hk val
+  val' <- promptValue dpy overlay kbs hk val
 
   io $ destroyOverlay dpy overlay
   return val'
 
-promptValue :: Display -> XovOverlay -> SliderUpdateHook -> Int -> X Int
-promptValue dpy o hk val = do
-  call <- io $ eventHandler dpy keyBindings
+promptValue :: Display -> XovOverlay -> SliderKeybindings -> SliderUpdateHook -> Int -> X Int
+promptValue dpy o kbs hk val = do
+  call <- io $ eventHandler dpy kbs
   val' <- call val
   case val' of
      Just v -> do
@@ -70,14 +74,14 @@ promptValue dpy o hk val = do
             Just v' -> do
               let newv = inBounds o v'
               io $ updateProgress dpy o newv
-              promptValue dpy o hk newv
+              promptValue dpy o kbs hk newv
             Nothing -> return val
      Nothing -> return val
 
 inBounds :: XovOverlay -> Int -> Int
-inBounds o v = min (max v 0) (maxValue . conf $ o)
+inBounds o v = min (max v (minValue . conf $ o)) (maxValue . conf $ o)
 
-eventHandler :: Display -> M.Map (KeyMask, KeySym) (Int -> X (Maybe Int)) -> IO (Int -> X (Maybe Int))
+eventHandler :: Display -> M.Map (KeyMask, KeySym) SliderUpdateHook -> IO SliderUpdateHook
 eventHandler dpy keymap = allocaXEvent $ \e -> do
   nextEvent dpy e
   ev <- getEvent e
@@ -99,16 +103,16 @@ incVal :: Int -> SliderUpdateHook
 incVal inc val = do
   return $ Just (val + inc)
 
-keyBindings :: M.Map (KeyMask, KeySym) (Int -> X (Maybe Int))
-keyBindings = M.fromList
+defaultKeybindings :: Int -> Int -> SliderKeybindings
+defaultKeybindings sg bg = M.fromList
   [ ((0, xK_Escape), sQuit)
   , ((0, xK_q), sQuit)
-  , ((0, xK_Left), incVal (-5))
-  , ((0, xK_Right), incVal 5)
-  , ((0, xK_Up), incVal 1)
-  , ((0, xK_Down), incVal (-1))
-  , ((0, xK_h), incVal (-5))
-  , ((0, xK_l), incVal 5)
-  , ((0, xK_k), incVal 1)
-  , ((0, xK_j), incVal (-1))
+  , ((0, xK_Left), incVal (-bg))
+  , ((0, xK_Right), incVal bg)
+  , ((0, xK_Up), incVal sg)
+  , ((0, xK_Down), incVal (-sg))
+  , ((0, xK_h), incVal (-bg))
+  , ((0, xK_l), incVal bg)
+  , ((0, xK_k), incVal sg)
+  , ((0, xK_j), incVal (-sg))
   ]

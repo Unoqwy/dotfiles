@@ -13,7 +13,7 @@ import qualified Data.Map as M
 import QMonad.Config.Hooks.Layouts (layoutHook)
 import QMonad.Config.Keybindings (keybindings)
 import QMonad.Config.Xmobar (xmobarLogHook)
-import QMonad.Config.Env (EnvConfig(..), EnvConfig'(..), loadEnvConfig)
+import QMonad.Config.Env (EnvConfig(..), EnvState(..), loadEnvConfig)
 import QMonad.Config.Hooks.General (hooks)
 
 import qualified QMonad.Shared.Theme as T
@@ -43,7 +43,11 @@ main = do
     , XMonad.normalBorderColor = T.bgColor
 
     , XMonad.keys = keybindings conf
-    , XMonad.startupHook = XS.put $ EnvConfig' { envConfig = conf, globalOpacity = default_opacity conf }
+    , XMonad.startupHook = XS.put $ EnvState {
+          envConfig = conf,
+          globalOpacity = default_opacity conf,
+          colorTemp = 6500
+        }
     , XMonad.layoutHook = layoutHook
     , XMonad.logHook = xmobarLogHook xmobarStdin infoPipe
     }

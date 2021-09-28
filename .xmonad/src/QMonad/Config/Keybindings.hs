@@ -74,6 +74,7 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
         ((0, xK_o), opacityControlSlider)
       , ((0, xK_b), brightnessControlSlider)
       , ((0, xK_v), volumeControlSlider)
+      , ((0, xK_t), colorTempControlSlider)
       ])
 
   -- Media control

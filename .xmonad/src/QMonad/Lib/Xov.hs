@@ -44,6 +44,7 @@ data XovConf = XovConf {
   padding :: Int,
   borderWidth :: Int,
   innerBorderWidth :: Int,
+  minValue :: Int,
   maxValue :: Int
 }
 
@@ -214,7 +215,8 @@ drawProgress dpy gc XovOverlay{conf=conf,style=style,winScrn=scrnNum,win=win} va
         bsy = fi $ fi y + padding conf
         boxw' = max 0 boxw - fi (2 * padding conf)
         h' = max 0 h - fi (2 * padding conf)
-        val' = int2Float val * int2Float (maxValue conf) / 100.0
+        over = maxValue conf - minValue conf
+        val' = int2Float (val - minValue conf) * 100.0 / int2Float over
         progress = floor (val' * (int2Float . fi $ boxw') / 100.0)
         esx = fi $ bsx + fi progress
         empty = boxw' - progress

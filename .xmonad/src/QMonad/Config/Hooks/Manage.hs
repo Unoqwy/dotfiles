@@ -15,7 +15,7 @@ import qualified XMonad.Util.ExtensibleState as XS
 import Data.Monoid (All)
 import GHC.Float (int2Float)
 
-import QMonad.Config.Env (EnvConfig(..), EnvConfig'(envConfig, globalOpacity))
+import QMonad.Config.Env (EnvConfig(..), EnvState(envConfig, globalOpacity))
 import QMonad.Lib.Window.Opacity (setWindowOpacity)
 
 wmName = stringProperty "WM_NAME"
