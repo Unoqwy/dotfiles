@@ -73,6 +73,7 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
   , ((modm, xK_a), submap . M.fromList $ [
         ((0, xK_o), opacityControlSlider)
       , ((0, xK_b), brightnessControlSlider)
+      , ((0, xK_v), volumeControlSlider)
       ])
 
   -- Media control

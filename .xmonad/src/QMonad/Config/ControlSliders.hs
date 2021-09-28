@@ -1,6 +1,7 @@
 module QMonad.Config.ControlSliders (
   opacityControlSlider,
   brightnessControlSlider,
+  volumeControlSlider,
 ) where
 
 import XMonad
@@ -44,6 +45,17 @@ getBrightness = do
 brightnessHook :: Int -> X()
 brightnessHook val = do
   spawn $ "brightnessctl set " ++ show val ++ "%"
+
+volumeControlSlider :: X()
+volumeControlSlider = controlSlider (\c -> c { icon = Just "\xf6a8" }) getVolume volumeHook
+
+getVolume :: X Int
+getVolume = do
+  read <$> runProcessWithInput "/bin/sh" ["-c", "pamixer --get-volume"] []
+
+volumeHook :: Int -> X()
+volumeHook val = do
+  spawn $ "pamixer --set-volume " ++ show val
 
 controlSlider :: (XovConf -> XovConf) -> X Int -> (Int -> X()) -> X()
 controlSlider defConf' get hk = do
