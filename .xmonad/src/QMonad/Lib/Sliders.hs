@@ -8,6 +8,7 @@ module QMonad.Lib.Sliders (
   sId,
   sDo,
   sQuit,
+  incVal,
 ) where
 
 import Prelude hiding (Left, Right)

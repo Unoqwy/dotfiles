@@ -70,6 +70,11 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
   , ((modm, xK_Right), spawn "$XMONAD/bin/brightness  0.1")
 
   -- Control sliders
+  , ((0, xF86XK_AudioRaiseVolume), volumeControlSlider)
+  , ((0, xF86XK_AudioLowerVolume), volumeControlSlider)
+  , ((0, xF86XK_AudioMute), spawn "pamixer --toggle-mute")
+  , ((0, xF86XK_MonBrightnessUp  ), brightnessControlSlider)
+  , ((0, xF86XK_MonBrightnessDown), brightnessControlSlider)
   , ((modm, xK_a), submap . M.fromList $ [
         ((0, xK_o), opacityControlSlider)
       , ((0, xK_b), brightnessControlSlider)

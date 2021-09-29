@@ -7,6 +7,7 @@ module QMonad.Config.ControlSliders (
 
 import XMonad
 import XMonad.Util.Run (runProcessWithInput)
+import Graphics.X11.ExtraTypes.XF86
 import qualified XMonad.Util.ExtensibleState as XS
 import qualified XMonad.StackSet as W
 
@@ -38,7 +39,12 @@ opacityHook val = do
     mapM_ applyOpacityRule windows
 
 brightnessControlSlider :: X()
-brightnessControlSlider = controlSlider (\c -> c { icon = constIcon "\xf042" }) id Nothing getBrightness brightnessHook
+brightnessControlSlider = controlSlider (\c -> c {
+    icon = constIcon "\xf042"
+  }) id (Just $ extendKeybindings (defaultKeybindings 1 5) (M.fromList [
+      ((0, xF86XK_MonBrightnessUp  ), incVal 5)
+    , ((0, xF86XK_MonBrightnessDown), incVal (-5))
+  ])) getBrightness brightnessHook
 
 getBrightness :: X Int
 getBrightness = do
@@ -55,7 +61,10 @@ volumeControlSlider = controlSlider (\c -> c {
       muted <- runSH "pamixer --get-mute"
       return $ if muted == "false" then "\xf6a8" else "\xf6a9"
   }) id (Just $ extendKeybindings (defaultKeybindings 1 5) (M.fromList [
-        ((0, xK_space), sDo . void . io $ runSH "pamixer --toggle-mute")
+      ((0, xK_space), sDo . void . io $ runSH "pamixer --toggle-mute")
+    , ((0, xF86XK_AudioMute), sDo . void .io $ runSH "pamixer --toggle-mute")
+    , ((0, xF86XK_AudioRaiseVolume), incVal 5)
+    , ((0, xF86XK_AudioLowerVolume), incVal (-5))
   ])) getVolume volumeHook
 
 getVolume :: X Int
