@@ -75,6 +75,7 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
   , ((0, xF86XK_AudioMute), spawn "pamixer --toggle-mute")
   , ((0, xF86XK_MonBrightnessUp  ), brightnessControlSlider)
   , ((0, xF86XK_MonBrightnessDown), brightnessControlSlider)
+  , ((0, xK_Print), colorTempControlSlider)
   , ((modm, xK_a), submap . M.fromList $ [
         ((0, xK_o), opacityControlSlider)
       , ((0, xK_b), brightnessControlSlider)
