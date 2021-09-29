@@ -3,8 +3,10 @@ module QMonad.Lib.Sliders (
   SliderKeybindings(..),
   mkSlider,
   defaultKeybindings,
+  extendKeybindings,
 
   sId,
+  sDo,
   sQuit,
 ) where
 
@@ -96,6 +98,11 @@ eventHandler dpy keymap = allocaXEvent $ \e -> do
 sId :: SliderUpdateHook
 sId = return . Just
 
+sDo :: X() -> SliderUpdateHook
+sDo action i = do
+  action
+  return $ Just i
+
 sQuit :: SliderUpdateHook
 sQuit _ = return Nothing
 
@@ -116,3 +123,6 @@ defaultKeybindings sg bg = M.fromList
   , ((0, xK_k), incVal sg)
   , ((0, xK_j), incVal (-sg))
   ]
+
+extendKeybindings :: SliderKeybindings -> SliderKeybindings -> SliderKeybindings
+extendKeybindings orig extend = M.union extend orig

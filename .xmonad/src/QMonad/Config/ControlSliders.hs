@@ -7,9 +7,13 @@ module QMonad.Config.ControlSliders (
 
 import XMonad
 import XMonad.Util.Run (runProcessWithInput)
-import Data.Functor (($>))
 import qualified XMonad.Util.ExtensibleState as XS
 import qualified XMonad.StackSet as W
+
+import Control.Monad (void)
+import Data.Char (isSpace)
+import Data.Functor (($>))
+import qualified Data.Map as M
 
 import QMonad.Config.Env
 import QMonad.Config.Hooks.Manage (applyOpacityRule)
@@ -17,7 +21,7 @@ import QMonad.Lib.Sliders
 import QMonad.Lib.Xov
 
 opacityControlSlider :: X()
-opacityControlSlider = controlSlider (\c -> c { icon = Just "\xf8fb" }) id Nothing getOpacity opacityHook
+opacityControlSlider = controlSlider (\c -> c { icon = constIcon "\xf8fb" }) id Nothing getOpacity opacityHook
 
 getOpacity :: X Int
 getOpacity = XS.gets globalOpacity
@@ -34,7 +38,7 @@ opacityHook val = do
     mapM_ applyOpacityRule windows
 
 brightnessControlSlider :: X()
-brightnessControlSlider = controlSlider (\c -> c { icon = Just "\xf042" }) id Nothing getBrightness brightnessHook
+brightnessControlSlider = controlSlider (\c -> c { icon = constIcon "\xf042" }) id Nothing getBrightness brightnessHook
 
 getBrightness :: X Int
 getBrightness = do
@@ -46,17 +50,23 @@ brightnessHook :: Int -> X()
 brightnessHook val = spawn $ "brightnessctl set " ++ show val ++ "%"
 
 volumeControlSlider :: X()
-volumeControlSlider = controlSlider (\c -> c { icon = Just "\xf6a8" }) id Nothing getVolume volumeHook
+volumeControlSlider = controlSlider (\c -> c {
+    icon = Just $ \_ -> do
+      muted <- runSH "pamixer --get-mute"
+      return $ if muted == "false" then "\xf6a8" else "\xf6a9"
+  }) id (Just $ extendKeybindings (defaultKeybindings 1 5) (M.fromList [
+        ((0, xK_space), sDo . void . io $ runSH "pamixer --toggle-mute")
+  ])) getVolume volumeHook
 
 getVolume :: X Int
-getVolume = read <$> runProcessWithInput "/bin/sh" ["-c", "pamixer --get-volume"] []
+getVolume = read <$> io (runSH "pamixer --get-volume")
 
 volumeHook :: Int -> X()
 volumeHook val = spawn $ "pamixer --set-volume " ++ show val
 
 colorTempControlSlider :: X()
 colorTempControlSlider = controlSlider (\c -> c {
-    icon = Just "\xf6df",
+    icon = constIcon "\xf6df",
     valueSuffix = Nothing,
     minValue = 3000,
     maxValue = 9500
@@ -74,6 +84,14 @@ colorTempHook val = do
       colorTemp = val
     }
   spawn $ "redshift -PO " ++ show val
+
+runSH :: String -> IO String
+runSH command = do
+  out <- runProcessWithInput "/bin/sh" ["-c", command] []
+  return $ (reverse . dropWhile isSpace . reverse) out
+
+constIcon :: String -> Maybe (Int -> IO String)
+constIcon s = Just $ \_ -> return s
 
 controlSlider :: (XovConf -> XovConf) -> (XovStyle -> XovStyle) -> Maybe SliderKeybindings -> X Int -> (Int -> X()) -> X()
 controlSlider defConf' style (Just kbs) get hk = do

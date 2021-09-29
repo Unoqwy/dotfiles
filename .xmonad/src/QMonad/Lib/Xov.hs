@@ -34,7 +34,7 @@ data XovOverlay = XovOverlay {
 }
 
 data XovConf = XovConf {
-  icon :: Maybe String,
+  icon :: Maybe (Int -> IO String),
   iconWidth :: Int,
   showValue :: Bool,
   valueWidth :: Int,
@@ -168,31 +168,12 @@ drawOverlay dpy o@XovOverlay{conf=conf,style=style,winScrn=scrnNum,win=win} val 
         iw = fi $ innerBorderWidth conf
     gc <- createGC dpy win
 
-    Just bc <- initColor dpy (borderColor style)
-    Just ibc <- initColor dpy (innerBorderColor style)
-    Just bgc <- initColor dpy (backgroundColor style)
-
     -- outline
+    Just bc <- initColor dpy (borderColor style)
     setForeground dpy gc bc
     fillRectangle dpy win gc 0 0 fw fh
 
-    -- icon
-    let y = fi bw
-        h = fh - 2 * fi bw
-    x <- case icon conf of
-          Just icn -> do
-            setForeground dpy gc bgc
-            fillRectangle dpy win gc (fi bw) y (fi $ iconWidth conf) h
-            setForeground dpy gc ibc
-            fillRectangle dpy win gc (fi $ bw + iconWidth conf) y iw h
-
-            font <- xftFontOpen dpy scrn (iconFont style)
-            printCenteredString dpy scrn win font (Rectangle (fi bw) y (fi $ iconWidth conf) h)
-              (iconColor style) icn
-
-            return $ bw + iconWidth conf + fi iw
-          Nothing -> return bw
-
+    when (isJust . icon $ conf) (drawIcon dpy gc o val)
     drawProgress dpy gc o val
     when (showValue conf) (drawValue dpy gc o val)
 
@@ -200,6 +181,30 @@ drawOverlay dpy o@XovOverlay{conf=conf,style=style,winScrn=scrnNum,win=win} val 
     sync dpy False
   where
     (fw,fh) = getBounds conf
+
+drawIcon :: Display -> GC -> XovOverlay -> Int -> IO()
+drawIcon dpy gc XovOverlay{conf=conf,style=style,winScrn=scrnNum,win=win} val = do
+    Just ibc <- initColor dpy (innerBorderColor style)
+    Just bgc <- initColor dpy (backgroundColor style)
+
+    setForeground dpy gc bgc
+    fillRectangle dpy win gc (fi bw) y (fi $ iconWidth conf) h
+    setForeground dpy gc ibc
+    fillRectangle dpy win gc (fi $ bw + iconWidth conf) y iw h
+
+    icon <- icn val
+    font <- xftFontOpen dpy scrn (iconFont style)
+    printCenteredString dpy scrn win font (Rectangle (fi bw) y (fi $ iconWidth conf) h)
+      (iconColor style) icon
+  where
+    scrn = screenOfDisplay dpy scrnNum
+    (fw,fh) = getBounds conf
+    h = fh - 2 * fi bw
+    bw = fi $ borderWidth conf
+    iw = fi $ innerBorderWidth conf
+    Mks (Just x) _ _ = mks conf
+    y = fi bw
+    Just icn = icon conf
 
 drawProgress :: Display -> GC -> XovOverlay -> Int -> IO()
 drawProgress dpy gc XovOverlay{conf=conf,style=style,winScrn=scrnNum,win=win} val = do
@@ -257,6 +262,7 @@ drawValue dpy gc XovOverlay{conf=conf,style=style,winScrn=scrnNum,win=win} val =
 updateProgress :: Display -> XovOverlay -> Int -> IO()
 updateProgress dpy o val = do
   gc <- createGC dpy (win o)
+  drawIcon dpy gc o val
   drawProgress dpy gc o val
   drawValue dpy gc o val
   freeGC dpy gc
