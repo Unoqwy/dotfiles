@@ -57,9 +57,13 @@ brightnessHook val = spawn $ "brightnessctl set " ++ show val ++ "%"
 
 volumeControlSlider :: X()
 volumeControlSlider = controlSlider (\c -> c {
-    icon = Just $ \_ -> do
+    icon = Just $ \val -> do
       muted <- runSH "pamixer --get-mute"
-      return $ if muted == "false" then "\xf6a8" else "\xf6a9"
+      return $ if muted == "false" then case val of
+        x | x <= 30 -> "\xf027"
+        x | x >= 60 -> "\xf028"
+        _ -> "\xf6a8"
+      else "\xf6a9"
   }) id (Just $ extendKeybindings (defaultKeybindings 1 5) (M.fromList [
       ((0, xK_space), sDo . void . io $ runSH "pamixer --toggle-mute")
     , ((0, xF86XK_AudioMute), sDo . void .io $ runSH "pamixer --toggle-mute")
