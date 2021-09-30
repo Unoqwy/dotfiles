@@ -22,7 +22,7 @@ setupDefaultWorkspaces = do
     mapM_ (\t -> setWorkspaceMask (fst t) (Just $ snd t) Nothing) named
   where hidden = map show ([0, 1, 5] ++ [7..9]) ++ ["NSP"]
         named  = map (Data.Bifunctor.first show) [
-              (0, "config")
+              (0, "0")
             , (1, "music")
             , (2, "web")
             , (3, "dev")
@@ -31,6 +31,7 @@ setupDefaultWorkspaces = do
             , (6, "chat")
             , (7, "ts")
             , (8, "tm")
+            , (9, "media")
             ]
 
 startupHook :: X()

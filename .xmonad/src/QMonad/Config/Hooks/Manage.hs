@@ -50,7 +50,8 @@ windowRules = composeAll [
   , className =? "Spotify" --> doShift "1"
   , className =? "discord" --> doShift "6"
   , className =? "TeamSpeak 3" --> doShift "7"
-  , className =? "Notion" --> doShift "8"
+  , resource =? "notion-app" <||> className =? "Notion" --> doShift "8"
+  , className =? "media-app" --> doShift "9"
 
   -- Splash screens
   , className =? "jetbrains-idea-ce" <&&> title =? "win0" --> doCenterFloat

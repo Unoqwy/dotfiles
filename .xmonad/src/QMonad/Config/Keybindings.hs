@@ -141,13 +141,17 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
   ]
 
   -- Workspaces movements
-  ++
+  ++ -- Basic workspaces
   [((m .|. modm, k), windows $ f i)
     | (i, k) <- zip (XMonad.workspaces xconf) [xK_0 ..]
     , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]]
+  ++
+  [((modm, xK_w), submap . M.fromList $ [
+      ((0, xK_n), gotoWs "NSP")
+    ])]
 
   -- Swap workspaces
-  ++
+  ++ -- Special workspaces
   [((modm .|. controlMask, k), windows $ swapWithCurrent i)
     | (i, k) <- zip (XMonad.workspaces xconf) [xK_0 ..]]
 
@@ -155,3 +159,4 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
 
   where
     scratchpads = Scratchpads.scratchpads conf
+    gotoWs i = windows $ W.greedyView i
