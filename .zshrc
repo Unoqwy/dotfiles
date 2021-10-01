@@ -87,6 +87,8 @@ if type nvim > /dev/null; then
     alias vi="nvim"
 fi
 
+alias ssh="TERM=xterm-256color ssh"
+
 # misc tools
 alias ts="tree-sitter"
 alias f="xplr"
