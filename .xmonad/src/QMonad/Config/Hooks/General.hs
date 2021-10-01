@@ -2,6 +2,7 @@ module QMonad.Config.Hooks.General (hooks) where
 
 import XMonad ((<+>), XConfig, X, liftIO, spawn)
 import qualified XMonad
+import qualified XMonad.StackSet as W
 
 import XMonad.Hooks.InsertPosition (insertPosition, Focus(..), Position(..))
 import XMonad.Util.SpawnOnce (spawnOnce)
@@ -48,7 +49,9 @@ startupHook = do
   xmonad_started <- liftIO $ lookupEnv "XMONAD_STARTED"
   case xmonad_started of
     Just "1" -> spawn "notify-send 'xmonad' 'Restart OK'"
-    _ -> liftIO $ setEnv "XMONAD_STARTED" "1"
+    _ -> do
+      XMonad.windows $ W.greedyView "4"
+      liftIO $ setEnv "XMONAD_STARTED" "1"
 
   setupDefaultWorkspaces
 
