@@ -28,6 +28,7 @@ import qualified XMonad.Layout.BoringWindows as BW
 import System.Environment
 
 import QMonad.Config.ControlSliders
+import QMonad.Config.Hooks.Layouts (FocalToggle(..))
 import QMonad.Config.Env (EnvConfig(..), localBin)
 import QMonad.Config.IPC (MediaControl(..), mediaAction, toggleStatusBar)
 import QMonad.Lib.Window.Minimize (minimizeWindow, maximizeWindow, sortMinimizedWindows, minimizedStack)
@@ -53,6 +54,7 @@ chooseWindowToMaximize conf = do
 minimizeCurrentWindow :: X()
 minimizeCurrentWindow = withFocused minimizeWindow <+> BW.focusUp
 
+-- Focus
 fixFocus :: X()
 fixFocus =
   return ()
@@ -61,6 +63,9 @@ checkFocus :: Window -> X()
 checkFocus w = do
   minimized <- XS.gets minimizedStack
   when (w `elem` minimized) fixFocus
+
+toggleFocalWindow :: Window -> X()
+toggleFocalWindow w = sendMessage $ FocalToggle w
 
 -- Keybindings
 keybindings :: EnvConfig -> XConfig Layout -> M.Map (ButtonMask, KeySym) (X())
@@ -102,6 +107,8 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
   , ((modm, xK_comma ), sendMessage $ IncMasterN 1   )
   , ((modm, xK_period), sendMessage $ IncMasterN (-1))
 
+  , ((modm, xK_d), withFocused toggleFocalWindow)
+
     -- Focused window
   , ((modm .|. shiftMask, xK_c), kill <+> withFocused checkFocus)
   , ((modm, xK_h), sendMessage Shrink)
@@ -126,7 +133,6 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
   -- Scratchpads
   , ((modm, xK_f), namedScratchpadAction scratchpads "floaterm-min")
   , ((modm .|. shiftMask, xK_f), namedScratchpadAction scratchpads "floaterm")
-  , ((modm, xK_d), namedScratchpadAction scratchpads "quicksearch")
   , ((modm, xK_e), namedScratchpadAction scratchpads "filexplorer")
 
   -- Workspaces
