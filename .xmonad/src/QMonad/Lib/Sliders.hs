@@ -9,6 +9,7 @@ module QMonad.Lib.Sliders (
   sDo,
   sQuit,
   incVal,
+  setVal,
 ) where
 
 import Prelude hiding (Left, Right)
@@ -111,10 +112,18 @@ incVal :: Int -> SliderUpdateHook
 incVal inc val = do
   return $ Just (val + inc)
 
+setVal :: Int -> SliderUpdateHook
+setVal newv _ = do
+  return $ Just newv
+
 defaultKeybindings :: Int -> Int -> SliderKeybindings
 defaultKeybindings sg bg = M.fromList
   [ ((0, xK_Escape), sQuit)
+  , ((0, xK_Return), sQuit)
+  , ((0, xK_KP_Enter), sQuit)
   , ((0, xK_q), sQuit)
+  , ((0, xK_KP_Subtract), incVal (-bg))
+  , ((0, xK_KP_Add), incVal bg)
   , ((0, xK_Left), incVal (-bg))
   , ((0, xK_Right), incVal bg)
   , ((0, xK_Up), incVal sg)
