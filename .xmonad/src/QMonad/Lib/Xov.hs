@@ -196,6 +196,11 @@ drawIcon dpy gc XovOverlay{conf=conf,style=style,winScrn=scrnNum,win=win} val = 
     font <- xftFontOpen dpy scrn (iconFont style)
     printCenteredString dpy scrn win font (Rectangle (fi bw) y (fi $ iconWidth conf) h)
       (iconColor style) icon
+    xftFontClose dpy font
+
+    let colormap = defaultColormap dpy (defaultScreen dpy)
+    freeColors dpy colormap [] ibc
+    freeColors dpy colormap [] bgc
   where
     scrn = screenOfDisplay dpy scrnNum
     (fw,fh) = getBounds conf
@@ -229,6 +234,11 @@ drawProgress dpy gc XovOverlay{conf=conf,style=style,winScrn=scrnNum,win=win} va
     fillRectangle dpy win gc bsx bsy progress h'
     setForeground dpy gc ec
     fillRectangle dpy win gc esx bsy empty h'
+
+    let colormap = defaultColormap dpy (defaultScreen dpy)
+    freeColors dpy colormap [] pc
+    freeColors dpy colormap [] ec
+    freeColors dpy colormap [] bgc
   where
     scrn = screenOfDisplay dpy scrnNum
     (fw,fh) = getBounds conf
@@ -250,6 +260,11 @@ drawValue dpy gc XovOverlay{conf=conf,style=style,winScrn=scrnNum,win=win} val =
     font <- xftFontOpen dpy scrn (valueFont style)
     printCenteredString dpy scrn win font (Rectangle (fi x) y (fi $ valueWidth conf) h)
       (valueColor style) (show val ++ fromMaybe "" (valueSuffix conf))
+    xftFontClose dpy font
+
+    let colormap = defaultColormap dpy (defaultScreen dpy)
+    freeColors dpy colormap [] ibc
+    freeColors dpy colormap [] bgc
   where
     scrn = screenOfDisplay dpy scrnNum
     (fw,fh) = getBounds conf
