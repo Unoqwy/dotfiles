@@ -17,6 +17,8 @@ library
     X11 >=1.10,
     X11-xft >= 0.3,
     time,
+    process,
+    utf8-string,
     xmonad >=0.16.9999,
     xmonad-contrib >=0.16.999
 
@@ -51,6 +53,8 @@ executable qmonad
     X11,
     X11-xft,
     time,
+    process,
+    utf8-string,
     xmonad,
     xmonad-contrib
 

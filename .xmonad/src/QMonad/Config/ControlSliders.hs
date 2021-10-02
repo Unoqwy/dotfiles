@@ -14,12 +14,18 @@ import qualified XMonad.StackSet as W
 import Control.Monad (void)
 import Data.Char (isSpace)
 import Data.Functor (($>))
+import Data.Maybe (fromMaybe)
 import qualified Data.Map as M
 
 import QMonad.Config.Env
 import QMonad.Config.Hooks.Manage (applyOpacityRule)
 import QMonad.Lib.Sliders
 import QMonad.Lib.Xov
+
+import Codec.Binary.UTF8.String (encodeString)
+import System.Process (runInteractiveCommand, waitForProcess)
+import System.IO
+import System.Exit (ExitCode (ExitSuccess))
 
 opacityControlSlider :: X()
 opacityControlSlider = controlSlider (\c -> c { icon = constIcon "\xf8fb" }) id Nothing getOpacity opacityHook
@@ -39,21 +45,50 @@ opacityHook val = do
     mapM_ applyOpacityRule windows
 
 brightnessControlSlider :: X()
-brightnessControlSlider = controlSlider (\c -> c {
-    icon = constIcon "\xf042"
-  }) id (Just $ extendKeybindings (defaultKeybindings 1 5) (M.fromList [
-      ((0, xF86XK_MonBrightnessUp  ), incVal 5)
-    , ((0, xF86XK_MonBrightnessDown), incVal (-5))
-  ])) getBrightness brightnessHook
+brightnessControlSlider = do
+  e <- runSHGetExitCode "brightnessctl --class 'brightness' max"
+  ctrl <- case e of
+      ExitSuccess -> return . Just $ (getBrightnessCtlVal, brightnessCtlHook, return 100)
+      _ -> do
+        e' <- runSHGetExitCode "ddcutil -t detect | grep 'Monitor:'"
+        sid <- gets $ W.screen . W.current . windowset
+        let d = 2 - fromIntegral sid
+        return $ if e' == ExitSuccess
+          then Just (ddcutilQuery d Val, ddcutilHook d, ddcutilQuery d Max)
+          else Nothing
+  case ctrl of
+    Just (get, set, gm) -> do
+      max <- gm
+      controlSlider (\c -> c {
+        icon = constIcon "\xf042",
+        maxValue = max
+      }) id (Just $ extendKeybindings (defaultKeybindings 1 5) (M.fromList [
+          ((0, xF86XK_MonBrightnessUp  ), incVal 5)
+        , ((0, xF86XK_MonBrightnessDown), incVal (-5))
+        ])) get set
+    _ -> return ()
 
-getBrightness :: X Int
-getBrightness = do
+type DisplayId = Int
+data BrightnessQuery = Val | Max deriving (Enum)
+
+ddcutil :: String
+ddcutil = "ddcutil --sleep-less --sleep-multiplier .125"
+
+ddcutilQuery :: DisplayId -> BrightnessQuery -> X Int
+ddcutilQuery d Val = read <$> runSH (ddcutil ++ " -t -d " ++ show d ++ " getvcp 10 | cut -d 'C' -f 3 | awk '{ print $1; }'")
+ddcutilQuery d Max = read <$> runSH (ddcutil ++ " -t -d " ++ show d ++ " getvcp 10 | cut -d 'C' -f 3 | awk '{ print $2; }'")
+
+ddcutilHook :: DisplayId -> Int -> X()
+ddcutilHook d val = awaitSpawn $ ddcutil ++ " -d " ++ show d ++ " setvcp 10 " ++ show val
+
+getBrightnessCtlVal :: X Int
+getBrightnessCtlVal = do
   conf <- XS.gets envConfig
   brightness <- runProcessWithInput (localBin conf "get-brightness") [] []
   return $ read brightness
 
-brightnessHook :: Int -> X()
-brightnessHook val = spawn $ "brightnessctl set " ++ show val ++ "%"
+brightnessCtlHook :: Int -> X()
+brightnessCtlHook val = awaitSpawn $ "brightnessctl set " ++ show val ++ "%"
 
 volumeControlSlider :: X()
 volumeControlSlider = controlSlider (\c -> c {
@@ -65,8 +100,8 @@ volumeControlSlider = controlSlider (\c -> c {
         _ -> "\xf6a8"
       else "\xf6a9"
   }) id (Just $ extendKeybindings (defaultKeybindings 1 5) (M.fromList [
-      ((0, xK_space), sDo . void . io $ runSH "pamixer --toggle-mute")
-    , ((0, xF86XK_AudioMute), sDo . void .io $ runSH "pamixer --toggle-mute")
+      ((0, xK_space), sDo . awaitSpawn $ "pamixer --toggle-mute")
+    , ((0, xF86XK_AudioMute), sDo . awaitSpawn $ "pamixer --toggle-mute")
     , ((0, xF86XK_AudioRaiseVolume), incVal 5)
     , ((0, xF86XK_AudioLowerVolume), incVal (-5))
   ])) getVolume volumeHook
@@ -75,7 +110,7 @@ getVolume :: X Int
 getVolume = read <$> io (runSH "pamixer --get-volume")
 
 volumeHook :: Int -> X()
-volumeHook val = spawn $ "pamixer --set-volume " ++ show val
+volumeHook val = awaitSpawn $ "pamixer --set-volume " ++ show val
 
 colorTempControlSlider :: X()
 colorTempControlSlider = controlSlider (\c -> c {
@@ -98,7 +133,17 @@ colorTempHook val = do
     }
   spawn $ "redshift -PO " ++ show val
 
-runSH :: String -> IO String
+awaitSpawn :: String -> X()
+awaitSpawn = void . runSH
+
+runSHGetExitCode :: MonadIO m => String -> m ExitCode
+runSHGetExitCode cmd = io $ do
+  uninstallSignalHandlers
+  (hIn, hOut, hErr, p) <- runInteractiveCommand cmd
+  mapM_ hClose [hIn, hErr]
+  waitForProcess p <* hGetContents hOut <* installSignalHandlers
+
+runSH :: MonadIO m => String -> m String
 runSH command = do
   out <- runProcessWithInput "/bin/sh" ["-c", command] []
   return $ (reverse . dropWhile isSpace . reverse) out
