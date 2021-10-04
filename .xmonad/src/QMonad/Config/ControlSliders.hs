@@ -46,7 +46,7 @@ opacityHook val = do
 
 brightnessControlSlider :: X()
 brightnessControlSlider = do
-  e <- runSHGetExitCode "brightnessctl --class 'brightness' max"
+  e <- runSHGetExitCode "brightnessctl --class 'backlight' max"
   ctrl <- case e of
       ExitSuccess -> return . Just $ (getBrightnessCtlVal, brightnessCtlHook, return 100)
       _ -> do
