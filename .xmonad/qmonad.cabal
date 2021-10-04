@@ -2,7 +2,7 @@ cabal-version: >=1.10
 build-type: Simple
 
 name: qmonad
-version: 1.4.0
+version: 1.4.1
 author: Unoqwy <julien.qwy@gmail.com>
 license: MIT
 
@@ -38,6 +38,8 @@ executable qmonad
     QMonad.Config.Hooks.General
     QMonad.Config.Hooks.Layouts
     QMonad.Config.Hooks.Manage
+    QMonad.Config.Layout.FocalWindow
+    QMonad.Config.Layout.LayoutDescriptionMeta
     QMonad.Lib.Window.Minimize
     QMonad.Lib.Window.Opacity
     QMonad.Lib.Xov

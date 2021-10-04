@@ -28,7 +28,7 @@ import qualified XMonad.Layout.BoringWindows as BW
 import System.Environment
 
 import QMonad.Config.ControlSliders
-import QMonad.Config.Hooks.Layouts (FocalToggle(..))
+import QMonad.Config.Layout.FocalWindow (FocalToggle(..))
 import QMonad.Config.Env (EnvConfig(..), localBin)
 import QMonad.Config.IPC (MediaControl(..), mediaAction, toggleStatusBar)
 import QMonad.Lib.Window.Minimize (minimizeWindow, maximizeWindow, sortMinimizedWindows, minimizedStack)
