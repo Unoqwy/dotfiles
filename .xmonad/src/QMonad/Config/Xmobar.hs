@@ -40,7 +40,7 @@ awrap' wks l r name = wrap l r (awrap wks name)
 infoBorders :: (Bool, Bool) -> String -> String
 infoBorders (hm,hf) s = do
   wrapIf hm ("<box type=Right width=2 align=L maxlen=2 color=" ++ T.brightFgColor ++ ">") "</box>" $
-    wrapIf hf ("<box type=Left width=3 align=L maxlen=4 color=" ++ T.focusColor ++ ">") "</box>" s
+    wrapIf hf ("<box type=Left width=3 align=L maxlen=3 color=" ++ T.focusColor ++ ">") "</box>" s
 
 wrapIf :: Bool -> String -> String -> String -> String
 wrapIf True l r m = wrap l r m
