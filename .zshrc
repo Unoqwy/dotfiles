@@ -22,7 +22,7 @@ if [[ "$TERM" != "dumb" ]]; then
 
     setopt PROMPT_SUBST
     # reminder: these need to stay single quotes to expand later, not on read
-    PS1='%F{red}%(?.. <%?>)%F{magenta}${vcs_info_msg_0_} %b%F{green}%f '
+    PS1='%F{red}%(?.. <%?>)%F{magenta}${vcs_info_msg_0_} %b%F{cyan}%f '
     RPS1="%F{blue}%~%f"
 else
     # based on default prompt 'walters'
