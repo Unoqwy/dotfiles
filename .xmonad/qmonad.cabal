@@ -35,6 +35,7 @@ executable qmonad
     QMonad.Config.Xmobar
     QMonad.Config.Scratchpads
     QMonad.Config.ControlSliders
+    QMonad.Config.Util
     QMonad.Config.Hooks.General
     QMonad.Config.Hooks.Layouts
     QMonad.Config.Hooks.Manage

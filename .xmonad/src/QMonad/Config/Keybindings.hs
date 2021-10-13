@@ -67,6 +67,11 @@ checkFocus w = do
 toggleFocalWindow :: Window -> X()
 toggleFocalWindow w = sendMessage $ FocalToggle w
 
+wsScratchpadTerminalAction :: EnvConfig -> X()
+wsScratchpadTerminalAction conf = do
+  wid <- gets (W.currentTag . windowset)
+  Scratchpads.oneScratchpadAction $ Scratchpads.wsScratchpadTerminal conf wid
+
 -- Keybindings
 keybindings :: EnvConfig -> XConfig Layout -> M.Map (ButtonMask, KeySym) (X())
 keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
@@ -134,6 +139,8 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
   , ((modm, xK_f), namedScratchpadAction scratchpads "floaterm-min")
   , ((modm .|. shiftMask, xK_f), namedScratchpadAction scratchpads "floaterm")
   , ((modm, xK_e), namedScratchpadAction scratchpads "filexplorer")
+
+  , ((modm, xK_q), wsScratchpadTerminalAction conf)
 
   -- Workspaces
   , ((modm .|. shiftMask, xK_r), renameCurrentWorkspace XP.defaultConfig)

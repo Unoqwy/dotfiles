@@ -6,9 +6,8 @@ module QMonad.Config.Hooks.Manage (
 
 import XMonad hiding (manageHook, handleEventHook)
 import XMonad.Prelude
-import QMonad.Config.Scratchpads (scratchpads, transparentScratchpads)
+import QMonad.Config.Scratchpads (transparentScratchpads, manageHook')
 import XMonad.Hooks.ManageHelpers (isDialog, doCenterFloat, doRectFloat, composeOne, (-?>))
-import XMonad.Util.NamedScratchpad (namedScratchpadManageHook)
 import qualified XMonad.StackSet as W
 import qualified XMonad.Util.ExtensibleState as XS
 
@@ -24,7 +23,7 @@ wmRole = stringProperty "WM_WINDOW_ROLE"
 doCenteredFloat = doRectFloat $ W.RationalRect 0.25 0.25 0.5 0.5
 
 manageHook :: EnvConfig -> ManageHook
-manageHook conf = namedScratchpadManageHook (scratchpads conf) <+> windowRules <+> opacityHook
+manageHook conf = QMonad.Config.Scratchpads.manageHook' conf <+> windowRules <+> opacityHook
 
 handleEventHook :: Event -> X All
 handleEventHook PropertyEvent { ev_event_type = t, ev_atom = a, ev_window = win }
@@ -74,6 +73,7 @@ opacityHook :: ManageHook
 opacityHook = composeOne $
     [ resource =? r -?> makeTransparent | r <- appNames ]
     ++ [ className =? c -?> makeTransparent | c <- classNames ]
+    ++ [ fmap ("wsterm-" `isPrefixOf`) resource -?> makeTransparent ]
   where makeTransparent = doSetOpacity Nothing
         appNames = [
             "jetbrains-idea-ce"
