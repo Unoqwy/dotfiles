@@ -45,9 +45,11 @@ keybindings conf@XConfig{XMonad.modMask = modm} = M.fromList [
       , ((0, xK_h), spawn clipboardHistory)
 
       , ((0, xK_w), spawn "choose-wallpaper")
+      , ((0, xK_k), spawn "choose-kbd-layout")
       , ((0, xK_a), spawn "rofi-primary-sink")
       ])
 
   -- Special keys
   , ((modm, xK_Print), spawn "flameshot gui")
+  , ((modm, xK_Delete), spawn "setxkbmap us && notify-send 'Layout reset'")
   ]
