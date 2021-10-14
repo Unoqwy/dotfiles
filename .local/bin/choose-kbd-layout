@@ -1,8 +1,12 @@
 #!/bin/sh
-choices=$(cat /usr/share/X11/xkb/rules/evdev.lst | sed -n '/^\! layout$/,/^\! option$/p' | awk '!/^!/ {if($1) { print $1; }}')
+choices=$((cat /usr/share/X11/xkb/rules/evdev.lst | sed -n '/^\! layout$/,/^\! option$/p' | awk '!/^!/ {if($1) { print $1; }}'; echo dvorak-programmer) | sort | uniq)
 keymap=$(echo "$choices" | rofi -dmenu -i -l 8 -p "Layout")
 if [ -z "$keymap" ]; then
     exit 0
 fi
-setxkbmap "$keymap"
+if [[ "$keymap" == "dvorak-programmer" ]]; then
+    setxkbmap -variant dvp
+else
+    setxkbmap "$keymap"
+fi
 notify-send "Layout set" "$keymap"
