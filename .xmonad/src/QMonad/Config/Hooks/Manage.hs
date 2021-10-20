@@ -79,6 +79,7 @@ opacityHook = composeOne $
             "jetbrains-idea-ce"
           , "spotify"
           , "discord"
+          , "code"
           ] ++ transparentScratchpads
         classNames = [
             "Alacritty"
