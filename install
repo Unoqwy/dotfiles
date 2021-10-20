@@ -17,6 +17,8 @@ install .zshrc
 install .zshenv
 install .Xresources
 install .Xmodmap
+install .inputremap
+install .xbindkeysrc.scm
 install .ideavimrc
 install .vimrc
 install .xinitrc
