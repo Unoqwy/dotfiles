@@ -4,7 +4,10 @@
     follow = keyboard
     idle_threshold = 0
 
-    geometry = "300x0-2-2"
+    origin = bottom-right
+    offset = 2x2
+    width = 300
+
     transparency = 10
 
     padding = 8
