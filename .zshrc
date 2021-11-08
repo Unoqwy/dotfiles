@@ -93,6 +93,11 @@ alias ssh="TERM=xterm-256color ssh"
 alias ts="tree-sitter"
 alias f="xplr"
 
+# ansible
+alias ans="ansible"
+alias anp="ansible-playbook"
+alias anl="ansible-lint"
+
 # system
 alias synclock="sudo ntpd -gq"
 
