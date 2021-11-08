@@ -9,6 +9,7 @@ import qualified XMonad.StackSet as W
 import qualified XMonad.Util.ExtensibleState as XS
 
 import XMonad.Actions.Submap (submap)
+import XMonad.Actions.CycleWS (prevScreen, nextScreen)
 import Graphics.X11.ExtraTypes.XF86
 
 import XMonad.Layout.Spacing (
@@ -126,7 +127,9 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
   , ((modm,               xK_m), BW.focusMaster)
   , ((modm .|. shiftMask, xK_j), BW.swapDown   )
   , ((modm .|. shiftMask, xK_k), BW.swapUp     )
-  -- don't care about swap to master
+
+  , ((modm, xK_bracketleft ), prevScreen)
+  , ((modm, xK_bracketright), nextScreen)
 
   -- Hidden (minimized) windows
   , ((modm, xK_u), chooseWindowToMaximize conf)

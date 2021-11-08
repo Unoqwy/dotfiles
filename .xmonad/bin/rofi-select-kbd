@@ -1,0 +1,4 @@
+#!/bin/sh
+choices=$(ls /dev/input/by-id/usb-*-event-kbd | awk '{ print substr($1,22,length($1)-31) }')
+result=$(echo "$choices" | rofi -dmenu -i -l 8 -p "Keyboard")
+[[ -n "$result" ]] && echo $(realpath "/dev/input/by-id/usb-$result-event-kbd")
