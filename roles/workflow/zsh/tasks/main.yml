@@ -1,0 +1,12 @@
+- import_tasks: install.yml
+
+- name: Link .zshrc
+  file:
+    src: "{{ install_src }}/roles/workflow/zsh/files/zshrc"
+    dest: "{{ install_dest }}/.zshrc"
+    state: link
+- name: Link .zshenv
+  file:
+    src: "{{ install_src }}/roles/workflow/zsh/files/zshenv"
+    dest: "{{ install_dest }}/.zshenv"
+    state: link

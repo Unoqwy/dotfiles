@@ -1,0 +1,15 @@
+- import_tasks: install.yml
+
+- name: Create kitty config directory
+  file:
+    path: "{{ install_dest }}/.config/kitty"
+    state: directory
+- name: Link sonokai theme
+  file:
+    src: "{{ install_src }}/roles/desktop/kitty/files/sonokai.conf"
+    dest: "{{ install_dest }}/.config/kitty/sonokai.conf"
+    state: link
+- name: Create kitty config
+  template:
+    src: "{{ install_src }}/roles/desktop/kitty/templates/kitty.conf.j2"
+    dest: "{{ install_dest }}/.config/kitty/kitty.conf"

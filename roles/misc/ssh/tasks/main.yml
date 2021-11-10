@@ -1,0 +1,7 @@
+- import_tasks: install.yml
+
+- name: Link nscp bin
+  file:
+    src: "{{ install_src }}/roles/misc/ssh/bins/nscp"
+    dest: "{{ install_dest }}/.local/bin/nscp"
+    state: link

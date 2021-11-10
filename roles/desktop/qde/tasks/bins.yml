@@ -1,0 +1,15 @@
+- name: Link choose-kbd-layout bin
+  file:
+    src: "{{ install_src }}/roles/desktop/qde/bins/choose-kbd-layout"
+    dest: "{{ install_dest }}/.local/bin/choose-kbd-layout"
+    state: link
+- name: Link choose-primary-sink bin
+  file:
+    src: "{{ install_src }}/roles/desktop/qde/bins/choose-primary-sink"
+    dest: "{{ install_dest }}/.local/bin/choose-primary-sink"
+    state: link
+- name: Link choose-wallpaper bin
+  file:
+    src: "{{ install_src }}/roles/desktop/qde/bins/choose-wallpaper"
+    dest: "{{ install_dest }}/.local/bin/choose-wallpaper"
+    state: link

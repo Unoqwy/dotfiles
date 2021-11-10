@@ -1,7 +1,0 @@
-- import_tasks: install.yml
-
-- name: Link .vimrc
-  file:
-    src: "{{ install_src }}/ansible/roles/vim/files/vimrc"
-    dest: "{{ install_dest }}/.vimrc"
-    state: link

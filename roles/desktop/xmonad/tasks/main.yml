@@ -1,0 +1,22 @@
+- import_tasks: install.yml
+
+- name: Link .xmonad
+  file:
+    src: "{{ install_src }}/xmonad"
+    dest: "{{ install_dest }}/.xmonad"
+    state: link
+- name: Create xmobar env config
+  template:
+    src: "{{ install_src }}/roles/desktop/xmonad/templates/xmobar.env.j2"
+    dest: "{{ install_dest }}/.xmonad/bin/xmobar/.env"
+- name: Select xmonad as primary window manager
+  file:
+    src: "{{ install_dest }}/.xmonad"
+    dest: "{{ install_dest }}/.xinitwm"
+    state: link
+
+- name: Link xmonad bin
+  file:
+    src: "{{ install_src }}/roles/desktop/xmonad/bins/xmonad"
+    dest: "{{ install_dest }}/.local/bin/xmonad"
+    state: link

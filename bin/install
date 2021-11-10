@@ -26,4 +26,5 @@ if ! "$base/bin/prepare" 1>/dev/null; then
 fi
 
 ansible-galaxy collection install -r ansible/requirements.yml
-ansible-playbook -i ansible/hosts ansible/local-playbook.yml -K $@
+ANSIBLE_CONFIG=ansible/ansible.cfg ansible-playbook -i ansible/hosts \
+    local-playbook.yml -K $@

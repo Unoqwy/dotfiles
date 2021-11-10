@@ -1,0 +1,12 @@
+- import_tasks: install.yml
+
+- name: Link .vimrc
+  file:
+    src: "{{ install_src }}/roles/misc/vim/files/vimrc"
+    dest: "{{ install_dest }}/.vimrc"
+    state: link
+- name: Link viman bin
+  file:
+    src: "{{ install_src }}/roles/misc/vim/bins/viman"
+    dest: "{{ install_dest }}/.local/bin/viman"
+    state: link

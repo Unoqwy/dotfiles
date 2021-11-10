@@ -1,0 +1,7 @@
+- import_tasks: install.yml
+
+- name: Link spotify bin
+  file:
+    src: "{{ install_src }}/roles/apps/spotify/bins/spotify"
+    dest: "{{ install_dest }}/.local/bin/spotify"
+    state: link

@@ -70,9 +70,7 @@ def write_to_entry(entry, pkg, append):
             entry[key] = val.format(pkg)
 
 
-if __name__ == "__main__":
-    roles_dir = "ansible/roles/"
-
+def visit_roles_dir(roles_dir):
     for dir in os.listdir(roles_dir):
         dir_path = os.path.join(roles_dir, dir)
         if not os.path.isdir(dir_path):
@@ -101,5 +99,13 @@ if __name__ == "__main__":
                     ])
                     install_file.write(dump)
                     print(f"Written install file '{install_file_path}'")
-            except yaml.YAMLError as err:
+            except yaml.YAMLError:
                 print(f"YAML file '{pkgs_path}' cannot be parsed.", file=sys.stderr)
+
+
+if __name__ == "__main__":
+    for dir in os.listdir("roles"):
+        dir_path = os.path.join("roles", dir)
+        if not os.path.isdir(dir_path):
+            continue
+        visit_roles_dir(dir_path)

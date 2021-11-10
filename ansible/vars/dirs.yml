@@ -1,0 +1,4 @@
+userhome: "{{ '~' | expanduser }}"
+dotfiles_clone_dir: "{{ playbook_dir }}"
+install_src: "{{ dotfiles_clone_dir | realpath }}"
+install_dest: "{{ userhome }}"

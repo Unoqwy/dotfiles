@@ -1,0 +1,17 @@
+- import_tasks: install.yml
+
+- name: Link .xinitrc
+  file:
+    src: "{{ install_src }}/roles/desktop/x11/files/xinitrc"
+    dest: "{{ install_dest }}/.xinitrc"
+    state: link
+- name: Link .xbindkeysrc.scm
+  file:
+    src: "{{ install_src }}/roles/desktop/x11/files/xbindkeysrc.scm"
+    dest: "{{ install_dest }}/.xbindkeysrc.scm"
+    state: link
+- name: Link .Xmodmap
+  file:
+    src: "{{ install_src }}/roles/desktop/x11/files/Xmodmap"
+    dest: "{{ install_dest }}/.Xmodmap"
+    state: link
