@@ -1,7 +1,16 @@
 - import_tasks: install.yml
 
-- name: Link tmux config dir
+- name: Create tmux config directory
   file:
-    src: "{{ install_src }}/.config/tmux"
-    dest: "{{ install_dest }}/.config/tmux"
+    path: "{{ install_dest }}/.config/tmux"
+    state: directory
+- name: Link tmux.conf
+  file:
+    src: "{{ install_src }}/ansible/roles/tmux/files/tmux.conf"
+    dest: "{{ install_dest }}/.config/tmux/tmux.conf"
+    state: link
+- name: Link plugins.tmux
+  file:
+    src: "{{ install_src }}/ansible/roles/tmux/files/plugins.tmux"
+    dest: "{{ install_dest }}/.config/tmux/plugins.tmux"
     state: link

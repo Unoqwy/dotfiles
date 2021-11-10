@@ -5,3 +5,29 @@
     src: "{{ install_src }}/ansible/roles/qde/files/Xresources"
     dest: "{{ install_dest }}/.Xresources"
     state: link
+
+- name: Create dunst config directory
+  file:
+    path: "{{ install_dest }}/.config/dunst"
+    state: directory
+- name: Link dunstrc
+  file:
+    src: "{{ install_src }}/ansible/roles/qde/files/dunstrc"
+    dest: "{{ install_dest }}/.config/dunst/dunstrc"
+    state: link
+
+- name: Create picom config directory
+  file:
+    path: "{{ install_dest }}/.config/picom"
+    state: directory
+- name: Link picom.conf
+  file:
+    src: "{{ install_src }}/ansible/roles/qde/files/picom.conf"
+    dest: "{{ install_dest }}/.config/picom/picom.conf"
+    state: link
+
+- name: Link greenclip.toml
+  file:
+    src: "{{ install_src }}/ansible/roles/qde/files/greenclip.toml"
+    dest: "{{ install_dest }}/.config/greenclip.conf"
+    state: link

@@ -31,13 +31,15 @@
     - role: git
       tags: [base, git]
     - role: vim
-      tags: [minimal, vim]
+      tags: [base, vim]
+    - role: gittools
+      tags: [workflow, gittools]
     - role: zsh
       tags: [workflow, shell]
     - role: tmux
       tags: [workflow, tmux]
-    - role: gittools
-      tags: [workflow, gittools]
+    - role: nvim
+      tags: [workflow, nvim]
 
     - role: x11
       tags: [desktop, x11]
@@ -45,6 +47,8 @@
       tags: [desktop, qde]
     # - role: xmonad
     #   tags: [desktop, xmonad]
+    - role: alacritty
+      tags: [desktop, terminal, alacritty]
     - role: kitty
       tags: [desktop, workflow, terminal, kitty]
 

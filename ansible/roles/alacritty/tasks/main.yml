@@ -1,0 +1,10 @@
+- import_tasks: install.yml
+
+- name: Create alacritty config directory
+  file:
+    path: "{{ install_dest }}/.config/alacritty"
+    state: directory
+- name: Create alacritty config
+  template:
+    src: "{{ install_src }}/ansible/roles/alacritty/files/alacritty.yml.j2"
+    dest: "{{ install_dest }}/.config/alacritty/alacritty.yml"

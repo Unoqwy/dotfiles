@@ -1,6 +1,6 @@
 - name: Create Huion tablet remap udev rule
   template:
-    src: "{{ install_src }}/ansible/roles/udev-rules/files/tablet.rules"
+    src: "{{ install_src }}/ansible/roles/udev-rules/files/tablet.rules.j2"
     dest: "/etc/udev/rules.d/10-huion-tablet.rules"
   become: yes
   notify: Reload udev rules
