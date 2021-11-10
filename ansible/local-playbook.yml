@@ -1,6 +1,9 @@
 - name: Setup dotfiles locally
   hosts: local
 
+  vars_files:
+    - env_vars.yml
+
   pre_tasks:
   - name: Ensure elevation privileges are granted
     command: "whoami"
@@ -33,6 +36,8 @@
       tags: [workflow, shell]
     - role: tmux
       tags: [workflow, tmux]
+    - role: gittools
+      tags: [workflow, gittools]
 
     - role: x11
       tags: [desktop, x11]
@@ -40,6 +45,8 @@
       tags: [desktop, qde]
     # - role: xmonad
     #   tags: [desktop, xmonad]
+    - role: kitty
+      tags: [desktop, workflow, terminal, kitty]
 
     - role: rust
       tags: [lang, rust]

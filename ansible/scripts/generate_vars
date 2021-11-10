@@ -1,0 +1,30 @@
+#!/bin/python3
+import yaml
+
+
+def dotenv_to_vars(dotenv):
+    vars = {}
+    for key, val in dotenv.items():
+        key = key.replace("-", "_")
+        if isinstance(val, dict):
+            sub = dotenv_to_vars(val)
+            for k, v in sub.items():
+                vars[f"{key}_{k}"] = v
+        else:
+            vars[key] = val
+    return vars
+
+
+if __name__ == "__main__":
+    with open(".env", "r") as fs:
+        dotenv = yaml.safe_load(fs)
+        vars = dotenv_to_vars(dotenv)
+        with open("ansible/env_vars.yml", "w") as vars_file:
+            dump = "\n".join([
+                "# This file was auto-generated.",
+                "# See `ansible/scripts/generate_vars` for details.",
+                "",
+                yaml.dump(vars)
+            ])
+            vars_file.write(dump)
+            print(f"Written env vars to ansible/env_vars.yml")

@@ -20,4 +20,4 @@ fi
 cd "$DF_HOME"
 git clone "$DF_REPO" .
 
-exec "$DF_REPO/bin/prepare"
+"$DF_REPO/bin/prepare"

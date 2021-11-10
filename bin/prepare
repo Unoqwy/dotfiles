@@ -1,7 +1,8 @@
 #!/bin/bash
 base=$(readlink -f "$(dirname $(readlink -f "$0"))/..")
 
-exec "$base/ansible/scripts/generate_install"
+"$base/ansible/scripts/generate_install"
+"$base/ansible/scripts/generate_vars"
 
 if [[ ! -f "$base/.env" ]]; then
     echo "Created new .env file"

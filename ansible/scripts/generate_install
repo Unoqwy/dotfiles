@@ -94,7 +94,7 @@ if __name__ == "__main__":
                     continue
                 with open(install_file_path, "w") as install_file:
                     dump = "\n".join([
-                        "# This file was auto-generated.", 
+                        "# This file was auto-generated.",
                         "# See `ansible/scripts/generate_install` for details.",
                         "",
                         yaml.dump(install_contents)
