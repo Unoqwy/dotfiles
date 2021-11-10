@@ -1,0 +1,7 @@
+- import_tasks: install.yml
+
+- name: Link tmux config dir
+  file:
+    src: "{{ install_src }}/.config/tmux"
+    dest: "{{ install_dest }}/.config/tmux"
+    state: link

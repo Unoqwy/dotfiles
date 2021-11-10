@@ -1,0 +1,12 @@
+- import_tasks: install.yml
+
+- name: Create .cargo directory
+  file:
+    path: "{{ install_dest }}/.cargo"
+    state: directory
+    mode: "0755"
+- name: Link cargo config
+  file:
+    src: "{{ install_src }}/ansible/roles/rust/files/cargo-config"
+    dest: "{{ install_dest }}/.cargo/config"
+    state: link

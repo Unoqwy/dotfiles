@@ -1,0 +1,16 @@
+# vim:ft=gitconfig
+
+[init]
+	defaultBranch = master
+[pull]
+	rebase = false
+[advice]
+	addIgnoredFile = false
+
+[user]
+	name = Unoqwy
+	email = julien.qwy@gmail.com
+[commit]
+	gpgsign = true
+[credential]
+	helper = store

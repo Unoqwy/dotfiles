@@ -1,0 +1,7 @@
+- import_tasks: install.yml
+
+- name: Link .gitconfig
+  file:
+    src: "{{ install_src }}/ansible/roles/git/files/config"
+    dest: "{{ install_dest }}/.gitconfig"
+    state: link

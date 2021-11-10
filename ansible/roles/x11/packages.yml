@@ -1,0 +1,6 @@
+pacman:
+  - xorg
+  - xorg-xinit
+  - libxss
+  - xdotool
+  - xbindkeys

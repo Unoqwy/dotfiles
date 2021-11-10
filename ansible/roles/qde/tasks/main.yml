@@ -1,0 +1,7 @@
+- import_tasks: install.yml
+
+- name: Link .Xresources
+  file:
+    src: "{{ install_src }}/ansible/roles/qde/files/Xresources"
+    dest: "{{ install_dest }}/.Xresources"
+    state: link

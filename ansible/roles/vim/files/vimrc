@@ -1,3 +1,5 @@
+" vim:ft=vim
+"
 " Minimal .vimrc with no plugins
 " to use as an alternative when nvim config cannot be used.
 " Also used as a base in .ideavimrc.

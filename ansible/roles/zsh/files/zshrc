@@ -1,5 +1,4 @@
 #!/bin/sh
-
 bindkey -v
 setopt autocd
 
@@ -100,6 +99,7 @@ alias anl="ansible-lint"
 
 # system
 alias synclock="sudo ntpd -gq"
+alias octperm="stat -c %a"
 
 # cargo run test with stdout
 alias cto="cargo test -- --nocapture"

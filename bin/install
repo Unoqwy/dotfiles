@@ -1,0 +1,15 @@
+#!/bin/bash
+if [[ "$EUID" == 0 ]]; then
+    echo "This should not be run as root!"
+    exit 1
+fi
+
+if ! command -v ansible > /dev/null; then
+    echo "Ansible not found, trying to install with package manager."
+    if cat /etc/os-release | grep ID=arch > /dev/null; then
+        sudo pacman -Sy ansible
+    fi
+fi
+
+ansible-galaxy collection install -r ansible/requirements.yml
+ansible-playbook -i ansible/hosts ansible/local-playbook.yml -K $@

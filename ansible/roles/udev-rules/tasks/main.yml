@@ -1,0 +1,16 @@
+- name: Create Huion tablet remap udev rule
+  template:
+    src: "{{ install_src }}/ansible/roles/udev-rules/files/tablet.rules"
+    dest: "/etc/udev/rules.d/10-huion-tablet.rules"
+  become: yes
+  notify: Reload udev rules
+- file:
+    path: "/etc/udev/rules.d/10-huion-tablet"
+    state: directory
+    mode: "0755"
+  become: yes
+- copy:
+    src: "{{ install_src }}/ansible/roles/udev-rules/files/tablet-pad-bind.sh"
+    dest: "/etc/udev/rules.d/10-huion-tablet/pad"
+    mode: "0755"
+  become: yes

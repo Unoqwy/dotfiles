@@ -1,0 +1,26 @@
+#!/bin/sh
+xset r rate 600 35
+
+[[ -f "$HOME/.Xmodmap" ]] && xmodmap "$HOME/.Xmodmap"
+[[ -f "$HOME/.xbindkeysrc.scm" ]] && xbindkeys -f "$HOME/.xbindkeysrc.scm"
+[[ -f "$HOME/.Xresources" ]] && xrdb -load "$HOME/.Xresources"
+
+[[ -f "$HOME/.xinitrc-local" ]] && source "$HOME/.xinitrc-local"
+[[ -f "$HOME/.inputremap" ]] && sh "$HOME/.inputremap"
+
+# XDG
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_CACHE_HOME="$HOME/.cache"
+
+# Set wallpaper
+[[ -f "$HOME/.fehbg" ]] && sh "$HOME/.fehbg"
+
+# Reset pipes
+function mkpipe {
+    if [[ -p "$1" ]]; then
+        rm "$1"
+    fi
+    mkfifo "$1"
+}
+
+source "$HOME/.xinitwm"

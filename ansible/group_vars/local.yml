@@ -1,0 +1,11 @@
+# Dir variables
+userhome: "{{ '$HOME' | expanduser }}"
+dotfiles_clone_dir: "{{ playbook_dir }}/../"
+install_src: "{{ dotfiles_clone_dir | realpath }}"
+install_dest: "{{ userhome }}"
+
+# Misc
+xautority_file: "{{ userhome }}/.Xautority"
+
+# Interpreters
+ansible_python_interpreter: "/usr/bin/python3"

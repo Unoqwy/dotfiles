@@ -9,14 +9,13 @@ set ideajoin
 set ideamarks
 set surround
 
-" damn you ugly thing
 set ideastatusicon=disabled
 
 nnoremap <C-P> :action GotoClass<CR>
 nnoremap <leader>fo :action GotoFile<CR>
 nnoremap <leader>fg :action FindInPath<CR>
 
-# code navigation
+" code navigation
 nmap gd :action GotoDeclaration<CR>
 nmap gy :action GotoTypeDeclaration<CR>
 nmap gi :action GotoImplementation<CR>
@@ -24,7 +23,7 @@ nmap gr :action ShowUsages<CR>
 
 nmap [d :action GotoPreviousError<CR>
 nmap ]d :action GotoNextError<CR>
-# nmap <leader>dl - no way to show all errors on line? :(
+" nmap <leader>dl - no way to show all errors on line? :(
 nmap <leader>dh :action ShowErrorDescription<CR>
 
 nnoremap K :action QuickJavaDoc<CR>

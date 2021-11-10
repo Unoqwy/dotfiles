@@ -1,0 +1,14 @@
+_:
+  # Dynamic menus
+  - pacman: [dmenu, rofi, rofi-calc]
+    aur: [rofi-greenclip]
+
+  # General tools
+  - pacman: [picom, flameshot, libnotify, dunst, sxiv]
+
+  # Audio
+  - pacman: [libpulse, pipewire-pulse, pavucontrol, pamixer]
+
+  # Network
+  - pacman: [networkmanager]
+    aur: [networkmanager-dmenu-git]

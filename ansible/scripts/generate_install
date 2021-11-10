@@ -1,0 +1,105 @@
+#!/bin/python3
+
+import sys
+import os
+import yaml
+
+
+PKG_MANAGERS = {
+    "pacman": (True, [
+        ("community.general.pacman", ("package", "{0}")),
+        ("when", "ansible_pkg_mgr == 'pacman'")
+    ], "pacman"),
+    "aur": (True, [
+        ("kewlfft.aur.aur", [("use", "paru"), ("name", "{0}")]),
+        ("when", "ansible_pkg_mgr == 'pacman'")
+    ], "paru"),
+}
+
+
+def generate_install_file_contents(pkgs_desc):
+    contents = []
+    if "_" in pkgs_desc:
+        # Alternative way allowing to comment groups
+        groups = pkgs_desc["_"]
+        for group in groups:
+            for pkg_manager in group.keys():
+                if not pkg_manager in PKG_MANAGERS.keys():
+                    continue
+                a(pkg_manager, group[pkg_manager], contents)
+    else:
+        for pkg_manager in PKG_MANAGERS.keys():
+            if not pkg_manager in pkgs_desc:
+                continue
+            a(pkg_manager, pkgs_desc[pkg_manager], contents)
+    return contents
+
+
+def a(pkg_manager, pkgs, contents):
+    if not isinstance(pkgs, list):
+        pkgs = [pkgs]
+    support_list, items, rename = PKG_MANAGERS[pkg_manager]
+    if support_list:
+        entry = { "name": f"Install {','.join(pkgs)} with {rename}" }
+        for append in items:
+            write_to_entry(entry, pkgs, append)
+        contents.append(entry)
+    else:
+        for pkg in pkgs:
+            entry = { "name": f"Install {pkg} with {rename}" }
+            for append in items:
+                write_to_entry(entry, pkg, append)
+            contents.append(entry)
+
+
+def write_to_entry(entry, pkg, append):
+    key, val = append
+    if isinstance(val, tuple):
+        sub = {}
+        write_to_entry(sub, pkg, val)
+        entry[key] = sub
+    elif isinstance(val, list):
+        sub = {}
+        for subval in val:
+            write_to_entry(sub, pkg, subval)
+        entry[key] = sub
+    else:
+        if isinstance(pkg, list) and val == "{0}":
+            entry[key] = pkg
+        else:
+            entry[key] = val.format(pkg)
+
+
+if __name__ == "__main__":
+    roles_dir = "ansible/roles/"
+
+    for dir in os.listdir(roles_dir):
+        dir_path = os.path.join(roles_dir, dir)
+        if not os.path.isdir(dir_path):
+            continue
+        pkgs_path = os.path.join(dir_path, "packages.yml")
+        if not os.path.isfile(pkgs_path):
+            continue
+
+        tasks_dir_path = os.path.join(dir_path, "tasks")
+        if not os.path.isdir(tasks_dir_path):
+            os.makedirs(tasks_dir_path)
+        install_file_path = os.path.join(tasks_dir_path, "install.yml")
+
+        with open(pkgs_path, "r") as fs:
+            try:
+                pkgs_desc = yaml.safe_load(fs)
+                install_contents = generate_install_file_contents(pkgs_desc)
+                if not install_contents:
+                    continue
+                with open(install_file_path, "w") as install_file:
+                    dump = "\n".join([
+                        "# This file was auto-generated.", 
+                        "# See `ansible/scripts/generate_install` for details.",
+                        "",
+                        yaml.dump(install_contents)
+                    ])
+                    install_file.write(dump)
+                    print(f"Written install file '{install_file_path}'")
+            except yaml.YAMLError as err:
+                print(f"YAML file '{pkgs_path}' cannot be parsed.", file=sys.stderr)
