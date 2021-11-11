@@ -64,8 +64,11 @@
       tags: [desktop, terminal, alacritty]
     - role: wezterm
       tags: [desktop, terminal, wezterm]
+
     - role: udev-rules
       tags: [desktop, system, udev-rules]
+    - role: greetd
+      tags: [desktop, system, greetd]
 
     - role: rust
       tags: [lang, rust]

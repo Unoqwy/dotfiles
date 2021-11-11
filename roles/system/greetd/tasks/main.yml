@@ -1,0 +1,12 @@
+- import_tasks: install.yml
+
+- name: Create greetd config
+  template:
+    src: "{{ install_src }}/roles/system/greetd/files/config.toml"
+    dest: "/etc/greetd/config.toml"
+  become: yes
+- name: Enable greetd on start
+  systemd:
+    name: greetd.service
+    enabled: yes
+  become: yes
