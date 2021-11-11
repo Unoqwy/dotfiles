@@ -1,0 +1,17 @@
+- name: Prepare local machine for dotfiles binary usage
+  hosts: local
+
+  vars_files:
+  - vars/dirs.yml
+
+  pre_tasks:
+  - name: Ensure python3-pip is installed (pacman)
+    community.general.pacman:
+      package:
+      - python-pip
+    when: ansible_pkg_mgr == 'pacman'
+
+  tasks:
+  - name: Install pick package
+    pip:
+      name: pick

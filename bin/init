@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Script to be run when the repo was just cloned.
+# It will ensure pick is installed to choose tags when using bin/install later on.
+
+if [[ "$EUID" == 0 ]]; then
+    echo "This should not be run as root!"
+    exit 1
+fi
+
+ansible-playbook -i ansible/hosts ansible/preinstall-playbook.yml -K $@

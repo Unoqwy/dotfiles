@@ -1,0 +1,14 @@
+#!/bin/python3
+import yaml
+from pick import pick
+
+import sys
+import subprocess
+
+
+title = "Select components to install (SPC to mark, ENTER to continue)"
+options = yaml.safe_load(sys.argv[2])
+selected = pick(options, title, indicator="->", multiselect=True, min_selection_count=1)
+
+tags = map(lambda s: s[0], selected)
+subprocess.run(f"{sys.argv[1]} -K --tags {','.join(tags)}", shell=True)

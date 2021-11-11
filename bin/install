@@ -26,5 +26,6 @@ if ! "$base/bin/prepare" 1>/dev/null; then
 fi
 
 ansible-galaxy collection install -r ansible/requirements.yml
-ANSIBLE_CONFIG=ansible/ansible.cfg ansible-playbook -i ansible/hosts \
-    local-playbook.yml -K $@
+
+options=$("$base/bin/anp" --list-tags | awk -F"TASK TAGS:" '{print $2}' | xargs echo -n)
+"$base/bin/select-tags" "$base/bin/anp" "$options"
