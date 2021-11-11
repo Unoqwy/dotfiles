@@ -5,6 +5,7 @@ hie.yaml
 prompt-history
 
 **/.env
+xinit.env
 
 # cabal output
 dist-newstyle/
