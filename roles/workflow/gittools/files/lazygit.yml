@@ -1,0 +1,10 @@
+notARepository: "skip"
+
+gui:
+  language: "en"
+  mouseEvents: false
+  showFileTree: true
+  showRandomTip: false
+
+update:
+  method: never

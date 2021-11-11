@@ -7,8 +7,9 @@ import yaml
 
 PKG_MANAGERS = {
     "pacman": (True, [
-        ("community.general.pacman", ("package", "{0}")),
-        ("when", "ansible_pkg_mgr == 'pacman'")
+        ("community.general.pacman", [("update_cache", "yes"), ("package", "{0}")]),
+        ("when", "ansible_pkg_mgr == 'pacman'"),
+        ("become", "yes"),
     ], "pacman"),
     "aur": (True, [
         ("kewlfft.aur.aur", [("use", "paru"), ("name", "{0}")]),

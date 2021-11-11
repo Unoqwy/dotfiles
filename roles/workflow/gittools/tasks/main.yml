@@ -1,1 +1,11 @@
 - import_tasks: install.yml
+
+- name: Create lazygit config directory
+  file:
+    path: "{{ install_dest }}/.config/lazygit"
+    state: directory
+- name: Link lazygit config
+  file:
+    src: "{{ install_src }}/roles/workflow/gittools/files/lazygit.yml"
+    dest: "{{ install_dest }}/.config/lazygit/config.yml"
+    state: link
