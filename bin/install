@@ -25,7 +25,16 @@ if ! "$base/bin/prepare" 1>/dev/null; then
     exit 1
 fi
 
-ansible-galaxy collection install -r ansible/requirements.yml
+# install dependencies and ignore messages when all is installed
+ansible-galaxy collection install -r ansible/requirements.yml \
+    | grep -v 'Starting galaxy collection install process' \
+    | grep -v 'Nothing to do.'
 
-options=$("$base/bin/anp" --list-tags | awk -F"TASK TAGS:" '{print $2}' | xargs echo -n)
-"$base/bin/select-tags" "$base/bin/anp" "$options"
+if [[ "$1" == "pick" ]]; then
+    options=$("$base/bin/anp" --list-tags | awk -F"TASK TAGS:" '{print $2}' | xargs echo -n)
+    "$base/bin/select-tags" "$base/bin/anp" "$options"
+elif [[ -n "$1" ]]; then
+    "$base/bin/anp" -K $@
+else
+    "$base/bin/anp" -K
+fi
