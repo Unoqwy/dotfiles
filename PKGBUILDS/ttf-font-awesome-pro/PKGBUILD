@@ -2,6 +2,7 @@ pkgname=ttf-font-awesome-pro
 pkgver=5.15.4
 pkgrel=1
 pkgdesc="Font Awesome Pro TTF fonts"
+arch=("any")
 license=("custom:Font Awesome Pro License")
 source=("https://pro.fontawesome.com/releases/v$pkgver/webfonts/fa-regular-400.ttf"
         "https://pro.fontawesome.com/releases/v$pkgver/webfonts/fa-light-300.ttf"

@@ -1,0 +1,5 @@
+- name: Install Font Awesome Pro Fonts
+  kewlfft.aur.aur:
+    use: makepkg
+    name: ttf-font-awesome-pro
+    local_pkgbuild: "{{ install_src }}/PKGBUILDS/ttf-font-awesome-pro"
