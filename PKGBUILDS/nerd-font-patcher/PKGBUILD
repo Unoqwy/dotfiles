@@ -1,0 +1,39 @@
+_pkgname=nerd-fonts-patcher
+_repo="https://github.com/ryanoasis/nerd-fonts"
+
+pkgname=$_pkgname-git
+pkgver=v2.1.0.152.gb9e5b3a
+pkgrel=1
+pkgdesc="Nerd-fonts' font-patcher utility"
+url="https://github.com/ryanoasis/nerd-fonts"
+license=("MIT")
+depends=("python" "fontforge")
+makedepends=("git")
+provides=("$_pkgname")
+conflicts=("$_pkgname")
+
+prepare() {
+    git clone --filter=blob:none --sparse "$_repo" nerd-fonts
+
+    cd nerd-fonts
+    git sparse-checkout add src/glyphs
+    git sparse-checkout add src/svgs
+}
+
+pkgver() {
+    cd nerd-fonts
+    git describe --tags --long | sed 's/-/./g'
+}
+
+package() {
+    cd nerd-fonts
+
+    mkdir -p "$pkgdir/usr/bin"
+    mkdir -p "$pkgdir/opt/nerd-fonts"
+
+    cp "font-patcher" "$pkgdir/usr/bin/nerd-fonts-patcher"
+    sed -i 's/__dir__ + "\/src\/glyphs\/"/"\/opt\/nerd-fonts\/glyphs\/"/g' \
+        "$pkgdir/usr/bin/nerd-fonts-patcher"
+    cp -r src/glyphs "$pkgdir/opt/nerd-fonts/glyphs"
+    cp -r src/svgs "$pkgdir/opt/nerd-fonts/svgs"
+}
