@@ -6,6 +6,7 @@ import qualified XMonad.StackSet as W
 
 import XMonad.Hooks.InsertPosition (insertPosition, Focus(..), Position(..))
 import XMonad.Util.SpawnOnce (spawnOnce)
+import XMonad.Util.Hacks (windowedFullscreenFixEventHook)
 
 import System.Environment (lookupEnv, setEnv)
 import qualified Data.Bifunctor
@@ -59,6 +60,6 @@ startupHook = do
 hooks :: EnvConfig -> XConfig a -> XConfig a
 hooks conf xconf = xconf {
     XMonad.startupHook = startupHook <+> XMonad.startupHook xconf
-  , XMonad.handleEventHook = Hooks.Manage.handleEventHook
+  , XMonad.handleEventHook = Hooks.Manage.handleEventHook <+> windowedFullscreenFixEventHook
   , XMonad.manageHook  = insertPosition Below Newer <+> Hooks.Manage.manageHook conf
   }
