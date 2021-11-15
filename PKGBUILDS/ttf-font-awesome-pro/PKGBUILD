@@ -1,0 +1,26 @@
+pkgname=ttf-font-awesome-pro
+pkgver=5.15.4
+pkgrel=1
+pkgdesc="Font Awesome Pro TTF fonts"
+license=("custom:Font Awesome Pro License")
+source=("https://pro.fontawesome.com/releases/v$pkgver/webfonts/fa-regular-400.ttf"
+        "https://pro.fontawesome.com/releases/v$pkgver/webfonts/fa-light-300.ttf"
+        "https://pro.fontawesome.com/releases/v$pkgver/webfonts/fa-solid-900.ttf"
+        "https://pro.fontawesome.com/releases/v$pkgver/webfonts/fa-brands-400.ttf"
+        "https://pro.fontawesome.com/releases/v$pkgver/webfonts/fa-duotone-900.ttf")
+sha256sums=('0d2ab10110edd1e3d4d342a886ba1bfde4d253271580ece3e2345f2c2a5bd6c8'
+            'b5f9cd44c2ad5defc174e7323ed4f2c3202ca06fd48ab9fb343994e2d18ed2a8'
+            '79fc8a96e647e26599745a693baa61a4136d3834c1134ccfef4cbfac9dff1783'
+            'e428f5fa89da4b45c2187dc129026283c41b8b3ceed74540fc372680975b2b47'
+            '5eb0df3449b8f788de303dc9b9d2c68529f92296461ef7dddc39a233256d19ef')
+
+package() {
+    target="$pkgdir/usr/share/fonts/TTF"
+    mkdir -p "$target"
+    install -Dm644 -t "$target" *.ttf
+
+    cd "$target"
+    for f in *; do
+        mv "$f" "${f/fa-/fa-pro-}"
+    done
+}
