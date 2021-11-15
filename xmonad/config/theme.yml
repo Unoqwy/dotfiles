@@ -1,0 +1,16 @@
+border:
+  width: 2
+  normal: "#191919"
+  focused: "#303030"
+
+prompt:
+  font: JetBrains Mono
+  fontSize: 8
+
+  foreground: "#aea9b1"
+  background: "#191919"
+  selectedForeground: "#e3e1e4"
+  selectedBackground: "#303030"
+
+  borderWidth: 2
+  borderColor: "#303030"

@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 import Xmobar
 
 import Control.Monad (when, void)
@@ -7,39 +8,39 @@ import System.Environment.Blank (getEnvDefault)
 import Data.List.Split (splitOn)
 import qualified Configuration.Dotenv as Dotenv
 
-import qualified QMonad.Shared.Theme as T
+import qualified QMonad.Shared.XmobarColors as C
 
 -- Config
 config :: (String, String, [(String, String)], Int) -> Config
 config (scriptsDir, weatherStation, networkCards, fontTailor) = defaultConfig {
   -- General behavior
-    hideOnStart      = False
-  , allDesktops      = True
+    hideOnStart = False
+  , allDesktops = True
   , overrideRedirect = True
-  , persistent       = False
+  , persistent = False
 
   -- Appearance
-  , font            = "xft:Jetbrains Mono:size=" ++ show (11 + fontTailor) ++ ":antialias=true:hinting=true"
+  , font = "xft:JetBrains Mono:size=" ++ show (11 + fontTailor) ++ ":antialias=true:hinting=true"
   , additionalFonts = [
       "xft:Ubuntu Nerd Font:size=" ++ show (10 + fontTailor)
     , "xft:Font Awesome 5 Pro:size=" ++ show (10 + fontTailor) ++ ":style=Solid"
   ]
-  , textOffset  = 16
+  , textOffset = 16
   , textOffsets = [-1, 16]
 
-  , fgColor  = "#848089"
-  , bgColor  = "#191919"
-  , alpha    = 230
+  , fgColor = C.foreground
+  , bgColor = C.background
+  -- , alpha    = 230
   , position = Top
-  , border   = NoBorder
+  , border = NoBorder
 
   -- Layout
-  , sepChar  = "%"
+  , sepChar = "%"
   , alignSep = "}{"
   , template =
          " "
 
-      ++ "<fc=#be7572>%memory% %cpu% %multicoretemp%</fc>"
+      ++ "<fc=" ++ C.sysMonitor ++ ">%memory% %cpu% %multicoretemp%</fc>"
       ++ " "
       ++ "%XmonadInfo%"
       ++ "}"
@@ -68,13 +69,13 @@ config (scriptsDir, weatherStation, networkCards, fontTailor) = defaultConfig {
     , Run $ Weather weatherStation ["-t", "<tempC>°C", "-x", "<fn=0></fn>"] 18000
     , Run $ Battery ["-t", "<acstatus>", "--", "-o", "<fn=2>\xf242</fn><fn=1> </fn><left>%", "-O", "<fn=2>\xf376</fn> <left>%", "-i", ""] 50
     , Run $ Com "sh" [scriptsDir ++ "get-volume"] "vol" 30
-    , Run $ Date ("<fc=" ++ T.brightFgColor ++ "><fn=2>\xf017</fn><fn=1> </fn>%I:%M:%S<fn=1> </fn>%p</fc> %a-%d") "formattedTime" 2
+    , Run $ Date ("<fc=" ++ C.time ++ "><fn=2>\xf017</fn><fn=1> </fn>%I:%M:%S<fn=1> </fn>%p</fc> %a-%d") "formattedTime" 2
 
   -- Network cards dynamic commands
   ] ++ map (\(networkCard, icon) -> Run $ Network networkCard [
-      "-t", "<fc=#72beb3><rx>kB<fn=1> </fn><fn=2>\xf063</fn></fc>"
-         ++ "<fn=1> </fn><fc=" ++ T.darkFgColor ++ "><fn=2>" ++ defIcon icon ++ "</fn></fc><fn=1> </fn>"
-         ++ "<fn=2>\xf062</fn><fn=1> </fn><tx>kB"
+      "-t", "<fc=" ++ C.networkDown ++ "><rx>kB<fn=1> </fn><fn=2>\xf063</fn></fc>"
+         ++ "<fn=1> </fn><fc=" ++ C.networkIcon ++ "><fn=2>" ++ defIcon icon ++ "</fn></fc><fn=1> </fn>"
+         ++ "<fn=2>\xf062</fn><fn=1> </fn><fc=" ++ C.networkUp ++ "><tx>kB</fc>"
     , "-m", "2", "-c", " ", "-x", "~" ++ networkCard ++ "~"
   ] 10) networkCards
 }

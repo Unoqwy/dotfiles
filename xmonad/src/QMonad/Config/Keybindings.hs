@@ -146,7 +146,7 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
   , ((modm, xK_q), wsScratchpadTerminalAction conf)
 
   -- Workspaces
-  , ((modm .|. shiftMask, xK_r), renameCurrentWorkspace XP.defaultConfig)
+  , ((modm .|. shiftMask, xK_r), renameCurrentWorkspace xpConfig)
   , ((modm .|. shiftMask, xK_v), toggleCurrentWorkspaceVisibility)
 
   -- X server and xmonad control
@@ -176,3 +176,4 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
   where
     scratchpads = Scratchpads.scratchpads conf
     gotoWs i = windows $ W.greedyView i
+    xpConfig = XP.defaultConfig conf

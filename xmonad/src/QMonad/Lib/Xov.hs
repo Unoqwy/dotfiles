@@ -65,7 +65,7 @@ fi = fromIntegral
 
 getBounds :: XovConf -> (Dimension ,Dimension)
 getBounds conf = (w, h)
-  where a = \a -> fi (2 * borderWidth conf) + a
+  where a a = fi (2 * borderWidth conf) + a
         ibs = sum [fromEnum $ showValue conf, fromEnum . isJust $ icon conf]
         icn = if isJust $ icon conf then iconWidth conf else 0
         vl = if showValue conf then valueWidth conf else 0

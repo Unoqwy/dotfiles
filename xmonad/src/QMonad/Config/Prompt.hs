@@ -1,31 +1,33 @@
 module QMonad.Config.Prompt (
-    defaultConfig
+  defaultConfig
 ) where
 
 import XMonad.Prompt
 import XMonad.Prompt.FuzzyMatch (fuzzyMatch)
 
-import qualified QMonad.Shared.Theme as T
+import QMonad.Config.Env (EnvConfig(..))
+import qualified QMonad.Config.Theme as T
 
-defaultConfig :: XPConfig
-defaultConfig = def {
-    font     = T.secondFont 11
-  , bgColor  = T.bgColor
-  , fgColor  = T.fgColor
-  , bgHLight = T.primaryColor
-  , fgHLight = T.fgOnPrimColor
+defaultConfig :: EnvConfig -> XPConfig
+defaultConfig conf = def {
+    font = "xft:" ++ T.font t' ++ ":size=" ++ show (T.fontSize t')
+              ++ ":antialias=true:hinting=true"
+  , fgColor = T.foreground t'
+  , bgColor = T.background t'
+  , fgHLight = T.selectedForeground t'
+  , bgHLight = T.selectedBackground t'
 
-  , borderColor       = T.primaryColor
-  , promptBorderWidth = 1
+  , promptBorderWidth = fromIntegral $ T.borderWidth t'
+  , borderColor = T.borderColor t'
 
   , position = Top
-  , height   = 24
+  , height = 24
 
   , autoComplete = Just 10000
   , maxComplRows = Just 2
-  , historySize   = 100
+  , historySize = 100
   , historyFilter = id
   , searchPredicate = fuzzyMatch
   , alwaysHighlight = True
   }
-
+  where t' = T.prompt . theme $ conf

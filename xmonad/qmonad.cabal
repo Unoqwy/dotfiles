@@ -2,7 +2,7 @@ cabal-version: >=1.10
 build-type: Simple
 
 name: qmonad
-version: 1.4.1
+version: 1.5.0
 author: Unoqwy <julien.qwy@gmail.com>
 license: MIT
 
@@ -14,11 +14,13 @@ library
     base >=4.9 && <5,
     containers,
     bifunctors,
+    either,
     X11 >=1.10,
-    X11-xft >= 0.3,
+    X11-xft >=0.3,
     time,
     process,
     utf8-string,
+    yaml,
     xmonad >=0.16.9999,
     xmonad-contrib >=0.16.999
 
@@ -34,6 +36,7 @@ executable qmonad
     QMonad.Config.Prompt
     QMonad.Config.Xmobar
     QMonad.Config.Scratchpads
+    QMonad.Config.Theme
     QMonad.Config.ControlSliders
     QMonad.Config.Util
     QMonad.Config.Hooks.General
@@ -46,18 +49,20 @@ executable qmonad
     QMonad.Lib.Xov
     QMonad.Lib.Sliders
     QMonad.Lib.WorkspaceMasks
-    QMonad.Shared.Theme
+    QMonad.Shared.XmobarColors
 
   default-language: Haskell2010
   build-depends:
     base,
     containers,
     bifunctors,
+    either,
     X11,
     X11-xft,
     time,
     process,
     utf8-string,
+    yaml,
     xmonad,
     xmonad-contrib
 
@@ -66,7 +71,7 @@ executable qmobar
   hs-source-dirs: src
 
   other-modules:
-    QMonad.Shared.Theme
+    QMonad.Shared.XmobarColors
 
   default-language: Haskell2010
   build-depends:
