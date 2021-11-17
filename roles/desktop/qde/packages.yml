@@ -10,5 +10,8 @@ _:
   - pacman: [libpulse, pipewire-pulse, pavucontrol, pamixer]
 
   # Network
-  - pacman: [networkmanager]
+  - pacman: [networkmanager, network-manager-applet]
     aur: [networkmanager-dmenu-git]
+
+  # Fonts
+  - pacman: [fontforge, ttf-jetbrains-mono]
