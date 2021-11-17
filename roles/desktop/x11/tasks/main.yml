@@ -1,5 +1,3 @@
-- import_tasks: install.yml
-
 - name: Link .xinitrc
   file:
     src: "{{ install_src }}/roles/desktop/x11/files/xinitrc"

@@ -1,7 +1,3 @@
-- import_tasks: install.yml
-- import_tasks: bins.yml
-- import_tasks: fonts.yml
-
 - name: Link .Xresources
   file:
     src: "{{ install_src }}/roles/desktop/qde/files/Xresources"

@@ -1,5 +1,3 @@
-- import_tasks: install.yml
-
 - name: Link unread-bell config
   file:
     src: "{{ install_src }}/roles/apps/discord/unread-bell"

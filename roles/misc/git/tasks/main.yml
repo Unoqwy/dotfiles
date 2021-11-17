@@ -1,5 +1,3 @@
-- import_tasks: install.yml
-
 - name: Link .gitconfig
   file:
     src: "{{ install_src }}/roles/misc/git/files/config"

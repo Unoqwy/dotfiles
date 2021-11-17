@@ -1,5 +1,3 @@
-- import_tasks: install.yml
-
 - name: Create greetd config
   template:
     src: "{{ install_src }}/roles/system/greetd/files/config.toml"

@@ -1,5 +1,3 @@
-- import_tasks: install.yml
-
 - name: Link .zshrc
   file:
     src: "{{ install_src }}/roles/workflow/zsh/files/zshrc"

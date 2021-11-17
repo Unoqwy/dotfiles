@@ -1,5 +1,3 @@
-- import_tasks: install.yml
-
 - name: Create kitty config directory
   file:
     path: "{{ install_dest }}/.config/kitty"
