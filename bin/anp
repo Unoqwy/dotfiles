@@ -1,3 +1,2 @@
-#!/bin/sh
-ANSIBLE_CONFIG=ansible/ansible.cfg ansible-playbook -i ansible/hosts \
-    local-playbook.yml $@
+#!/bin/bash
+ANSIBLE_CONFIG=ansible/ansible.cfg ansible-playbook -i ansible/hosts $@

@@ -2,7 +2,7 @@
   hosts: local
 
   vars_files:
-  - vars/dirs.yml
+  - ../ansible/vars/dirs.yml
 
   pre_tasks:
   - name: Ensure python3-pip is installed (pacman)
@@ -12,6 +12,12 @@
     when: ansible_pkg_mgr == 'pacman'
 
   tasks:
-  - name: Install pick package
+  - name: Install pick module (pip)
     pip:
       name: pick
+  - name: Install PARU helper (AUR)
+    kewlfft.aur.aur:
+      name: paru
+      use: makepkg
+      state: present
+    when: ansible_pkg_mgr == 'pacman'

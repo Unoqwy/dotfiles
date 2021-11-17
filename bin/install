@@ -25,16 +25,28 @@ if ! "$base/bin/prepare" 1>/dev/null; then
     exit 1
 fi
 
+_pwd=$("$base/bin/__/prompt-password")
+if [[ -z "$_pwd" ]]; then
+    echo "Invalid sudo password"
+    exit 1
+fi
+printf "\n"
+
+function anp {
+    "$base/bin/anp" "$base/playbooks/$1-playbook.yml" ${@:2}
+}
+
 # install dependencies and ignore messages when all is installed
 ansible-galaxy collection install -r ansible/requirements.yml \
     | grep -v 'Starting galaxy collection install process' \
     | grep -v 'Nothing to do.'
 
 if [[ "$1" == "pick" ]]; then
-    options=$("$base/bin/anp" --list-tags | awk -F"TASK TAGS:" '{print $2}' | xargs echo -n)
-    "$base/bin/select-tags" "$base/bin/anp" "$options"
-elif [[ -n "$1" ]]; then
-    "$base/bin/anp" -K $@
+    options=$(anp main --list-tags | awk -F"TASK TAGS:" '{print $2}' | xargs echo -n)
+    "$base/bin/select-tags" "$base/bin/anp $base/playbooks/main-playbook.yml" "$options"
 else
-    "$base/bin/anp" -K
+    mkdir -p "$HOME/.config"
+    mkdir -p "$HOME/.local/bin"
+
+    echo "$_pwd" | anp main --become-password-file - $@
 fi

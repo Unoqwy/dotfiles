@@ -8,4 +8,5 @@ if [[ "$EUID" == 0 ]]; then
     exit 1
 fi
 
-ansible-playbook -i ansible/hosts ansible/preinstall-playbook.yml -K $@
+base=$(readlink -f "$(dirname $(readlink -f "$0"))/..")
+"$base/bin/anp" "$base/playbooks/init-playbook.yml" -K

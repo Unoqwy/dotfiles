@@ -2,38 +2,9 @@
   hosts: local
 
   vars_files:
-    - ansible/vars/dirs.yml
-    - ansible/vars/misc.yml
-    - ansible/env_vars.yml
-
-  pre_tasks:
-  - name: Ensure elevation privileges are granted
-    command: "whoami"
-    changed_when: False
-    become: yes
-  - name: Ensure dotfiles destination directory exists
-    file:
-      path: "{{ install_dest }}"
-      state: directory
-  - name: Ensure XDG config directory exists
-    file:
-      path: "{{ install_dest }}/.config"
-      state: directory
-  - name: Ensure .local directory exists
-    file:
-      path: "{{ install_dest }}/.local"
-      state: directory
-  - name: Ensure .local/bin directory exists
-    file:
-      path: "{{ install_dest }}/.local/bin"
-      state: directory
-
-  - name: Install PARU helper
-    kewlfft.aur.aur:
-      name: paru
-      use: makepkg
-      state: present
-    when: ansible_pkg_mgr == 'pacman'
+    - ../ansible/vars/dirs.yml
+    - ../ansible/vars/misc.yml
+    - ../ansible/env_vars.yml
 
   roles:
     - role: git
