@@ -18,12 +18,14 @@ PKG_MANAGERS = {
         ("when", "ansible_pkg_mgr == 'pacman'")
     ], "paru"),
 }
+STANDALONE_TASKS = os.path.abspath(os.path.join("ansible", "standalone_tasks"))
 
 
 ## Packages
 
 def generate_install_file_contents(pkgs_desc):
     contents = []
+    require_package_facts = False
     if "_" in pkgs_desc:
         # Alternative way allowing to comment groups
         groups = pkgs_desc["_"]
@@ -31,37 +33,56 @@ def generate_install_file_contents(pkgs_desc):
             for pkg_manager in group.keys():
                 if not pkg_manager in PKG_MANAGERS.keys():
                     continue
-                generate_pkgs_contents(pkg_manager, group[pkg_manager], contents)
+                require_package_facts |= generate_pkgs_contents(pkg_manager, group[pkg_manager], contents)
     else:
         for pkg_manager in PKG_MANAGERS.keys():
             if not pkg_manager in pkgs_desc:
                 continue
-            generate_pkgs_contents(pkg_manager, pkgs_desc[pkg_manager], contents)
+            require_package_facts |= generate_pkgs_contents(pkg_manager, pkgs_desc[pkg_manager], contents)
+    if require_package_facts:
+        contents.insert(0, { "include_tasks": f"{STANDALONE_TASKS}/gather_package_facts.yml" })
     return contents
 
 
 def generate_pkgs_contents(pkg_manager, pkgs, contents):
+    require_package_facts = False
     if not isinstance(pkgs, list):
         pkgs = [pkgs]
+    str_pkgs, dict_pkgs = [], []
+    for pkg in pkgs:
+        if isinstance(pkg, dict):
+            dict_pkgs.append(pkg)
+        elif isinstance(pkg, str):
+            str_pkgs.append(pkg)
+
     support_list, items, rename = PKG_MANAGERS[pkg_manager]
     if support_list:
-        str_pkgs = [pkg_to_str(pkg) for pkg in pkgs]
         entry = { "name": f"Install {','.join(str_pkgs)} with {rename}" }
         for append in items:
-            write_to_entry(entry, pkgs, append)
+            write_to_entry(entry, str_pkgs, append)
         contents.append(entry)
     else:
-        for pkg in pkgs:
+        for pkg in str_pkgs:
             entry = { "name": f"Install {pkg} with {rename}" }
             for append in items:
                 write_to_entry(entry, pkg, append)
             contents.append(entry)
 
+    for dict_pkg in dict_pkgs:
+        name = dict_pkg["name"]
+        unless = dict_pkg.get("unless")
 
-def pkg_to_str(pkg) -> str:
-    if isinstance(pkg, dict):
-        return pkg['name']
-    return pkg
+        entry = { "name": f"Install {name} with {rename}" }
+        for append in items:
+            write_to_entry(entry, name, append)
+        if unless is not None:
+            require_package_facts = True
+            if not isinstance(unless, list):
+                unless = [unless]
+            when = [f"'{pkg}' not in ansible_facts.packages" for pkg in unless]
+            entry["when"] = " and ".join(when)
+        contents.append(entry)
+    return require_package_facts
 
 
 def write_to_entry(entry, pkg, append):
@@ -80,11 +101,6 @@ def write_to_entry(entry, pkg, append):
             entry[key] = pkg
         else:
             entry[key] = val.format(pkg)
-
-
-## Role entries
-
-
 
 
 ## Generate

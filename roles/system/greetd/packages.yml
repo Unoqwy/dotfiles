@@ -1,1 +1,4 @@
-aur: [greetd, greetd-tuigreet-bin]
+aur:
+  - greetd
+  - name: greetd-tuigreet-bin
+    unless: greetd-tuigreet-git
