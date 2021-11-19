@@ -10,6 +10,7 @@ import qualified XMonad.Util.ExtensibleState as XS
 
 import XMonad.Actions.Submap (submap)
 import XMonad.Actions.CycleWS (prevScreen, nextScreen)
+import XMonad.Actions.CopyWindow (copy, kill1)
 import Graphics.X11.ExtraTypes.XF86
 
 import XMonad.Layout.Spacing (
@@ -116,7 +117,7 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
   , ((modm, xK_d), withFocused toggleFocalWindow)
 
     -- Focused window
-  , ((modm .|. shiftMask, xK_c), kill <+> withFocused checkFocus)
+  , ((modm .|. shiftMask, xK_c), kill1 <+> withFocused checkFocus)
   , ((modm, xK_h), sendMessage Shrink)
   , ((modm, xK_l), sendMessage Expand)
   , ((modm, xK_t), withFocused $ windows . W.sink)
@@ -160,7 +161,7 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
   ++ -- Basic workspaces
   [((m .|. modm, k), windows $ f i)
     | (i, k) <- zip (XMonad.workspaces xconf) [xK_0 ..]
-    , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]]
+    , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask),  (copy, shiftMask .|. controlMask)]]
   ++
   [((modm, xK_w), submap . M.fromList $ [
       ((0, xK_n), gotoWs "NSP")
