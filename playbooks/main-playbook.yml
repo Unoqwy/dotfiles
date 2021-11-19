@@ -13,6 +13,8 @@
       tags: [base, vim]
     - role: ssh
       tags: [base, ssh]
+    - role: gnupg
+      tags: [base, gnupg]
 
     - role: gittools
       tags: [workflow, gittools]
