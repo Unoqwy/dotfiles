@@ -61,8 +61,8 @@ alias grep="grep --color=auto"
 # common operations
 alias cl="clear"
 alias la="ls -a"
-alias ll="ls -lh"
-alias lh="ls -lah"
+alias lh="ls -lh"
+alias ll="ls -lah"
 alias yank="xclip -selection clipboard"
 
 # git
@@ -71,9 +71,6 @@ alias gc="git commit"
 alias gs="git status"
 alias gcl="git clone"
 alias lg="lazygit"
-
-function gclh { git clone "https://github.com/$1" ${@:2} }
-function gclb { git clone "https://gitlab.com/$1.git" ${@:2} }
 
 # tmux
 alias ta="tmux attach -t"
@@ -92,11 +89,6 @@ alias ssh="TERM=xterm-256color ssh"
 alias ts="tree-sitter"
 alias f="xplr"
 
-# ansible
-alias ans="ansible"
-alias anp="ansible-playbook"
-alias anl="ansible-lint"
-
 # system
 alias synclock="sudo ntpd -gq"
 alias octperm="stat -c %a"
@@ -108,3 +100,6 @@ alias cto="cargo test -- --nocapture"
 alias sf="symfony"
 alias sfs="(pkill symfony || true) && symfony server:start"
 alias sfc="php bin/console"
+
+function rsed { find . -type f -exec sed -i "s|$1|$2|g" {} +; }
+function rsedg { find . -type f -exec sed -i "s/$1/$2/g" {} +; }
