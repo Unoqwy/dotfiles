@@ -73,7 +73,12 @@ alias gcl="git clone"
 alias lg="lazygit"
 
 # tmux
-alias ta="tmux attach -t"
+if type tmux-attach > /dev/null; then
+    alias ta="tmux-attach"
+else
+    alias ta="tmux attach -t"
+fi
+
 alias th="tmux command-prompt -I \$PWD -p 'CWD:' 'attach -c %1'"
 alias thc="th && clear"
 alias tml="tmux ls"

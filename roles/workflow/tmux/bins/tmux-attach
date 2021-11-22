@@ -1,0 +1,18 @@
+#!/bin/sh
+if [[ -z "$1" ]]; then
+    echo "Usage: tmux-attach <session>"
+    exit 1
+fi
+
+session="$1"
+
+if ! tmux list-sessions | cut -d':' -f 1 | grep -qx "$session"; then
+    echo "Unknown session"
+    exit 1
+fi
+
+if [[ -n "$TMUX" ]]; then
+    tmux switch -t "$session"
+else
+    tmux attach -t "$session"
+fi

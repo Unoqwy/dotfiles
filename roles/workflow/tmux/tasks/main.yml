@@ -12,3 +12,8 @@
     src: "{{ install_src }}/roles/workflow/tmux/files/plugins.tmux"
     dest: "{{ install_dest }}/.config/tmux/plugins.tmux"
     state: link
+- name: Link tmux-attach bin
+  file:
+    src: "{{ install_src }}/roles/workflow/tmux/bins/tmux-attach"
+    dest: "{{ install_dest }}/.local/bin/tmux-attach"
+    state: link
