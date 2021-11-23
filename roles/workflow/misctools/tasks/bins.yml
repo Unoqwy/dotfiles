@@ -1,0 +1,5 @@
+- name: Link qbck bin
+  file:
+    src: "{{ install_src }}/roles/workflow/misctools/bins/qbck"
+    dest: "{{ install_dest }}/.local/bin/qbck"
+    state: link

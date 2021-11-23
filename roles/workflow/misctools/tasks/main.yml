@@ -4,6 +4,6 @@
     state: directory
 - name: Link lazygit config
   file:
-    src: "{{ install_src }}/roles/workflow/gittools/files/lazygit.yml"
+    src: "{{ install_src }}/roles/workflow/misctools/files/lazygit.yml"
     dest: "{{ install_dest }}/.config/lazygit/config.yml"
     state: link

@@ -1,0 +1,19 @@
+#!/bin/sh
+BACKUPS_DIR="$HOME/.cache/qbackups"
+
+target="$1"
+if [[ -z "$target" && ! -e "$target" ]]; then
+    echo "Please give a target file or directory"
+    exit 1
+fi
+
+subdir=${2:-"misc"}
+backup_dir="$BACKUPS_DIR/$subdir"
+mkdir -p "$backup_dir"
+
+epoch=$(date +%s)
+target_file="$backup_dir/$target-$epoch.tar.gz"
+
+echo "Backup up target.."
+tar -zc -f "$target_file" "$target"
+echo "Done archiving backup, directory can be removed"

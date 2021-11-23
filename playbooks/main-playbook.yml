@@ -16,8 +16,8 @@
     - role: gnupg
       tags: [base, gnupg]
 
-    - role: gittools
-      tags: [workflow, gittools]
+    - role: misctools
+      tags: [workflow, misctools]
     - role: zsh
       tags: [workflow, shell]
     - role: tmux
