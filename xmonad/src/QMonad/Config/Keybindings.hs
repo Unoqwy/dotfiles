@@ -29,6 +29,7 @@ import qualified XMonad.Layout.BoringWindows as BW
 
 import System.Environment
 
+import QMonad.Config.DoNotDisturb (toggleDND)
 import QMonad.Config.ControlSliders
 import QMonad.Config.Layout.FocalWindow (FocalToggle(..))
 import QMonad.Config.Env (EnvConfig(..), localBin)
@@ -73,6 +74,12 @@ wsScratchpadTerminalAction :: EnvConfig -> X()
 wsScratchpadTerminalAction conf = do
   wid <- gets (W.currentTag . windowset)
   Scratchpads.oneScratchpadAction $ Scratchpads.wsScratchpadTerminal conf wid
+
+-- DND
+toggleDND' :: XConfig Layout -> X()
+toggleDND' XConfig{XMonad.logHook = logHook'} = do
+  toggleDND
+  logHook'
 
 -- Keybindings
 keybindings :: EnvConfig -> XConfig Layout -> M.Map (ButtonMask, KeySym) (X())
@@ -138,6 +145,7 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
 
   -- Misc
   , ((modm, xK_r), spawn "zsh -c 'sleep 0.2 && wiazac_client'")
+  , ((modm .|. shiftMask, xK_z), toggleDND' xconf)
 
   -- Scratchpads
   , ((modm, xK_f), namedScratchpadAction scratchpads "floaterm-min")
@@ -164,7 +172,8 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
     , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask),  (copy, shiftMask .|. controlMask)]]
   ++
   [((modm, xK_w), submap . M.fromList $ [
-      ((0, xK_n), gotoWs "NSP")
+      ((0, xK_d), gotoWs "DND")
+    , ((0, xK_n), gotoWs "NSP")
     ])]
 
   -- Swap workspaces

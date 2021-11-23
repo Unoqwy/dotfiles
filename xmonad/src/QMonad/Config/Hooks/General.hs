@@ -4,6 +4,7 @@ import XMonad ((<+>), XConfig, X, liftIO, spawn)
 import qualified XMonad
 import qualified XMonad.StackSet as W
 
+import XMonad.Actions.DynamicWorkspaces (addHiddenWorkspace)
 import XMonad.Hooks.InsertPosition (insertPosition, Focus(..), Position(..))
 import XMonad.Util.SpawnOnce (spawnOnce)
 import XMonad.Util.Hacks (windowedFullscreenFixEventHook)
@@ -22,7 +23,8 @@ setupDefaultWorkspaces :: X()
 setupDefaultWorkspaces = do
     mapM_ (\w -> setWorkspaceMask w Nothing (Just False)) hidden
     mapM_ (\t -> setWorkspaceMask (fst t) (Just $ snd t) Nothing) named
-  where hidden = map show ([0, 1, 5] ++ [7..9]) ++ ["NSP"]
+    addHiddenWorkspace "DND"
+  where hidden = map show ([0, 1, 5] ++ [7..9]) ++ ["DND", "NSP"]
         named  = map (Data.Bifunctor.first show) [
               (0, "0")
             , (1, "music")

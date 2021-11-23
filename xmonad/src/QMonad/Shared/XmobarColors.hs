@@ -8,6 +8,8 @@ focal = "#e5c463"
 title = foreground
 layout = "#948ae3"
 
+dndIcon = "#3f51b5"
+
 focusedPinnedWs = "#85dacc"
 focusedUnpinnedWs = "#948ae3"
 nonEmtpyWs = title

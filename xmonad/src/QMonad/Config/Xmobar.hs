@@ -11,6 +11,7 @@ import Data.List (find)
 import XMonad.Util.Run (hPutStrLn)
 import XMonad.Util.Minimize (Minimized(minimizedStack))
 
+import QMonad.Config.DoNotDisturb (isDND)
 import QMonad.Config.Layout.LayoutDescriptionMeta (parseLayoutDescription)
 import QMonad.Lib.WorkspaceMasks
 import qualified XMonad.Util.ExtensibleState as XS
@@ -76,11 +77,15 @@ infoLogHook :: Handle -> Bool -> String -> X()
 infoLogHook infoPipe showTitle ld = do
   let (meta, ld') = parseLayoutDescription [] ld
   let titleColor = if "focal" `elem` meta then C.focal else C.title
+
+  dnd <- isDND
+  let dndIcon = if dnd then "<fc=" ++ C.dndIcon ++ "><fn=2>\xf1f6</fn></fc> " else ""
+
   dynamicLogWithPP def {
       ppOutput = hPutStrLn infoPipe
     , ppOrder  = \(_:l:t:_) -> [l,t]
 
-    , ppLayout = \_ -> wrap 
+    , ppLayout = \_ -> dndIcon ++ wrap
           ("<box type=Bottom width=2 color=" ++ C.layout ++ "><fc=" ++ C.layout ++ ">")
           "</fc></box>" ld'
     , ppTitle = \s -> if showTitle

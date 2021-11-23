@@ -11,19 +11,17 @@ import Graphics.X11.ExtraTypes.XF86
 import qualified XMonad.Util.ExtensibleState as XS
 import qualified XMonad.StackSet as W
 
-import Control.Monad (void)
-import Data.Char (isSpace)
 import Data.Functor (($>))
 import Data.Maybe (fromMaybe)
 import qualified Data.Map as M
 
 import QMonad.Config.Env
 import QMonad.Config.Hooks.Manage (applyOpacityRule)
+import QMonad.Config.Util
 import QMonad.Lib.Sliders
 import QMonad.Lib.Xov
 
 import Codec.Binary.UTF8.String (encodeString)
-import System.Process (runInteractiveCommand, waitForProcess)
 import System.IO
 import System.Exit (ExitCode (ExitSuccess))
 
@@ -132,21 +130,6 @@ colorTempHook val = do
       colorTemp = val
     }
   spawn $ "redshift -PO " ++ show val
-
-awaitSpawn :: String -> X()
-awaitSpawn = void . runSH
-
-runSHGetExitCode :: MonadIO m => String -> m ExitCode
-runSHGetExitCode cmd = io $ do
-  uninstallSignalHandlers
-  (hIn, hOut, hErr, p) <- runInteractiveCommand cmd
-  mapM_ hClose [hIn, hErr]
-  waitForProcess p <* hGetContents hOut <* installSignalHandlers
-
-runSH :: MonadIO m => String -> m String
-runSH command = do
-  out <- runProcessWithInput "/bin/sh" ["-c", command] []
-  return $ (reverse . dropWhile isSpace . reverse) out
 
 constIcon :: String -> Maybe (Int -> IO String)
 constIcon s = Just $ \_ -> return s
