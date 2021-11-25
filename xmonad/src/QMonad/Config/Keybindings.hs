@@ -9,7 +9,7 @@ import qualified XMonad.StackSet as W
 import qualified XMonad.Util.ExtensibleState as XS
 
 import XMonad.Actions.Submap (submap)
-import XMonad.Actions.CycleWS (prevScreen, nextScreen)
+import XMonad.Actions.CycleWS (prevScreen, nextScreen, toggleWS)
 import XMonad.Actions.CopyWindow (copy, kill1)
 import Graphics.X11.ExtraTypes.XF86
 
@@ -138,6 +138,7 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
 
   , ((modm, xK_bracketleft ), prevScreen)
   , ((modm, xK_bracketright), nextScreen)
+  , ((modm, xK_apostrophe), toggleWS)
 
   -- Hidden (minimized) windows
   , ((modm, xK_u), chooseWindowToMaximize conf)
