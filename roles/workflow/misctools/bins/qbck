@@ -1,19 +1,191 @@
-#!/bin/sh
-BACKUPS_DIR="$HOME/.cache/qbackups"
+#!/bin/bash
+BACKUP_FILE_REGEX="^(.*)-([0-9]+)\.tar\.gz$"
+DATE_FORMAT="%b. %d %Y"
 
-target="$1"
-if [[ -z "$target" && ! -e "$target" ]]; then
-    echo "Please give a target file or directory"
-    exit 1
+### Default arguments
+BACKUPS_DIR="$HOME/.cache/qbackups"
+MODE="create"
+
+CATEGORY="misc"
+FILTER=""
+
+### Parse arguments
+FILES=()
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -b|--backup-dir)
+            BACKUPS_DIR="$2"
+            shift
+            ;;
+        -c|--category)
+            CATEGORY="$2"
+            shift
+            ;;
+
+        -f|--filter)
+            FILTER="$2"
+            ;;
+
+        -l|--list)
+            MODE="list"
+            ;;
+        -d|--delete)
+            MODE="delete"
+            ;;
+
+        *)
+            FILES+=("$1")
+    esac
+    shift
+done
+
+### Utility functions
+function filter_epoch_init {
+    if [[ -z "$FILTER" ]]; then
+        return 0
+    fi
+
+    IFS=' ' read -r -a elts <<< "$FILTER"
+    if ! date -d "${elts[1]}" 1>/dev/null; then
+        exit 1
+    fi
+
+    filter_epoch=${elts[1]}
+    if [[ -z "$filter_epoch" ]]; then
+        filter_epoch="+0min"
+    fi
+    filter_epoch=$(date -d "$filter_epoch" +%s)
+    case "${elts[0]}" in
+        ">"|"<")
+            filter_op="${elts[0]}"
+            ;;
+        *)
+            echo "Unsupported filter operation"
+            exit 1
+    esac
+}
+
+function filter_epoch {
+    if [[ -z $filter_op ]]; then
+        return 0
+    fi
+
+    epoch="$1"
+    case $filter_op in
+        ">")
+            [[ $epoch -gt $filter_epoch ]]
+            ;;
+        "<")
+            [[ $epoch -lt $filter_epoch ]]
+            ;;
+    esac
+    return $?
+}
+
+function list_backups {
+    if [[ "$1" == "files" ]]; then
+        _backup_assoc_files=1
+    else
+        _backup_assoc_files=0
+    fi
+
+    declare -gA backups
+    for file in $backup_dir/*.tar.gz; do
+        entry=$(basename "$file")
+        if [[ $entry =~ $BACKUP_FILE_REGEX ]]; then
+            target="${BASH_REMATCH[1]}"
+            epoch="${BASH_REMATCH[2]}"
+            if ! filter_epoch $epoch; then
+                continue
+            fi
+
+            if [[ _backup_assoc_files -eq 1 ]]; then
+                val="$file"
+            else
+                val="$epoch"
+            fi
+
+            if [[ -v "backups[$target]" ]]; then
+                backups[$target]+=";$val"
+            else
+                backups[$target]="$val"
+            fi
+        fi
+    done
+}
+
+function get_timestr {
+    if [[ -n "$filter_epoch" ]]; then
+        declare -A timeact=([">"]="after" ["<"]="before")
+        timestr=" ${timeact[$filter_op]} \033[1;35m$(date -d @$filter_epoch +"$DATE_FORMAT")\e[0m"
+    fi
+}
+
+### Pre-run
+if [[ $MODE == "list" || $MODE == "delete" ]]; then
+    filter_epoch_init; get_timestr
 fi
 
-subdir=${2:-"misc"}
-backup_dir="$BACKUPS_DIR/$subdir"
-mkdir -p "$backup_dir"
+### Main
+backup_dir="$BACKUPS_DIR/$CATEGORY"
+if [[ $MODE == "create" ]]; then
+    if [[ ${#FILES[@]} -eq 1 ]]; then
+        target="${FILES[0]}"
+    elif [[ ${#FILES[@]} -gt 1 ]]; then
+        echo "Only one positional argument is expected"
+        exit 1
+    fi
 
-epoch=$(date +%s)
-target_file="$backup_dir/$target-$epoch.tar.gz"
+    if [[ -z "$target" || ! -d "$target" ]]; then
+        echo "Please give a target directory"
+        exit 1
+    fi
 
-echo "Backup up target.."
-tar -zc -f "$target_file" "$target"
-echo "Done archiving backup, directory can be removed"
+    input_file=$(realpath "$target")
+    target=$(basename "$target")
+    epoch=$(date +%s)
+    target_file="$backup_dir/$target-$epoch.tar.gz"
+
+    echo "Backup up target.."
+    mkdir -p "$backup_dir"
+    if tar -zc -f "$target_file" -C "$input_file" .; then
+        echo "Done archiving backup, directory can be safely deleted/cleared"
+    else
+        echo "Backup failed!"
+    fi
+elif [[ $MODE == "list" ]]; then
+    list_backups
+    echo -e "\e[0mListing \033[1;36m$CATEGORY \e[0mbackups$timestr:"
+    for target in "${!backups[@]}"; do
+        IFS=';' read -r -a entries <<< "${backups[$target]}"
+        last_update=${entries[-1]}
+        last_update=$(date -d @$last_update +"$DATE_FORMAT")
+        echo -e "\e[2m* \e[0m\033[0;33m$target \e[0m\e[2m(${#entries[@]}) \e[0m\033[0;35m[latest: $last_update]"
+    done
+elif [[ $MODE == "delete" ]]; then
+    list_backups files
+    echo -e "\e[0mDeleting backups from \033[1;36m$CATEGORY\e[0m$timestr:"
+    for target in "${!backups[@]}"; do
+        IFS=';' read -r -a entries <<< "${backups[$target]}"
+        printf "\e[0mConfirm deletion of \e[2m(${#entries[@]}) \e[0m\033[0;33m$target \e[0mbackups"
+        read -p " [yn]" -r yn
+        while true; do
+            printf "\n"
+            case $yn in
+                [Yy])
+                    rm ${entries[@]}
+                    break
+                    ;;
+                [Nn])
+                    break
+                    ;;
+                *)
+                    printf "Please input [Y]es or [N]o "
+                    read -p "" -n 1 -r yn
+                    ;;
+            esac
+        done
+    done
+else
+    exit 132
+fi
