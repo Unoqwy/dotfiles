@@ -8,7 +8,7 @@ import XMonad hiding (manageHook, handleEventHook)
 import XMonad.Prelude
 import QMonad.Config.DoNotDisturb (isDND)
 import qualified QMonad.Config.Scratchpads (transparentScratchpads, manageHook')
-import XMonad.Hooks.ManageHelpers (isDialog, doCenterFloat, doRectFloat, composeOne, (-?>), isInProperty)
+import XMonad.Hooks.ManageHelpers (isDialog, doCenterFloat, doRectFloat, composeOne, (-?>), isInProperty, (/=?))
 import qualified XMonad.StackSet as W
 import qualified XMonad.Util.ExtensibleState as XS
 
@@ -78,6 +78,7 @@ windowRules = composeAll [
 
   -- Misc
   , resource =? "Godot_ProjectList" --> doCenteredFloat
+  , resource =? "Godot_Engine" <&&> className /=? "Godot" --> doFloat
   , wmRole =? "GtkFileChooserDialog" --> doCenteredFloat
   ]
 
