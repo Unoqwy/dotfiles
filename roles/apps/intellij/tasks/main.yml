@@ -1,0 +1,5 @@
+- name: Link .ideavimrc
+  file:
+    src: "{{ install_src }}/roles/apps/intellij/files/ideavimrc"
+    dest: "{{ install_dest }}/.ideavimrc"
+    state: link

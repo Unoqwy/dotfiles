@@ -45,3 +45,6 @@
 
     - role: rust
       tags: [lang, rust]
+
+    - role: intellij
+      tags: [apps, intellij]

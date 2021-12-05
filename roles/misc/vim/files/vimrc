@@ -49,6 +49,7 @@ match Error /\t/
 nnoremap <SPACE> <Nop>
 let mapleader=" "
 
+nnoremap <leader>w :w<CR>
 nnoremap <leader>fs :w<CR>
 nnoremap <leader>, :e#<CR>
 
