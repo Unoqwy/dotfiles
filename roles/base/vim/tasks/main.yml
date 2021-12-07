@@ -1,10 +1,10 @@
 - name: Link .vimrc
   file:
-    src: "{{ install_src }}/roles/misc/vim/files/vimrc"
+    src: "{{ install_src }}/roles/base/vim/files/vimrc"
     dest: "{{ install_dest }}/.vimrc"
     state: link
 - name: Link viman bin
   file:
-    src: "{{ install_src }}/roles/misc/vim/bins/viman"
+    src: "{{ install_src }}/roles/base/vim/bins/viman"
     dest: "{{ install_dest }}/.local/bin/viman"
     state: link

@@ -1,5 +1,5 @@
 - name: Link .gitconfig
   file:
-    src: "{{ install_src }}/roles/misc/git/files/config"
+    src: "{{ install_src }}/roles/base/git/files/config"
     dest: "{{ install_dest }}/.gitconfig"
     state: link

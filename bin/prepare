@@ -1,11 +1,15 @@
 #!/bin/bash
 base=$(readlink -f "$(dirname $(readlink -f "$0"))/..")
 
-"$base/ansible/scripts/generate_vars"
-mkdir -p .generated/roles
-"$base/ansible/scripts/generate_tasks"
-
 if [[ ! -f "$base/.env" ]]; then
     echo "Created new .env file"
     cp "$base/.env.example" "$base/.env"
 fi
+
+"$base/ansible/scripts/generate_vars"
+if [[ -d "$base/.generated/roles" ]]; then
+    echo "Clearing last prepared roles"
+    rm -rf "$base/.generated/roles"
+fi
+mkdir -p "$base/.generated/roles"
+"$base/ansible/scripts/generate_playbook"

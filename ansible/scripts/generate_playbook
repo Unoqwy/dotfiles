@@ -109,14 +109,14 @@ def write_yml_file(path, yml_dict):
     with open(path, "w") as file:
         dump = "\n".join([
             "# This file was auto-generated.",
-            "# See `ansible/scripts/generate_tasks",
+            "# See `ansible/scripts/generate_playbook",
             "",
             yaml.dump(yml_dict)
         ])
         file.write(dump)
 
 
-def visit_role_dir(src_path, dest_path, group: str, role: str):
+def visit_then_write_tasks(src_path, dest_path, group: str, role: str):
     tasks_dir = os.path.join(src_path, "tasks")
     if os.path.isdir(tasks_dir):
         import_tasks = [os.path.abspath(path) for path in Path(tasks_dir).rglob("*.yml")]
@@ -144,16 +144,35 @@ def visit_role_dir(src_path, dest_path, group: str, role: str):
 
 if __name__ == "__main__":
     generated_dir = os.path.join(".generated", "roles")
+    roles = []
+
     for group in os.listdir("roles"):
         roles_dir = os.path.join("roles", group)
         if not os.path.isdir(roles_dir):
             continue
 
         for role in os.listdir(roles_dir):
-            dir_path = os.path.join(roles_dir, role)
-            if not os.path.isdir(dir_path):
+            role_dir = os.path.join(roles_dir, role)
+            if not os.path.isdir(role_dir):
                 continue
-            dest_path = os.path.join(generated_dir, f"{role}", "tasks")
-            if not os.path.isdir(dest_path):
-                os.makedirs(dest_path)
-            visit_role_dir(dir_path, dest_path, group, role)
+            mapped_role_dir = os.path.join(generated_dir, role)
+
+            tasks_dir = os.path.join(mapped_role_dir, "tasks")
+            for dir in [tasks_dir]:
+                if not os.path.isdir(dir):
+                    os.makedirs(dir)
+
+            visit_then_write_tasks(role_dir, tasks_dir, group, role)
+            roles.append({"role": role, "tags": [group, role]})
+
+    playbook = [{
+        "name": "Setup dotfiles",
+        "hosts": "local",
+        "vars_files": [
+            "../ansible/vars/dirs.yml",
+            "../ansible/vars/misc.yml",
+            "env_vars.yml",
+        ],
+        "roles": roles,
+    }]
+    write_yml_file(os.path.join(".generated", "playbook.yml"), playbook)

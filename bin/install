@@ -32,8 +32,12 @@ if [[ -z "$_pwd" ]]; then
 fi
 printf "\n"
 
+function pb {
+    echo "$base/playbooks/$1-playbook.yml"
+}
+
 function anp {
-    "$base/bin/anp" "$base/playbooks/$1-playbook.yml" ${@:2}
+    "$base/bin/anp" "$(pb $1)" ${@:2}
 }
 
 # install dependencies and ignore messages when all is installed
@@ -43,10 +47,17 @@ ansible-galaxy collection install -r ansible/requirements.yml \
 
 if [[ "$1" == "pick" ]]; then
     options=$(anp main --list-tags | awk -F"TASK TAGS:" '{print $2}' | xargs echo -n)
-    "$base/bin/select-tags" "$base/bin/anp $base/playbooks/main-playbook.yml" "$options"
+    "$base/bin/select-tags" "$base/bin/anp $(pb main)" "$options"
 else
     mkdir -p "$HOME/.config"
     mkdir -p "$HOME/.local/bin"
 
-    echo "$_pwd" | anp main --become-password-file - $@
+    _skip_tags="apps"
+    for arg in "$@"; do
+        if [[ $arg == "--tags" ]]; then
+            _skip_tags="."
+            break
+        fi
+    done
+    echo "$_pwd" | anp main --become-password-file - --skip-tags "$_skip_tags" $@
 fi

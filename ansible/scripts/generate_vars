@@ -19,7 +19,7 @@ if __name__ == "__main__":
     with open(".env", "r") as fs:
         dotenv = yaml.safe_load(fs)
         vars = dotenv_to_vars(dotenv)
-        with open("ansible/env_vars.yml", "w") as vars_file:
+        with open(".generated/env_vars.yml", "w") as vars_file:
             dump = "\n".join([
                 "# This file was auto-generated.",
                 "# See `ansible/scripts/generate_vars` for details.",
