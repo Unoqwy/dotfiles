@@ -34,7 +34,7 @@ layouts =
             renamed [Replace "V 2*|1"] vtall
         ||| renamed [Replace "H 1|1"] htall
       )
-      ||| renamed [Replace "1"] full
+      ||| renamed [Replace "Full"] full
       ||| renamed [Replace "FS"] fullScreen
   where
     defaultIncr = 5/100
