@@ -1,6 +1,6 @@
 #!/bin/bash
 BACKUP_FILE_REGEX="^(.*)-([0-9]+)\.tar\.gz$"
-DATE_FORMAT="%b. %d %Y"
+DATE_FORMAT="%b. %d %Y %H:%M"
 
 ### Default arguments
 BACKUPS_DIR="$HOME/.cache/qbackups"
@@ -26,8 +26,18 @@ while [[ $# -gt 0 ]]; do
             FILTER="$2"
             ;;
 
+        -i|--info)
+            MODE="info"
+            ;;
         -l|--list)
             MODE="list"
+            ;;
+        -ll|--detailed-list)
+            MODE="list"
+            MODE_LIST_DETAILED=1
+            ;;
+        -r|--restore)
+            MODE="restore"
             ;;
         -d|--delete)
             MODE="delete"
@@ -56,7 +66,7 @@ function filter_epoch_init {
     fi
     filter_epoch=$(date -d "$filter_epoch" +%s)
     case "${elts[0]}" in
-        ">"|"<")
+        "<"|">"|"<="|">=")
             filter_op="${elts[0]}"
             ;;
         *)
@@ -72,11 +82,17 @@ function filter_epoch {
 
     epoch="$1"
     case $filter_op in
-        ">")
+        "<")
             [[ $epoch -gt $filter_epoch ]]
             ;;
-        "<")
+        ">")
             [[ $epoch -lt $filter_epoch ]]
+            ;;
+        "<=")
+            [[ $epoch -ge $filter_epoch ]]
+            ;;
+        ">=")
+            [[ $epoch -le $filter_epoch ]]
             ;;
     esac
     return $?
@@ -116,10 +132,20 @@ function list_backups {
 
 function get_timestr {
     if [[ -n "$filter_epoch" ]]; then
-        declare -A timeact=([">"]="after" ["<"]="before")
+        declare -A timeact=(["<"]="before" [">"]="after" ["<="]="before" [">="]="after")
         timestr=" ${timeact[$filter_op]} \033[1;35m$(date -d @$filter_epoch +"$DATE_FORMAT")\e[0m"
     fi
 }
+
+### Print functions
+function _prefix {
+    printf "\e[30m[\e[0\033[1;${1}m${2}\e[30m]\e[0m "
+}
+
+function _header { _prefix 93 H; }
+function _info { _prefix 94 I; }
+function _ok { _prefix 92 OK; }
+function _fail { _prefix 91 Fail; }
 
 ### Pre-run
 if [[ $MODE == "list" || $MODE == "delete" ]]; then
@@ -132,12 +158,17 @@ if [[ $MODE == "create" ]]; then
     if [[ ${#FILES[@]} -eq 1 ]]; then
         target="${FILES[0]}"
     elif [[ ${#FILES[@]} -gt 1 ]]; then
-        echo "Only one positional argument is expected"
+        _fail; echo "Only one positional argument is expected"
         exit 1
     fi
 
-    if [[ -z "$target" || ! -d "$target" ]]; then
-        echo "Please give a target directory"
+    if [[ -z "$target" ]]; then
+        _fail; echo "Usage: qbck <DIRECTORY>"
+        exit 1
+    fi
+
+    if [[ ! -d "$target" ]]; then
+        _fail; echo "Target directory does not exist!"
         exit 1
     fi
 
@@ -146,29 +177,51 @@ if [[ $MODE == "create" ]]; then
     epoch=$(date +%s)
     target_file="$backup_dir/$target-$epoch.tar.gz"
 
-    echo "Backup up target.."
+    _info; echo "Backup up target..."
     mkdir -p "$backup_dir"
-    if tar -zc -f "$target_file" -C "$input_file" .; then
-        echo "Done archiving backup, directory can be safely deleted/cleared"
+    if tar -zca -f "$target_file" \
+            --directory "$input_file" \
+            --transform "s#^\.#contents#" ./
+    then
+        _ok; echo -e "Done creating backup \e[0m\033[0;33m$target\e[0m\e[2m-\e[0m\033[0;35m$epoch\e[0m"\
+            "\e[2m[\e[0m\033[1;36m$CATEGORY\e[0m\e[2m]\e[0m."
     else
-        echo "Backup failed!"
+        _fail; echo "Backup creation failed!"
     fi
 elif [[ $MODE == "list" ]]; then
     list_backups
-    echo -e "\e[0mListing \033[1;36m$CATEGORY \e[0mbackups$timestr:"
+    if [[ ${#FILES[@]} -ne 0 ]]; then
+        _filter=", filtering \e[2m${FILES[@]}"
+    fi
+    _header; echo -e "\e[0mListing \033[1;36m$CATEGORY \e[0mbackups$timestr$_filter\e[0m:"
     for target in "${!backups[@]}"; do
+        if [[ ${#FILES[@]} -ne 0 ]]; then
+            if ! printf '%s\n' "${FILES[@]}" | grep -q "^$target\$"; then
+                continue
+            fi
+        fi
         IFS=';' read -r -a entries <<< "${backups[$target]}"
         last_update=${entries[-1]}
         last_update=$(date -d @$last_update +"$DATE_FORMAT")
-        echo -e "\e[2m* \e[0m\033[0;33m$target \e[0m\e[2m(${#entries[@]}) \e[0m\033[0;35m[latest: $last_update]"
+        echo -e " \033[1;30m* \e[0m\033[0;33m$target \e[0m\e[2m(${#entries[@]}) \e[0m\033[0;35m[latest: $last_update]"
+        if [[ $MODE_LIST_DETAILED -eq 1 ]]; then
+            echo ${entries[@]} | xargs -n 4 | awk  \
+                '{ printf "    "; for (i=1; i<=NF; i++) { printf "\033[2;33m'$target'\033[2m-\033[2;35m"$i"\033[0;37m"; if (i!=NF) { printf ", " } }; printf "\n" }'
+        fi
     done
+elif [[ $MODE == "info" ]]; then
+   # TODO
+   exit 1
+elif [[ $MODE == "restore" ]]; then
+   # TODO
+   exit 1
 elif [[ $MODE == "delete" ]]; then
     list_backups files
-    echo -e "\e[0mDeleting backups from \033[1;36m$CATEGORY\e[0m$timestr:"
+    _header; echo -e "\e[0mDeleting backups from \033[1;36m$CATEGORY\e[0m$timestr:"
     for target in "${!backups[@]}"; do
         IFS=';' read -r -a entries <<< "${backups[$target]}"
-        printf "\e[0mConfirm deletion of \e[2m(${#entries[@]}) \e[0m\033[0;33m$target \e[0mbackups"
-        read -p " [yn]" -r yn
+        _info; printf "\e[0mConfirm deletion of \e[2m(${#entries[@]}) \e[0m\033[0;33m$target \e[0mbackups."
+        read -p " [y/n]" -r yn
         while true; do
             printf "\n"
             case $yn in
@@ -180,8 +233,8 @@ elif [[ $MODE == "delete" ]]; then
                     break
                     ;;
                 *)
-                    printf "Please input [Y]es or [N]o "
-                    read -p "" -n 1 -r yn
+                    printf "Please input [y]es or [n]o. [y/n]"
+                    read -p "" -r yn
                     ;;
             esac
         done
