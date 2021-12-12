@@ -8,5 +8,5 @@ trim_space_from_selection = true
 history_file = "$HOME/.cache/clipboard-history"
 image_cache_directory = "/tmp/greenclip"
 
-max_history_length = 50
+max_history_length = 500
 static_history = []
