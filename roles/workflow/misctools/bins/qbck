@@ -181,6 +181,7 @@ if [[ $MODE == "create" ]]; then
     mkdir -p "$backup_dir"
     if tar -zca -f "$target_file" \
             --directory "$input_file" \
+            --exclude-vcs-ignores \
             --transform "s#^\.#contents#" ./
     then
         _ok; echo -e "Done creating backup \e[0m\033[0;33m$target\e[0m\e[2m-\e[0m\033[0;35m$epoch\e[0m"\
