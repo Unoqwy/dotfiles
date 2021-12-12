@@ -1,0 +1,5 @@
+- name: Link vscode user settings.json
+  file:
+    src: "{{ install_src }}/roles/apps/vscode/files/settings.json"
+    dest: "{{ install_dest }}/.config/Code/User/settings.json"
+    state: link

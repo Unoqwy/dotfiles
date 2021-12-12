@@ -1,0 +1,2 @@
+paru: visual-studio-code-bin
+pacman: [gnome-keyring, libsecret, libgnome-keyring]
