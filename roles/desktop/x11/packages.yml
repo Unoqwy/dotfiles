@@ -4,3 +4,4 @@ pacman:
   - libxss
   - xdotool
   - xbindkeys
+  - xclip

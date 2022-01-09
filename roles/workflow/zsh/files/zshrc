@@ -1,60 +1,81 @@
 #!/bin/sh
-bindkey -v
-setopt autocd
+# vim:fdm=marker
 
-# Completion
-autoload -Uz compinit; compinit
-setopt MENU_COMPLETE
-zstyle ":completion:*" menu select
-
-bindkey '^[[Z' reverse-menu-complete
-
-# Prompt
-autoload -Uz promptinit; promptinit
-
-if [[ "$TERM" != "dumb" ]]; then
-    autoload -Uz vcs_info
-    zstyle ":vcs_info:*" enable git
-    precmd() { vcs_info; }
-
-    zstyle ":vcs_info:git*" formats "  %b" # TODO: display more git info
-
-    setopt PROMPT_SUBST
-    # reminder: these need to stay single quotes to expand later, not on read
-    PS1='%F{red}%(?.. <%?>)%F{magenta}${vcs_info_msg_0_} %b%F{cyan}%f '
-    RPS1="%F{blue}%~%f"
-else
-    # based on default prompt 'walters'
-    PS1="%(?..[%?] )%n@%m:%~ "
-fi
-
-
-# History
+## ZSH config {{{
+# zsh:history/search
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=10000
 SAVEHIST=$HISTSIZE
-
 setopt HIST_IGNORE_ALL_DUPS
 
 autoload -Uz up-line-or-beginning-search
 autoload -Uz down-line-or-beginning-search
 zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
+
+# zsh:dir
+setopt autocd
+
+# zsh:keybindings
+bindkey -v
 bindkey "^k" up-line-or-beginning-search
 bindkey "^j" down-line-or-beginning-search
+bindkey '^[[Z' reverse-menu-complete
 
-alias hist="history"
+# zsh:completion
+autoload -Uz compinit; compinit
+setopt MENU_COMPLETE
+zstyle ":completion:*" menu select
+
+# zsh:prompt
+autoload -Uz promptinit; promptinit
+if [[ "$TERM" != "dumb" ]]; then
+    setopt PROMPT_SUBST
+    autoload -Uz vcs_info
+    zstyle ":vcs_info:*" enable git
+    zstyle ":vcs_info:git*" formats "  %b"
+    precmd() { vcs_info; }
+
+    # reminder: these need to stay single quotes to expand later, not on read
+    PS1='%F{red}%(?.. <%?>)%F{magenta}${vcs_info_msg_0_} %b%F{cyan}%f '
+    RPS1="%F{blue}%~%f"
+else
+    PS1="%(?..[%?] )%n@%m:%~ " # based on default prompt 'walters'
+fi
+## }}}
+
+## Sourcing {{{
+# zsh:syntax-highlighting
+_ZSH_SHL_SOURCE="/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+if [[ -f $_ZSH_SHL_SOURCE ]]; then
+    source "$_ZSH_SHL_SOURCE"
+fi
+
+# source z.lua
+if [[ -f /usr/share/z.lua/z.lua ]]; then
+    eval "$(/usr/share/z.lua/z.lua --init zsh)"
+fi
+
+_TMUX_EXT_SOURCE="$HOME/.config/tmux/tmux_ext.sh"
+if [[ -f $_TMUX_EXT_SOURCE ]]; then
+    time source "$_TMUX_EXT_SOURCE"
+else
+    alias ta="tmux attach -t"
+fi
+## }}}
+
+## Aliases {{{
+
+# history aliases
+alias hist="vim ~/.zsh_history"
 alias inhist="history 0 | grep -i"
 
-# Syntax highlighting
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-# prevent accidental overwrite
+# require confirmation on main file ops
 alias cp="cp --interactive"
 alias mv="mv --interactive"
 alias rm="rm --interactive"
 
-# colors
+# automatic colors
 alias ls="ls --color=auto"
 alias grep="grep --color=auto"
 
@@ -72,17 +93,7 @@ alias gs="git status"
 alias gcl="git clone"
 alias lg="lazygit"
 
-# tmux
-if type tmux-attach > /dev/null; then
-    alias ta="tmux-attach"
-else
-    alias ta="tmux attach -t"
-fi
-
-alias th="tmux command-prompt -I \$PWD -p 'CWD:' 'attach -c %1'"
-alias thc="th && clear"
-alias tml="tmux ls"
-
+# alias vim and vi to nvim if installed
 if type nvim > /dev/null; then
     alias vim="nvim"
     alias vi="nvim"
@@ -106,5 +117,9 @@ alias sf="symfony"
 alias sfs="(pkill symfony || true) && symfony server:start"
 alias sfc="php bin/console"
 
+## }}}
+
+## Misc tools {{{
 function rsed { find . -type f -exec sed -i "s|$1|$2|g" {} +; }
 function rsedg { find . -type f -exec sed -i "s/$1/$2/g" {} +; }
+## }}}
