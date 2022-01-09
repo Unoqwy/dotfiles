@@ -7,3 +7,8 @@
     src: "{{ install_src }}/roles/workflow/misctools/files/lazygit.yml"
     dest: "{{ install_dest }}/.config/lazygit/config.yml"
     state: link
+- name: Link neofetch config
+  file:
+    src: "{{ install_src }}/roles/workflow/misctools/files/neofetch.conf"
+    dest: "{{ install_dest }}/.config/neofetch/config.conf"
+    state: link

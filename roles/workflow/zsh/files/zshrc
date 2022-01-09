@@ -37,7 +37,7 @@ if [[ "$TERM" != "dumb" ]]; then
     precmd() { vcs_info; }
 
     # reminder: these need to stay single quotes to expand later, not on read
-    PS1='%F{red}%(?.. <%?>)%F{magenta}${vcs_info_msg_0_} %b%F{cyan}%f '
+    PS1='%F{red}%(?.. <%?>)%F{magenta}${vcs_info_msg_0_} %F{black}%f '
     RPS1="%F{blue}%~%f"
 else
     PS1="%(?..[%?] )%n@%m:%~ " # based on default prompt 'walters'
@@ -65,6 +65,7 @@ fi
 ## }}}
 
 ## Aliases {{{
+alias ssh="TERM=xterm-256color ssh"
 
 # history aliases
 alias hist="vim ~/.zsh_history"
@@ -88,9 +89,7 @@ alias yank="xclip -selection clipboard"
 
 # git
 alias g="git"
-alias gc="git commit"
 alias gs="git status"
-alias gcl="git clone"
 alias lg="lazygit"
 
 # alias vim and vi to nvim if installed
@@ -98,28 +97,20 @@ if type nvim > /dev/null; then
     alias vim="nvim"
     alias vi="nvim"
 fi
-
-alias ssh="TERM=xterm-256color ssh"
-
-# misc tools
-alias ts="tree-sitter"
 alias f="xplr"
 
-# system
-alias synclock="sudo ntpd -gq"
+alias nf="neofetch"
+alias nfr="neofetch --config none"
+
+alias ts="tree-sitter"
 alias octperm="stat -c %a"
-
-# cargo run test with stdout
-alias cto="cargo test -- --nocapture"
-
-# Symfony
-alias sf="symfony"
-alias sfs="(pkill symfony || true) && symfony server:start"
-alias sfc="php bin/console"
-
 ## }}}
 
 ## Misc tools {{{
 function rsed { find . -type f -exec sed -i "s|$1|$2|g" {} +; }
 function rsedg { find . -type f -exec sed -i "s/$1/$2/g" {} +; }
+
+function synctime {
+    sudo sh -c 'ntpd -gq && hwclock --systohc'
+}
 ## }}}
