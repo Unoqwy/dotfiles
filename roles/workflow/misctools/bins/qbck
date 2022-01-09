@@ -139,7 +139,7 @@ function get_timestr {
 
 ### Print functions
 function _prefix {
-    printf "\e[30m[\e[0\033[1;${1}m${2}\e[30m]\e[0m "
+    printf "\e[30m[\e[1;${1}m${2}\e[30m]\e[0m "
 }
 
 function _header { _prefix 93 H; }
