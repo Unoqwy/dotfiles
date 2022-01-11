@@ -5,6 +5,7 @@ import os
 import yaml
 
 from pathlib import Path
+import shutil
 
 
 PKG_MANAGERS = {
@@ -163,6 +164,9 @@ if __name__ == "__main__":
                     os.makedirs(dir)
 
             visit_then_write_tasks(role_dir, tasks_dir, group, role)
+            handlers_dir = os.path.join(role_dir, "handlers")
+            if os.path.isdir(handlers_dir):
+                shutil.copytree(handlers_dir, os.path.join(mapped_role_dir, "handlers"))
             roles.append({"role": role, "tags": [group, role]})
 
     playbook = [{
