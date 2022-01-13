@@ -179,7 +179,8 @@ function tt() {
         if [[ -v 'map[$PWD]' ]]; then
             session=${map[$PWD]}
         else
-            session=$(basename $(realpath .))
+            session=$(basename $(realpath .) | tr '.' '-')
+            session=${session// /_}
         fi
     fi
     if ! _tmuxext_ensure_session "$session" $autoload; then

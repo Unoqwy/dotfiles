@@ -4,7 +4,7 @@ _:
     aur: [rofi-greenclip]
 
   # General tools
-  - pacman: [picom, flameshot, libnotify, dunst, sxiv]
+  - pacman: [picom, flameshot, libnotify, dunst, sxiv, feh]
 
   # Audio
   - pacman: [libpulse, pipewire-pulse, pavucontrol, pamixer]
@@ -15,3 +15,4 @@ _:
 
   # Fonts
   - pacman: [fontforge, ttf-jetbrains-mono]
+    aur: [nerd-fonts-jetbrains-mono]

@@ -1,0 +1,1 @@
+pacman: [jq, wget, fuse, htop]

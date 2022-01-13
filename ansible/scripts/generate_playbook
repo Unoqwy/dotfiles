@@ -18,6 +18,11 @@ PKG_MANAGERS = {
         ("kewlfft.aur.aur", [("use", "paru"), ("name", "{0}")]),
         ("when", "ansible_pkg_mgr == 'pacman'")
     ], "paru"),
+    "pkgbuild": (True, [
+        ("kewlfft.aur.aur", [("use", "makepkg"), ("name", "{0}"),
+            ("local_pkgbuild", "{{{{ install_src }}}}/PKGBUILDS/{0[0]}")]),
+        ("when", "ansible_pkg_mgr == 'pacman'")
+    ], "makepkg"),
 }
 STANDALONE_TASKS = os.path.abspath(os.path.join("ansible", "standalone_tasks"))
 
