@@ -3,7 +3,7 @@ _repo="https://github.com/Unoqwy/unread-bell.git"
 _bin=$_pkgname
 
 pkgname="${_pkgname}-git"
-pkgver=v0.2.0.g518d9e4
+pkgver=v0.2.1.g02fd104
 pkgrel=1
 pkgdesc="Discord notifications aggregation daemon"
 url="$_repo"
@@ -26,6 +26,10 @@ build() {
 }
 
 package() {
+    install -d "$pkgdir/opt/$_pkgname/discord-hook"
+    cp -a $_pkgname/hooks/discord/. "$pkgdir/opt/$_pkgname/discord-hook"
+    (cd "$pkgdir/opt/$_pkgname/discord-hook"; rm package.json yarn.lock)
+
     cd $_pkgname
     install -Dm755 target/release/$_bin "$pkgdir/usr/bin/$_bin"
     install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
