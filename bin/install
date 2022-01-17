@@ -25,12 +25,20 @@ if ! "$base/bin/prepare" 1>/dev/null; then
     exit 1
 fi
 
-_pwd=$("$base/bin/__/prompt-password")
-if [[ -z "$_pwd" ]]; then
-    echo "Invalid sudo password"
-    exit 1
+if [[ "$1" == "-" ]]; then
+    shift
+    _pwd=$(</dev/stdin)
+else
+    _pwd=""
 fi
-printf "\n"
+if [[ -z "$_pwd" ]]; then
+    _pwd=$("$base/bin/__/prompt-password")
+    if [[ -z "$_pwd" ]]; then
+        echo "Invalid sudo password"
+        exit 1
+    fi
+    printf "\n"
+fi
 
 function pb {
     echo "$base/playbooks/$1-playbook.yml"
@@ -52,7 +60,7 @@ else
     mkdir -p "$HOME/.config"
     mkdir -p "$HOME/.local/bin"
 
-    _skip_tags="apps"
+    _skip_tags="apps,pacmans"
     for arg in "$@"; do
         if [[ $arg == "--tags" ]]; then
             _skip_tags="."

@@ -172,6 +172,9 @@ if __name__ == "__main__":
             handlers_dir = os.path.join(role_dir, "handlers")
             if os.path.isdir(handlers_dir):
                 shutil.copytree(handlers_dir, os.path.join(mapped_role_dir, "handlers"))
+            meta_dir = os.path.join(role_dir, "meta")
+            if os.path.isdir(meta_dir):
+                shutil.copytree(meta_dir, os.path.join(mapped_role_dir, "meta"))
             roles.append({"role": role, "tags": [group, role]})
 
     playbook = [{

@@ -6,6 +6,7 @@ if [[ ! -f "$base/.env" ]]; then
     cp "$base/.env.example" "$base/.env"
 fi
 
+mkdir -p "$base/.generated"
 "$base/ansible/scripts/generate_vars"
 if [[ -d "$base/.generated/roles" ]]; then
     echo "Clearing last prepared roles"

@@ -7,6 +7,18 @@ if [[ "$EUID" == 0 ]]; then
     echo "This should not be run as root!"
     exit 1
 fi
-
 base=$(readlink -f "$(dirname $(readlink -f "$0"))/..")
-"$base/bin/anp" "$base/playbooks/init-playbook.yml" -K
+
+if ! "$base/bin/prepare" 1>/dev/null; then
+    exit 1
+fi
+
+_pwd=$("$base/bin/__/prompt-password")
+if [[ -z "$_pwd" ]]; then
+    echo "Invalid sudo password"
+    exit 1
+fi
+printf "\n"
+
+echo "$_pwd" | "$base/bin/anp" "$base/playbooks/init-playbook.yml" --become-password-file -
+echo "$_pwd" | "$base/bin/install" - --tags paru

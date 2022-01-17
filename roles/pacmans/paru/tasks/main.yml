@@ -1,0 +1,6 @@
+- name: Install PARU helper (AUR)
+  kewlfft.aur.aur:
+    name: paru
+    use: makepkg
+    state: present
+  when: ansible_pkg_mgr == 'pacman'
