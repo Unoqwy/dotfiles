@@ -2,15 +2,13 @@
   template:
     src: "{{ install_src }}/roles/system/udev-rules/templates/tablet.rules.j2"
     dest: "/etc/udev/rules.d/10-huion-tablet.rules"
-  become: yes
+  become: true
   notify: Reload udev rules
 - file:
     path: "/etc/udev/rules.d/10-huion-tablet"
     state: directory
-    mode: "0755"
-  become: yes
+  become: true
 - copy:
     src: "{{ install_src }}/roles/system/udev-rules/files/tablet-pad-bind.sh"
     dest: "/etc/udev/rules.d/10-huion-tablet/pad"
-    mode: "0755"
-  become: yes
+  become: true

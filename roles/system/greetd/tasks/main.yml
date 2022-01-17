@@ -2,9 +2,9 @@
   template:
     src: "{{ install_src }}/roles/system/greetd/files/config.toml"
     dest: "/etc/greetd/config.toml"
-  become: yes
+  become: true
 - name: Enable greetd on start
   systemd:
     name: greetd.service
-    enabled: yes
-  become: yes
+    enabled: true
+  become: true
