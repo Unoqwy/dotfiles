@@ -1,4 +1,5 @@
 #!/bin/sh
+cd $XMONAD/bin/xmobar
 OUTPUT=${1:-"$(dirname $(readlink -f $0))/xmobar"}
 FLAGS=("+with_utf8" "+with_xft" "+with_weather" "+with_dbus")
 
@@ -7,6 +8,6 @@ echo "INFO: xmobar flags: $_flags"
 
 cd ../..
 cabal build "exe:qmobar" --constraint="xmobar $_flags"
-mv "$OUTPUT" "$OUTPUT.bak" 2>/dev/null
-chmod -x "$OUTPUT.bak" 2>/dev/null
-cp "$(find dist-newstyle -type f -executable -name "qmobar" | sort -n | tail -n1)" "$OUTPUT"
+
+bin=$(find dist-newstyle -type f -executable -name "qmobar" | sort -n | tail -n1)
+ln -sf "$(realpath $bin)" "$OUTPUT"

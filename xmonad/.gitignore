@@ -6,6 +6,7 @@ prompt-history
 
 **/.env
 xinit.env
+.env-state
 
 # cabal output
 dist-newstyle/

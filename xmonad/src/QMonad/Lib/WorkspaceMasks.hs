@@ -1,6 +1,7 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 
 module QMonad.Lib.WorkspaceMasks (
+    WorkspaceMasks(..),
     WorkspaceMask(..),
     WSPP(..),
     WSMaskFormat,

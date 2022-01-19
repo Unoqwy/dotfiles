@@ -1,4 +1,5 @@
 {-# LANGUAGE FlexibleInstances, MultiParamTypeClasses #-}
+{-# LANGUAGE TupleSections #-}
 
 module QMonad.Config.Layout.FocalWindow (
   FocalChange(..),
@@ -37,13 +38,15 @@ instance LayoutModifier FocalWindow Window where
             _ -> Just w
       | otherwise = Nothing
 
-  modifyLayout (FocalWindow (Just w)) ws r = if isJust stack
-      then runLayout ws { W.stack = stack } r
-      else runLayout ws r
-    where wins = W.integrate' . W.stack $ ws
-          stack | isJust $ find (== w) wins = Just W.Stack { W.focus = w, W.up = [], W.down = [] }
-                | otherwise = Nothing
-  modifyLayout (FocalWindow _) ws r = runLayout ws r
+  modifyLayoutWithUpdate (FocalWindow (Just w)) ws r = do
+      let wins = W.integrate' . W.stack $ ws
+      let (run, state) = case find (== w) wins of
+            Just w -> do
+               let stack = Just $ W.Stack w [] []
+               (runLayout ws { W.stack = stack } r, Nothing)
+            _ -> (runLayout ws r, Just $ FocalWindow Nothing)
+      (, state) <$> run
+  modifyLayoutWithUpdate (FocalWindow _) ws r = (, Nothing) <$> runLayout ws r
 
 focalWindow :: l a -> ModifiedLayout FocalWindow l a
 focalWindow = ModifiedLayout $ FocalWindow Nothing

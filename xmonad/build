@@ -1,1 +1,7 @@
-bin/xmonad/build
+#!/bin/sh
+export XMONAD=${XMONAD:-"$HOME/.xmonad"}
+if [[ ! -d "$XMONAD" ]]; then
+    exit 1
+fi
+"$XMONAD/bin/xmobar/build"
+XMONAD_FORCE_BUILD=1 "$XMONAD/bin/xmonad/build"

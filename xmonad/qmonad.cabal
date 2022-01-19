@@ -2,7 +2,7 @@ cabal-version: >=1.10
 build-type: Simple
 
 name: qmonad
-version: 1.5.0
+version: 1.5.1
 author: Unoqwy <julien.qwy@gmail.com>
 license: MIT
 
@@ -29,6 +29,7 @@ executable qmonad
   hs-source-dirs: src
 
   other-modules:
+    QMonad.Config.Aggregate
     QMonad.Config.Applications
     QMonad.Config.ControlSliders
     QMonad.Config.DoNotDisturb
@@ -45,6 +46,7 @@ executable qmonad
     QMonad.Config.Theme
     QMonad.Config.Util
     QMonad.Config.Xmobar
+    QMonad.Config.QwmhDesktops
     QMonad.Lib.Sliders
     QMonad.Lib.Window.Minimize
     QMonad.Lib.Window.Opacity

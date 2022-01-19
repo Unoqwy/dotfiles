@@ -29,18 +29,16 @@ opacityControlSlider :: X()
 opacityControlSlider = controlSlider (\c -> c { icon = constIcon "\xf8fb" }) id Nothing getOpacity opacityHook
 
 getOpacity :: X Int
-getOpacity = XS.gets globalOpacity
+getOpacity = getState globalOpacity 0
 
 opacityHook :: Int -> X()
 opacityHook val = do
-  state <- XS.get
-  XS.put $ state {
-      globalOpacity = val
-    }
+  updateState (\es -> es { globalOpacity = val })
   withWindowSet $ \ws -> do
     let wss = map (W.integrate' . W.stack) (W.hidden ws ++ map W.workspace (W.current ws : W.visible ws))
         windows = foldl1 (++) wss
     mapM_ applyOpacityRule windows
+  saveEnvState
 
 brightnessControlSlider :: X()
 brightnessControlSlider = do
@@ -80,10 +78,7 @@ ddcutilHook :: DisplayId -> Int -> X()
 ddcutilHook d val = awaitSpawn $ ddcutil ++ " -d " ++ show d ++ " setvcp 10 " ++ show val
 
 getBrightnessCtlVal :: X Int
-getBrightnessCtlVal = do
-  conf <- XS.gets envConfig
-  brightness <- runProcessWithInput (localBin conf "get-brightness") [] []
-  return $ read brightness
+getBrightnessCtlVal = read <$> (runSH =<< localBin' "get-brightness")
 
 brightnessCtlHook :: Int -> X()
 brightnessCtlHook val = awaitSpawn $ "brightnessctl set " ++ show val ++ "%"
@@ -121,14 +116,11 @@ colorTempControlSlider = controlSlider (\c -> c {
   }) (Just $ defaultKeybindings 100 500) getColorTemp colorTempHook
 
 getColorTemp :: X Int
-getColorTemp = XS.gets colorTemp
+getColorTemp = getState colorTemp 0
 
 colorTempHook :: Int -> X()
 colorTempHook val = do
-  state <- XS.get
-  XS.put $ state {
-      colorTemp = val
-    }
+  updateState (\es -> es { colorTemp = val })
   spawn $ "redshift -PO " ++ show val
 
 constIcon :: String -> Maybe (Int -> IO String)

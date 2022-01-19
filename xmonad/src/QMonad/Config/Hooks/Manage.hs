@@ -15,7 +15,7 @@ import qualified XMonad.Util.ExtensibleState as XS
 import Data.Monoid (All)
 import GHC.Float (int2Float)
 
-import QMonad.Config.Env (EnvConfig(..), EnvState(envConfig, globalOpacity))
+import QMonad.Config.Env (EnvConfig(..), EnvState(envConfig, globalOpacity), EnvState'(envState))
 import QMonad.Lib.Window.Opacity (setWindowOpacity)
 
 -- Utils
@@ -113,6 +113,5 @@ doSetOpacity opacity = doX $ \w -> setOpacity w opacity
 
 setOpacity :: Window -> Maybe Float -> X()
 setOpacity w (Just opac) = setWindowOpacity w (opac / 100.0)
-setOpacity w Nothing = do
-  opac <- XS.gets globalOpacity
-  setWindowOpacity w (int2Float opac / 100.0)
+setOpacity w Nothing = XS.gets envState >>= flip whenJust
+  (\es -> setOpacity w (Just . int2Float . globalOpacity $ es))

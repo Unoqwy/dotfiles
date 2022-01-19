@@ -14,13 +14,13 @@ import Data.Yaml (FromJSON)
 data Theme = Theme {
     border :: ThemeBorder,
     prompt :: ThemePrompt
-  } deriving (Show, Generic)
+  } deriving (Read, Show, Generic)
 
 data ThemeBorder = ThemeBorder {
     width :: Int,
     normal :: String,
     focused :: String
-  } deriving (Show, Generic)
+  } deriving (Read, Show, Generic)
 
 data ThemePrompt = ThemePrompt {
     font :: String,
@@ -33,7 +33,7 @@ data ThemePrompt = ThemePrompt {
 
     borderWidth :: Int,
     borderColor :: String
-  } deriving (Show, Generic)
+  } deriving (Read, Show, Generic)
 
 instance FromJSON Theme
 instance FromJSON ThemeBorder

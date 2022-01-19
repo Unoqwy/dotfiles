@@ -1,4 +1,4 @@
-import XMonad (xmonad, def, mod4Mask, extensionType)
+import XMonad (X, xmonad, def, mod4Mask, extensionType)
 import qualified XMonad
 import XMonad.Util.Run (spawnPipe)
 
@@ -12,9 +12,10 @@ import System.IO (Handle, IOMode(WriteMode), hSetBuffering, BufferMode(LineBuffe
 import Data.Typeable (typeOf)
 import qualified Data.Map as M
 
-import QMonad.Config.Env (EnvConfig(..), EnvState(..), loadEnvConfig)
+import QMonad.Config.Env (EnvConfig(..), EnvState(..), EnvState'(..), getState, putStateOrUpdate, loadEnvConfig)
 import QMonad.Config.Keybindings (keybindings)
 import QMonad.Config.Xmobar (xmobarLogHook)
+import QMonad.Config.QwmhDesktops (qwmh)
 import QMonad.Config.Hooks.General (hooks)
 import QMonad.Config.Hooks.Layouts (layoutHook)
 import qualified QMonad.Config.Theme as T
@@ -33,7 +34,7 @@ main = do
   infoPipe <- getFIFOHandle "/tmp/xmonad-info"
 
   conf <- loadEnvConfig
-  xmonad $ (ewmh . docks . hooks conf) def {
+  xmonad $ (ewmh . qwmh . docks . hooks conf) def {
       XMonad.terminal = terminal conf
     , XMonad.modMask = mod4Mask
     , XMonad.workspaces = map show [0..9]
@@ -43,11 +44,16 @@ main = do
     , XMonad.focusedBorderColor = T.focused . T.border . theme $ conf
 
     , XMonad.keys = keybindings conf
-    , XMonad.startupHook = XS.put $ EnvState {
-          envConfig = conf,
-          globalOpacity = default_opacity conf,
-          colorTemp = 6500
-        }
+    , XMonad.startupHook = startup conf
     , XMonad.layoutHook = layoutHook
     , XMonad.logHook = xmobarLogHook xmobarStdin infoPipe
     }
+
+startup :: EnvConfig -> X()
+startup conf = do
+  putStateOrUpdate (EnvState {
+      envConfig = conf,
+      globalOpacity = default_opacity conf,
+      colorTemp = 6500
+    }) (\es -> es { envConfig = conf })
+

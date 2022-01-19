@@ -13,7 +13,12 @@ export XMONAD_CACHE_DIR=$XDG_CACHE_HOME/xmonad
 
 export XMOBAR_CONFIG_DIR=$XMONAD/bin/xmobar
 
-[[ -f "$HOME/.xmonad/xinit.env" ]] && source "$HOME/.xmonad/xinit.env"
+[[ -f "$XMONAD/xinit.env" ]] && source "$XMONAD/xinit.env"
+[[ -f "$XMONAD/.env-state" ]] && source "$XMONAD/.env-state"
 
 # Start xmonad
-exec qmonad
+if [[ -x "$XMONAD_CONFIG_DIR/current" ]]; then
+    "$XMONAD_CONFIG_DIR/current"
+else
+    exec qmonad
+fi
