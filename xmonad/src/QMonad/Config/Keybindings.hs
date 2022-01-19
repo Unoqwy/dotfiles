@@ -57,16 +57,6 @@ chooseWindowToMaximize conf = do
 minimizeCurrentWindow :: X()
 minimizeCurrentWindow = withFocused minimizeWindow <+> BW.focusUp
 
--- Focus
-fixFocus :: X()
-fixFocus =
-  return ()
-
-checkFocus :: Window -> X()
-checkFocus w = do
-  minimized <- XS.gets minimizedStack
-  when (w `elem` minimized) fixFocus
-
 toggleFocalWindow :: Window -> X()
 toggleFocalWindow w = sendMessage $ FocalToggle w
 
@@ -77,9 +67,7 @@ wsScratchpadTerminalAction conf = do
 
 -- DND
 toggleDND' :: XConfig Layout -> X()
-toggleDND' XConfig{XMonad.logHook = logHook'} = do
-  toggleDND
-  logHook'
+toggleDND' XConfig{XMonad.logHook = logHook'} = toggleDND >> logHook'
 
 -- Keybindings
 keybindings :: EnvConfig -> XConfig Layout -> M.Map (ButtonMask, KeySym) (X())
@@ -124,7 +112,7 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
   , ((modm, xK_d), withFocused toggleFocalWindow)
 
     -- Focused window
-  , ((modm .|. shiftMask, xK_c), kill1 <+> withFocused checkFocus)
+  , ((modm .|. shiftMask, xK_c), kill1)
   , ((modm, xK_h), sendMessage Shrink)
   , ((modm, xK_l), sendMessage Expand)
   , ((modm, xK_t), withFocused $ windows . W.sink)

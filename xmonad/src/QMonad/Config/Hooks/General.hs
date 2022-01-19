@@ -1,13 +1,17 @@
 module QMonad.Config.Hooks.General (hooks) where
 
-import XMonad ((<+>), XConfig, X, liftIO, spawn)
+import XMonad
+import XMonad.Prelude
 import qualified XMonad
 import qualified XMonad.StackSet as W
 
 import XMonad.Actions.DynamicWorkspaces (addHiddenWorkspace)
 import XMonad.Hooks.InsertPosition (insertPosition, Focus(..), Position(..))
+import XMonad.Util.Minimize (Minimized(minimizedStack))
 import XMonad.Util.SpawnOnce (spawnOnce)
 import XMonad.Util.Hacks (windowedFullscreenFixEventHook)
+import qualified XMonad.Layout.BoringWindows as BW
+import qualified XMonad.Util.ExtensibleState as XS
 
 import System.Environment (lookupEnv, setEnv)
 import qualified Data.Bifunctor
@@ -38,8 +42,8 @@ setupDefaultWorkspaces = do
             , (9, "media")
             ]
 
-startupHook :: X()
-startupHook = do
+startupHook' :: X()
+startupHook' = do
   -- start daemons
   spawnOnce "flameshot &"
   spawnOnce "greenclip daemon &"
@@ -61,7 +65,22 @@ startupHook = do
 -- Main hooks
 hooks :: EnvConfig -> XConfig a -> XConfig a
 hooks conf xconf = xconf {
-    XMonad.startupHook = startupHook <+> XMonad.startupHook xconf
+    XMonad.startupHook = startupHook' <+> XMonad.startupHook xconf
   , XMonad.handleEventHook = Hooks.Manage.handleEventHook <+> windowedFullscreenFixEventHook
-  , XMonad.manageHook  = insertPosition Below Newer <+> Hooks.Manage.manageHook conf
+  , XMonad.manageHook = insertPosition Below Newer <+> Hooks.Manage.manageHook conf
+  , XMonad.logHook = logHook' <+> XMonad.logHook xconf
   }
+
+logHook' :: X()
+logHook' = withFocused checkFocus
+
+-- Focus
+fixFocus :: X()
+fixFocus = do
+  wset <- gets windowset
+  let stack = W.integrate' . W.stack . W.workspace . W.current $ wset
+  minimized <- XS.gets minimizedStack
+  when (any (`notElem` minimized) stack) BW.focusDown
+
+checkFocus :: Window -> X()
+checkFocus w = flip when fixFocus . (w `elem`) =<< XS.gets minimizedStack
