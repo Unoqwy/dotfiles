@@ -1,2 +1,2 @@
-pacman: [lazygit, neofetch]
+pacman: [lazygit, neofetch, just]
 aur: [z.lua]

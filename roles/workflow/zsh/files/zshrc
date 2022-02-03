@@ -89,6 +89,7 @@ alias yank="xclip -selection clipboard"
 
 # git
 alias g="git"
+alias ga="gita"
 alias gs="git status"
 alias lg="lazygit"
 
@@ -98,6 +99,7 @@ if type nvim > /dev/null; then
     alias vi="nvim"
 fi
 alias f="xplr"
+alias j="just"
 
 alias nf="neofetch"
 alias nfr="neofetch --config none"
