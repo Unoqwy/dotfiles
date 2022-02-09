@@ -66,7 +66,8 @@ windowRules = composeAll [
   , className =? "media-app" --> doShift "9"
 
   -- Splash screens
-  , className =? "jetbrains-idea-ce" <&&> title =? "win0" --> doCenterFloat
+  , fmap ("jetbrains-idea" `isPrefixOf`) className <&&> title =? "win0" --> doCenterFloat
+  , className =? "jetbrains-toolbox" --> doCenterFloat
 
   -- Settings apps
   , className =? "Pavucontrol" --> doCenteredFloat
@@ -98,9 +99,11 @@ opacityHook = composeOne $
         t' = QMonad.Config.Scratchpads.transparentScratchpads
         appNames = [
             "jetbrains-idea-ce"
+          , "jetbrains-idea"
           , "spotify"
           , "discord"
           , "code"
+          , "emacs"
           ] ++ t'
         classNames = [
             "Alacritty"

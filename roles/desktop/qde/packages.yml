@@ -4,7 +4,10 @@ _:
     aur: [rofi-greenclip]
 
   # General tools
-  - pacman: [picom, flameshot, libnotify, dunst, sxiv, feh]
+  - pacman: [flameshot, libnotify, dunst, sxiv, feh]
+  - pacman:
+    - name: picom
+      unless: picom-git
 
   # Audio
   - pacman: [libpulse, pipewire-pulse, pavucontrol, pamixer]

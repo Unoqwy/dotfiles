@@ -3,8 +3,17 @@ notARepository: "skip"
 gui:
   language: "en"
   mouseEvents: false
-  showFileTree: true
+  showFileTree: false
   showRandomTip: false
+  expandFocusedSidePanel: true
+  theme:
+    activeBorderColor:
+      - blue
+      - bold
+    inactiveBorderColor:
+      - '#858585'
+    selectedRangeBgColor:
+      - black
 
 update:
   method: never

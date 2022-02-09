@@ -71,7 +71,7 @@ nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
-set nosplitbelow splitright
+" set nosplitbelow splitright
 
 nnoremap <leader>sp :tabp<CR>
 nnoremap <leader>sn :tabn<CR>
