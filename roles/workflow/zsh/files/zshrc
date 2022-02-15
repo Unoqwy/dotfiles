@@ -101,6 +101,7 @@ fi
 alias f="xplr"
 alias j="just"
 alias c="cargo"
+alias fl="flutter"
 
 alias nf="neofetch"
 alias nfr="neofetch --config none"
