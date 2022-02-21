@@ -3,8 +3,12 @@
     src: "{{ install_src }}/roles/workflow/zsh/files/zshrc"
     dest: "{{ install_dest }}/.zshrc"
     state: link
-- name: Link .zshenv
+- name: Remove .zshenv
   file:
-    src: "{{ install_src }}/roles/workflow/zsh/files/zshenv"
-    dest: "{{ install_dest }}/.zshenv"
+    path: "{{ install_dest }}/.zshenv"
+    state: absent
+- name: Link .zprofile
+  file:
+    src: "{{ install_src }}/roles/workflow/zsh/files/zprofile"
+    dest: "{{ install_dest }}/.zprofile"
     state: link
