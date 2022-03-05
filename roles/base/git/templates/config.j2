@@ -1,9 +1,11 @@
 # vim:ft=gitconfig
+[core]
+	excludesFile = {{ install_dest }}/.config/git/.gitignore.global
 
 [init]
 	defaultBranch = master
 [pull]
-	rebase = false
+	rebase = true
 [advice]
 	addIgnoredFile = false
 

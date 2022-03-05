@@ -1,5 +1,13 @@
-- name: Link .gitconfig
-  file:
-    src: "{{ install_src }}/roles/base/git/files/config"
+- name: Create .gitconfig
+  template:
+    src: "{{ install_src }}/roles/base/git/templates/config.j2"
     dest: "{{ install_dest }}/.gitconfig"
+- name: Create git config directory
+  file:
+    path: "{{ install_dest }}/.config/git"
+    state: directory
+- name: Link global gitignore
+  file:
+    src: "{{ install_src }}/roles/base/git/files/.gitignore.global"
+    dest: "{{ install_dest }}/.config/git/.gitignore.global"
     state: link
