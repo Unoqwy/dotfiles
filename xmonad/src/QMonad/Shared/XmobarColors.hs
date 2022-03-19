@@ -7,6 +7,7 @@ background = "#191919"
 focal = "#e5c463"
 title = foreground
 layout = "#948ae3"
+foreignWs = "#85dacc"
 
 dndIcon = "#3f51b5"
 

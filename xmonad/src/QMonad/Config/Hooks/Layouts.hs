@@ -13,6 +13,7 @@ import XMonad.Layout.LayoutModifier
 import qualified XMonad.StackSet as W
 
 import QMonad.Config.Layout.FocalWindow (focalWindow)
+import QMonad.Config.Layout.ForeignLayout (foreignLayout)
 
 import Data.List (find)
 import Data.Maybe (isJust)
@@ -30,7 +31,7 @@ mkGaps = spacingRaw False
   (Border windowSpacing windowSpacing windowSpacing windowSpacing) True
 
 layouts =
-      focalWindow (
+      avoidStruts . foreignLayout . focalWindow $ (
             renamed [Replace "V 2*|1"] vtall
         ||| renamed [Replace "H 1|1"] htall
       )
@@ -38,8 +39,8 @@ layouts =
       ||| renamed [Replace "FS"] fullScreen
   where
     defaultIncr = 5/100
-    vtall = avoidStruts . mkGaps $ Mirror $ Tall 2 defaultIncr (2/3)
-    htall = avoidStruts . mkGaps $ Tall 1 defaultIncr (1/2)
+    vtall = mkGaps $ Mirror $ Tall 2 defaultIncr (2/3)
+    htall = mkGaps $ Tall 1 defaultIncr (1/2)
     full  = avoidStruts . mkGaps . noBorders $ Full
     fullScreen = noBorders Full
 

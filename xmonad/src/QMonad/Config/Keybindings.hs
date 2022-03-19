@@ -32,6 +32,7 @@ import System.Environment
 import QMonad.Config.DoNotDisturb (toggleDND)
 import QMonad.Config.ControlSliders
 import QMonad.Config.Layout.FocalWindow (FocalToggle(..))
+import QMonad.Config.Layout.ForeignLayout (ForeignMessage(..))
 import QMonad.Config.Env (EnvConfig(..), localBin)
 import QMonad.Config.IPC (MediaControl(..), mediaAction, toggleStatusBar)
 import QMonad.Lib.Window.Minimize (minimizeWindow, maximizeWindow, sortMinimizedWindows, minimizedStack)
@@ -152,21 +153,18 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
         ((0, xK_r), spawn "$XMONAD/bin/xmonad/recompile -r")
       , ((0, xK_k), io exitSuccess)
       ])
+
+  -- Go to workspaces
+  , ((modm, xK_w), submap . M.fromList $ map (\(k, w) -> ((0, k), gotoWs w)) allWs)
+  -- Focus foreign workspaces
+  , ((modm, xK_y), submap . M.fromList $ map (\(k, w) -> ((0, k), sendMessage . FocusForeign $ Just w)) allWs)
   ]
 
-  -- Workspaces movements
-  ++ -- Basic workspaces
+  ++ -- Basic workspaces shortcuts
   [((m .|. modm, k), windows $ f i)
     | (i, k) <- zip (XMonad.workspaces xconf) [xK_0 ..]
-    , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask),  (copy, shiftMask .|. controlMask)]]
-  ++
-  [((modm, xK_w), submap . M.fromList $ [
-      ((0, xK_d), gotoWs "DND")
-    , ((0, xK_n), gotoWs "NSP")
-    ])]
-
-  -- Swap workspaces
-  ++ -- Special workspaces
+    , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask), (copy, shiftMask .|. controlMask)]]
+  ++ -- Swap workspaces
   [((modm .|. controlMask, k), windows $ swapWithCurrent i)
     | (i, k) <- zip (XMonad.workspaces xconf) [xK_0 ..]]
 
@@ -176,3 +174,7 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
     scratchpads = Scratchpads.scratchpads conf
     gotoWs i = windows $ W.greedyView i
     xpConfig = XP.defaultConfig conf
+    allWs = [
+        (xK_d, "DND")
+      , (xK_n, "NSP")
+      ] ++ [(k, w) | (w, k) <- zip (XMonad.workspaces xconf) [xK_0 ..]]
