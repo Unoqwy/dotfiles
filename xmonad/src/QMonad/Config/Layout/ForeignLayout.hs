@@ -22,36 +22,45 @@ import XMonad.Actions.CopyWindow (copyWindow, kill1)
 import XMonad.Prompt (killBefore)
 
 -- | Bring a foreign workspace as a subset of the current workspace
-data ForeignLayout a = ForeignLayout (Maybe WorkspaceId) (Maybe WorkspaceId) [Window] deriving (Show, Read)
+data ForeignLayout a = ForeignLayout {
+    wid :: Maybe WorkspaceId
+  , fws :: Maybe WorkspaceId
+  , copied :: [Window]
+  , split :: Float
+  } deriving (Show, Read)
 
-data ForeignMessage = FocusForeign (Maybe WorkspaceId)
+data ForeignMessage = PopulateBoundWs WorkspaceId
+  | ResizeForeignSplit Float
+  | FocusForeign (Maybe WorkspaceId)
   | PrepareForRemoval WorkspaceId Window
-  | PopulateBoundWs WorkspaceId
   deriving (Read, Show)
 
 instance Message ForeignMessage
 
 instance LayoutModifier ForeignLayout Window where
-  modifyDescription (ForeignLayout _ (Just fws) _) = layoutMeta . Just $ "fws:" ++ fws
+  modifyDescription (ForeignLayout _ (Just fws) _ _) = layoutMeta . Just $ "fws:" ++ fws
   modifyDescription _ = description
 
-  handleMessOrMaybeModifyIt (ForeignLayout wid fws copied) m
+  handleMessOrMaybeModifyIt fl@(ForeignLayout wid fws copied _) m
+    | Just (PopulateBoundWs ws) <- fromMessage m = do
+      update $ fl { wid = Just ws }
+    | Just (ResizeForeignSplit by) <- fromMessage m = do
+      update $ fl { split = max 0.1 $ min (split fl + by) 0.9 }
     | Just (FocusForeign ws) <- fromMessage m = do
       filterWindows (`notElem` copied)
       let ws' = (\ws -> if ws == fromJust wid then Nothing else Just ws) =<< ws in
-        return . Just . Left $ ForeignLayout wid ws' []
+        update $ fl { fws = ws', copied = [] }
     | Just (PrepareForRemoval fws' w) <- fromMessage m = if Just fws' == fws && w `elem` copied
       then do
         filterWindows (/= w)
-        return . Just . Left $ ForeignLayout wid fws (filter (/= w) copied)
+        update $ fl { copied = filter (/= w) copied }
       else return Nothing
-    | Just (PopulateBoundWs ws) <- fromMessage m = do
-      return . Just . Left $ ForeignLayout (Just ws) fws copied
     | otherwise = return Nothing
     where filterWindows f = modifyWindowSet $ \wset -> W.view (W.currentTag wset) $
            W.modify Nothing (W.filter f) $ W.view (fromJust wid) wset
+          update = return . Just . Left
 
-  modifyLayoutWithUpdate (ForeignLayout a@(Just _) b@(Just fws) copied) ws r = do
+  modifyLayoutWithUpdate l@(ForeignLayout (Just _) (Just fws) copied split) ws r = do
       workspaces <- W.workspaces <$> gets windowset
       (fl, c) <- case find (\ws -> W.tag ws == fws) workspaces of
         Just fws -> do
@@ -65,15 +74,15 @@ instance LayoutModifier ForeignLayout Window where
         _ -> return ([], Nothing)
       let flw = map fst fl
       let stack' = W.filter (`notElem` flw) =<< W.stack ws
-      (, fmap (ForeignLayout a b) c) . first (++ fl) <$> runLayout ws { W.stack = stack' } mr
+      (, fmap (\c -> l { copied = c }) c) . first (++ fl) <$> runLayout ws { W.stack = stack' } mr
     where iw = rect_width r
-          mw = round $ 0.6 * fromIntegral iw
+          mw = round $ (1.0 - split) * fromIntegral iw
           mr = r { rect_width = mw }
           fr = r { rect_x = rect_x r + fromIntegral mw, rect_width = iw - mw }
   modifyLayoutWithUpdate ForeignLayout {} ws r = (, Nothing) <$> runLayout ws r
 
 foreignLayout :: l a -> ModifiedLayout ForeignLayout l a
-foreignLayout = ModifiedLayout $ ForeignLayout Nothing Nothing []
+foreignLayout = ModifiedLayout $ ForeignLayout Nothing Nothing [] 0.4
 
 killFocused :: X()
 killFocused = do

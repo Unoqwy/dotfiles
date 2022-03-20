@@ -157,8 +157,10 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
 
   -- Go to workspaces
   , ((modm, xK_w), submap . M.fromList $ map (\(k, w) -> ((0, k), gotoWs w)) allWs)
-  -- Focus foreign workspaces
+  -- Foreign workspaces
   , ((modm, xK_y), submap . M.fromList $ map (\(k, w) -> ((0, k), sendMessage . FocusForeign $ Just w)) allWs)
+  , ((modm .|. shiftMask, xK_y), sendMessage $ ResizeForeignSplit 0.1)
+  , ((modm .|. shiftMask, xK_u), sendMessage $ ResizeForeignSplit (-0.1))
   ]
 
   ++ -- Basic workspaces shortcuts
