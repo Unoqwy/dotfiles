@@ -21,7 +21,7 @@ import QMonad.Shared.XmobarColors (foreignWs)
 import XMonad.Actions.CopyWindow (copyWindow, kill1)
 import XMonad.Prompt (killBefore)
 
--- | Focus a foreign workspace
+-- | Bring a foreign workspace as a subset of the current workspace
 data ForeignLayout a = ForeignLayout (Maybe WorkspaceId) (Maybe WorkspaceId) [Window] deriving (Show, Read)
 
 data ForeignMessage = FocusForeign (Maybe WorkspaceId)
@@ -38,7 +38,8 @@ instance LayoutModifier ForeignLayout Window where
   handleMessOrMaybeModifyIt (ForeignLayout wid fws copied) m
     | Just (FocusForeign ws) <- fromMessage m = do
       filterWindows (`notElem` copied)
-      return . Just . Left $ ForeignLayout wid ws []
+      let ws' = (\ws -> if ws == fromJust wid then Nothing else Just ws) =<< ws in
+        return . Just . Left $ ForeignLayout wid ws' []
     | Just (PrepareForRemoval fws' w) <- fromMessage m = if Just fws' == fws && w `elem` copied
       then do
         filterWindows (/= w)
