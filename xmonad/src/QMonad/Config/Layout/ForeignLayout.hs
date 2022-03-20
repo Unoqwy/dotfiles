@@ -36,15 +36,19 @@ instance LayoutModifier ForeignLayout Window where
   modifyDescription _ = description
 
   handleMessOrMaybeModifyIt (ForeignLayout wid fws copied) m
-    | Just (FocusForeign ws) <- fromMessage m = return . Just . Left $ ForeignLayout wid ws []
-    | Just (PrepareForRemoval fws' w) <- fromMessage m = if isJust wid && Just fws' == fws && w `elem` copied
+    | Just (FocusForeign ws) <- fromMessage m = do
+      filterWindows (`notElem` copied)
+      return . Just . Left $ ForeignLayout wid ws []
+    | Just (PrepareForRemoval fws' w) <- fromMessage m = if Just fws' == fws && w `elem` copied
       then do
-        windows $ \wset -> W.view (W.currentTag wset) $ W.modify Nothing (W.filter (/= w)) $ W.view (fromJust wid) wset
+        filterWindows (/= w)
         return . Just . Left $ ForeignLayout wid fws (filter (/= w) copied)
       else return Nothing
     | Just (PopulateBoundWs ws) <- fromMessage m = do
       return . Just . Left $ ForeignLayout (Just ws) fws copied
     | otherwise = return Nothing
+    where filterWindows f = modifyWindowSet $ \wset -> W.view (W.currentTag wset) $
+           W.modify Nothing (W.filter f) $ W.view (fromJust wid) wset
 
   modifyLayoutWithUpdate (ForeignLayout a@(Just _) b@(Just fws) copied) ws r = do
       workspaces <- W.workspaces <$> gets windowset
