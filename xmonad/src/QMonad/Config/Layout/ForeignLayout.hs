@@ -4,6 +4,7 @@
 module QMonad.Config.Layout.ForeignLayout (
   ForeignMessage(..),
   foreignLayout,
+  killFocused,
 ) where
 
 import XMonad
@@ -21,57 +22,57 @@ import XMonad.Actions.CopyWindow (copyWindow, kill1)
 import XMonad.Prompt (killBefore)
 
 -- | Focus a foreign workspace
-data ForeignLayout a = ForeignLayout (Maybe WorkspaceId) [Window] deriving (Show, Read)
+data ForeignLayout a = ForeignLayout (Maybe WorkspaceId) (Maybe WorkspaceId) [Window] deriving (Show, Read)
 
 data ForeignMessage = FocusForeign (Maybe WorkspaceId)
-  | KillFocused
+  | PrepareForRemoval WorkspaceId Window
+  | PopulateBoundWs WorkspaceId
   deriving (Read, Show)
 
 instance Message ForeignMessage
 
 instance LayoutModifier ForeignLayout Window where
-  modifyDescription (ForeignLayout (Just fws) _) = layoutMeta . Just $ "fws:" ++ fws
+  modifyDescription (ForeignLayout _ (Just fws) _) = layoutMeta . Just $ "fws:" ++ fws
   modifyDescription _ = description
 
-  handleMessOrMaybeModifyIt (ForeignLayout fws copied) m
-    | Just (FocusForeign ws) <- fromMessage m = return . Just . Left $ ForeignLayout ws []
-    | Just KillFocused <- fromMessage m = do
-      focused <- W.peek <$> gets windowset
-      case focused of
-        Just w -> do
-          when (w `elem` copied) (windows $ W.modify Nothing (W.filter (/= w)))
-          kill1
-          return . Just . Left $ ForeignLayout fws (filter (/= w) copied)
-        _ -> return Nothing
+  handleMessOrMaybeModifyIt (ForeignLayout wid fws copied) m
+    | Just (FocusForeign ws) <- fromMessage m = return . Just . Left $ ForeignLayout wid ws []
+    | Just (PrepareForRemoval fws' w) <- fromMessage m = if isJust wid && Just fws' == fws && w `elem` copied
+      then do
+        windows $ \wset -> W.view (W.currentTag wset) $ W.modify Nothing (W.filter (/= w)) $ W.view (fromJust wid) wset
+        return . Just . Left $ ForeignLayout wid fws (filter (/= w) copied)
+      else return Nothing
+    | Just (PopulateBoundWs ws) <- fromMessage m = do
+      return . Just . Left $ ForeignLayout (Just ws) fws copied
     | otherwise = return Nothing
 
-  modifyLayoutWithUpdate (ForeignLayout (Just fws) copied) ws r = do
+  modifyLayoutWithUpdate (ForeignLayout a@(Just _) b@(Just fws) copied) ws r = do
       workspaces <- W.workspaces <$> gets windowset
-      fl <- case find (\ws -> W.tag ws == fws) workspaces of
+      (fl, c) <- case find (\ws -> W.tag ws == fws) workspaces of
         Just fws -> do
           let wins = W.integrate' . W.stack $ ws
               fwins = W.integrate' . W.stack $ fws
               missing = filter (`notElem` wins) fwins
           unless (null missing) (windows $ W.modify (Just $ W.Stack (head missing) [] (tail missing))
                 (\(W.Stack f l r) -> Just $ W.Stack f l (r ++ missing)))
-          fst <$> runLayout fws fr
-        _ -> return []
+          fl <- fst <$> runLayout fws fr
+          return (fl, Just $ copied ++ filter (`notElem` copied) missing)
+        _ -> return ([], Nothing)
       let flw = map fst fl
       let stack' = W.filter (`notElem` flw) =<< W.stack ws
-      (, Nothing) . first (++ fl) <$> runLayout ws { W.stack = stack' } mr
+      (, fmap (ForeignLayout a b) c) . first (++ fl) <$> runLayout ws { W.stack = stack' } mr
     where iw = rect_width r
           mw = round $ 0.6 * fromIntegral iw
           mr = r { rect_width = mw }
           fr = r { rect_x = rect_x r + fromIntegral mw, rect_width = iw - mw }
-  modifyLayoutWithUpdate (ForeignLayout _ _) ws r = (, Nothing) <$> runLayout ws r
+  modifyLayoutWithUpdate ForeignLayout {} ws r = (, Nothing) <$> runLayout ws r
 
 foreignLayout :: l a -> ModifiedLayout ForeignLayout l a
-foreignLayout = ModifiedLayout $ ForeignLayout Nothing []
+foreignLayout = ModifiedLayout $ ForeignLayout Nothing Nothing []
 
 killFocused :: X()
 killFocused = do
-  ws <- W.workspace . W.current <$> gets windowset
-  let (meta,_) = parseLayoutDescription [] (description . W.layout $ ws)
-  if any ("fws" `isPrefixOf`) meta
-    then sendMessage KillFocused
-    else kill1
+  withFocused $ \w -> do
+    ws <- W.tag . W.workspace . W.current <$> gets windowset
+    broadcastMessage $ PrepareForRemoval ws w
+  kill1

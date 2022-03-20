@@ -10,7 +10,7 @@ import qualified XMonad.Util.ExtensibleState as XS
 
 import XMonad.Actions.Submap (submap)
 import XMonad.Actions.CycleWS (prevScreen, nextScreen, toggleWS)
-import XMonad.Actions.CopyWindow (copy, kill1)
+import XMonad.Actions.CopyWindow (copy)
 import Graphics.X11.ExtraTypes.XF86
 
 import XMonad.Layout.Spacing (
@@ -32,7 +32,7 @@ import System.Environment
 import QMonad.Config.DoNotDisturb (toggleDND)
 import QMonad.Config.ControlSliders
 import QMonad.Config.Layout.FocalWindow (FocalToggle(..))
-import QMonad.Config.Layout.ForeignLayout (ForeignMessage(..))
+import QMonad.Config.Layout.ForeignLayout (ForeignMessage(..), killFocused)
 import QMonad.Config.Env (EnvConfig(..), localBin)
 import QMonad.Config.IPC (MediaControl(..), mediaAction, toggleStatusBar)
 import QMonad.Lib.Window.Minimize (minimizeWindow, maximizeWindow, sortMinimizedWindows, minimizedStack)
@@ -40,6 +40,7 @@ import QMonad.Lib.Window.Minimize (minimizeWindow, maximizeWindow, sortMinimized
 import qualified QMonad.Config.Scratchpads as Scratchpads
 import qualified QMonad.Config.Applications as A
 import qualified QMonad.Config.Prompt as XP
+import QMonad.Config.Hooks.General (allWorkspaces)
 
 -- Toggles
 toggleGaps :: X()
@@ -113,7 +114,7 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
   , ((modm, xK_d), withFocused toggleFocalWindow)
 
     -- Focused window
-  , ((modm .|. shiftMask, xK_c), kill1)
+  , ((modm .|. shiftMask, xK_c), killFocused)
   , ((modm, xK_h), sendMessage Shrink)
   , ((modm, xK_l), sendMessage Expand)
   , ((modm, xK_t), withFocused $ windows . W.sink)
@@ -174,7 +175,4 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
     scratchpads = Scratchpads.scratchpads conf
     gotoWs i = windows $ W.greedyView i
     xpConfig = XP.defaultConfig conf
-    allWs = [
-        (xK_d, "DND")
-      , (xK_n, "NSP")
-      ] ++ [(k, w) | (w, k) <- zip (XMonad.workspaces xconf) [xK_0 ..]]
+    allWs = allWorkspaces xconf
