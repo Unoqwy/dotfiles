@@ -10,7 +10,7 @@ import qualified XMonad.Util.ExtensibleState as XS
 
 import XMonad.Actions.Submap (submap)
 import XMonad.Actions.CycleWS (prevScreen, nextScreen, toggleWS)
-import XMonad.Actions.CopyWindow (copy, kill1)
+import XMonad.Actions.CopyWindow (copy)
 import Graphics.X11.ExtraTypes.XF86
 
 import XMonad.Layout.Spacing (
@@ -32,6 +32,7 @@ import System.Environment
 import QMonad.Config.DoNotDisturb (toggleDND)
 import QMonad.Config.ControlSliders
 import QMonad.Config.Layout.FocalWindow (FocalToggle(..))
+import QMonad.Config.Layout.ForeignLayout (ForeignMessage(..), killFocused)
 import QMonad.Config.Env (EnvConfig(..), localBin)
 import QMonad.Config.IPC (MediaControl(..), mediaAction, toggleStatusBar)
 import QMonad.Lib.Window.Minimize (minimizeWindow, maximizeWindow, sortMinimizedWindows, minimizedStack)
@@ -39,6 +40,7 @@ import QMonad.Lib.Window.Minimize (minimizeWindow, maximizeWindow, sortMinimized
 import qualified QMonad.Config.Scratchpads as Scratchpads
 import qualified QMonad.Config.Applications as A
 import qualified QMonad.Config.Prompt as XP
+import QMonad.Config.Hooks.General (allWorkspaces)
 
 -- Toggles
 toggleGaps :: X()
@@ -112,7 +114,7 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
   , ((modm, xK_d), withFocused toggleFocalWindow)
 
     -- Focused window
-  , ((modm .|. shiftMask, xK_c), kill1)
+  , ((modm .|. shiftMask, xK_c), killFocused)
   , ((modm, xK_h), sendMessage Shrink)
   , ((modm, xK_l), sendMessage Expand)
   , ((modm, xK_t), withFocused $ windows . W.sink)
@@ -152,21 +154,20 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
         ((0, xK_r), spawn "$XMONAD/bin/xmonad/recompile -r")
       , ((0, xK_k), io exitSuccess)
       ])
+
+  -- Go to workspaces
+  , ((modm, xK_w), submap . M.fromList $ map (\(k, w) -> ((0, k), gotoWs w)) allWs)
+  -- Foreign workspaces
+  , ((modm, xK_y), submap . M.fromList $ map (\(k, w) -> ((0, k), sendMessage . FocusForeign $ Just w)) allWs)
+  , ((modm .|. shiftMask, xK_y), sendMessage $ ResizeForeignSplit 0.1)
+  , ((modm .|. shiftMask, xK_u), sendMessage $ ResizeForeignSplit (-0.1))
   ]
 
-  -- Workspaces movements
-  ++ -- Basic workspaces
+  ++ -- Basic workspaces shortcuts
   [((m .|. modm, k), windows $ f i)
     | (i, k) <- zip (XMonad.workspaces xconf) [xK_0 ..]
-    , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask),  (copy, shiftMask .|. controlMask)]]
-  ++
-  [((modm, xK_w), submap . M.fromList $ [
-      ((0, xK_d), gotoWs "DND")
-    , ((0, xK_n), gotoWs "NSP")
-    ])]
-
-  -- Swap workspaces
-  ++ -- Special workspaces
+    , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask), (copy, shiftMask .|. controlMask)]]
+  ++ -- Swap workspaces
   [((modm .|. controlMask, k), windows $ swapWithCurrent i)
     | (i, k) <- zip (XMonad.workspaces xconf) [xK_0 ..]]
 
@@ -176,3 +177,4 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
     scratchpads = Scratchpads.scratchpads conf
     gotoWs i = windows $ W.greedyView i
     xpConfig = XP.defaultConfig conf
+    allWs = allWorkspaces xconf

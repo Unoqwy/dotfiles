@@ -6,6 +6,7 @@ module QMonad.Config.Xmobar (
 ) where
 
 import XMonad
+import XMonad.Prelude
 import Control.Monad (when)
 import Data.List (find)
 import XMonad.Util.Run (hPutStrLn)
@@ -78,6 +79,11 @@ infoLogHook infoPipe showTitle ld = do
   let (meta, ld') = parseLayoutDescription [] ld
   let titleColor = if "focal" `elem` meta then C.focal else C.title
 
+  wset <- gets windowset
+  foreignWs <- case find ("fws" `isPrefixOf`) meta of
+        Just ('f':'w':'s':':':fws) -> Just <$> getWorkspaceName fws
+        _ -> return Nothing
+
   dnd <- isDND
   let dndIcon = if dnd then "<fc=" ++ C.dndIcon ++ "><fn=2>\xf1f6</fn></fc> " else ""
 
@@ -88,6 +94,9 @@ infoLogHook infoPipe showTitle ld = do
     , ppLayout = \_ -> dndIcon ++ wrap
           ("<box type=Bottom width=2 color=" ++ C.layout ++ "><fc=" ++ C.layout ++ ">")
           "</fc></box>" ld'
+          ++ case foreignWs of
+              Just fws -> wrap (" <fc=" ++ C.foreignWs ++ ">") "</fc>" fws
+              Nothing -> ""
     , ppTitle = \s -> if showTitle
           then wrap ("<fc=" ++ titleColor ++ ">") "</fc>" (shorten 40 . xmobarStrip $ s)
           else ""

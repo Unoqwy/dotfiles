@@ -1,4 +1,4 @@
-module QMonad.Config.Hooks.General (hooks) where
+module QMonad.Config.Hooks.General (hooks, allWorkspaces) where
 
 import XMonad
 import XMonad.Prelude
@@ -21,13 +21,31 @@ import qualified QMonad.Config.Hooks.Manage as Hooks.Manage
 import QMonad.Config.Env (EnvConfig)
 
 import QMonad.Lib.WorkspaceMasks (setWorkspaceMask)
+import QMonad.Config.Layout.ForeignLayout (ForeignMessage(PopulateBoundWs))
+
+allWorkspaces :: XConfig a -> [(KeySym, WorkspaceId)]
+allWorkspaces xconf = [
+    (xK_d, "DND")
+  , (xK_n, "NSP")
+  ] ++ [(k, w) | (w, k) <- zip (XMonad.workspaces xconf) [xK_0 ..]]
 
 -- Startup hook
-setupDefaultWorkspaces :: X()
-setupDefaultWorkspaces = do
+setupDefaultWorkspaces :: XConfig a -> X()
+setupDefaultWorkspaces xconf = do
     mapM_ (\w -> setWorkspaceMask w Nothing (Just False)) hidden
     mapM_ (\t -> setWorkspaceMask (fst t) (Just $ snd t) Nothing) named
     addHiddenWorkspace "DND"
+    mapM_ (\wid -> do
+        wset <- gets windowset
+        let ws = find ((==wid).W.tag) (W.workspaces wset)
+        ul <- handleMessage (W.layout . fromJust $ ws) (SomeMessage . PopulateBoundWs $ wid) `catchX` return Nothing
+        whenJust ul $ \l' -> modifyWindowSet $ \wset -> do
+          let u = W.view wid wset
+          W.view (W.currentTag wset) $ u
+            { W.current = (W.current u)
+            { W.workspace = (W.workspace $ W.current u)
+            { W.layout = l' }}}
+      ) allWs
   where hidden = map show ([0, 1, 5] ++ [7..9]) ++ ["DND", "NSP"]
         named  = map (Data.Bifunctor.first show) [
               (0, "0")
@@ -41,9 +59,10 @@ setupDefaultWorkspaces = do
             , (8, "tm")
             , (9, "media")
             ]
+        allWs = map snd (allWorkspaces xconf)
 
-startupHook' :: X()
-startupHook' = do
+startupHook' :: XConfig a -> X()
+startupHook' xconf = do
   -- start daemons
   spawnOnce "flameshot &"
   spawnOnce "greenclip daemon &"
@@ -60,12 +79,12 @@ startupHook' = do
       XMonad.windows $ W.greedyView "4"
       liftIO $ setEnv "XMONAD_STARTED" "1"
 
-  setupDefaultWorkspaces
+  setupDefaultWorkspaces xconf
 
 -- Main hooks
 hooks :: EnvConfig -> XConfig a -> XConfig a
 hooks conf xconf = xconf {
-    XMonad.startupHook = startupHook' <+> XMonad.startupHook xconf
+    XMonad.startupHook = startupHook' xconf <+> XMonad.startupHook xconf
   , XMonad.handleEventHook = Hooks.Manage.handleEventHook <+> windowedFullscreenFixEventHook
   , XMonad.manageHook = insertPosition Below Newer <+> Hooks.Manage.manageHook conf
   , XMonad.logHook = logHook' <+> XMonad.logHook xconf
