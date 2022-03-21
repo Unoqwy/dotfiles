@@ -1,3 +1,9 @@
+- name: Build vscode user settings.json
+  shell:
+    cmd: ./build
+    chdir: "{{ install_src }}/roles/apps/vscode/config/"
+  register: vscode_build
+  changed_when: "'(changed)' in vscode_build.stdout"
 - name: Link vscode user settings.json
   file:
     src: "{{ install_src }}/roles/apps/vscode/files/settings.json"
