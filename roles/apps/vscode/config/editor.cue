@@ -22,7 +22,7 @@ workbench: {
 }
 
 files: {
-	insertFinalNewLine: true
+	insertFinalNewline: true
 	exclude: {
 		"**/.classpath":   true
 		"**/.project":     true
