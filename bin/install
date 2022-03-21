@@ -60,7 +60,7 @@ else
     mkdir -p "$HOME/.config"
     mkdir -p "$HOME/.local/bin"
 
-    _skip_tags="apps,pacmans"
+    _skip_tags="apps,pacmans,tools"
     for arg in "$@"; do
         if [[ $arg == "--tags" ]]; then
             _skip_tags="."
