@@ -29,7 +29,9 @@ zstyle ":completion:*" menu select
 
 # zsh:prompt
 autoload -Uz promptinit; promptinit
-if [[ "$TERM" != "dumb" ]]; then
+if [[ "$TERM" == "dumb" || "$TERM" == "linux" ]]; then
+    PS1="%(?..[%?] )%n@%m:%~ " # based on default prompt 'walters'
+else
     setopt PROMPT_SUBST
     autoload -Uz vcs_info
     zstyle ":vcs_info:*" enable git
@@ -39,8 +41,6 @@ if [[ "$TERM" != "dumb" ]]; then
     # reminder: these need to stay single quotes to expand later, not on read
     PS1='%F{red}%(?.. <%?>)%F{magenta}${vcs_info_msg_0_} %F{black}%f '
     RPS1="%F{blue}%~%f"
-else
-    PS1="%(?..[%?] )%n@%m:%~ " # based on default prompt 'walters'
 fi
 ## }}}
 
