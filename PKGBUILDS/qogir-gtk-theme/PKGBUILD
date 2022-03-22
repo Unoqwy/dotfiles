@@ -1,0 +1,28 @@
+_pkgname=qogir-gtk-theme
+_repo="https://github.com/vinceliuice/Qogir-theme.git"
+
+pkgname="${_pkgname}-git"
+pkgver=2021.12.25.7.g9b50682
+pkgrel=1
+pkgdesc="Qogir is a flat Design theme for GTK"
+url="$_repo"
+arch=("any")
+license=("GPL3")
+depends=("gtk-engines" "gtk-engine-murrine")
+makedepends=("git" "sassc")
+provides=("$_pkgname")
+conflicts=("$_pkgname")
+source=("$_pkgname::git+$_repo")
+md5sums=("SKIP")
+
+pkgver() {
+    cd $_pkgname
+    git describe --tags --long | sed 's/-/./g'
+}
+
+package() {
+    cd $_pkgname
+
+    install -dm755 "${pkgdir}/usr/share/themes"
+    ./install.sh -d "${pkgdir}/usr/share/themes" -l arch
+}

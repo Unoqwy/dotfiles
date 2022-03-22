@@ -19,3 +19,6 @@ _:
   # Fonts
   - pacman: [fontforge, ttf-jetbrains-mono]
     aur: [nerd-fonts-jetbrains-mono]
+
+  # Themes
+  - pacman: lxappearance

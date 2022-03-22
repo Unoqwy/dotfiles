@@ -1,0 +1,5 @@
+- name: Install Qogir GTK Theme
+  kewlfft.aur.aur:
+    use: makepkg
+    name: qogir-gtk-theme
+    local_pkgbuild: "{{ install_src }}/PKGBUILDS/qogir-gtk-theme"
