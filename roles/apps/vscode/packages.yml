@@ -1,2 +1,2 @@
 aur: visual-studio-code-bin
-pacman: [gnome-keyring, libsecret, libgnome-keyring]
+pacman: [gnome-keyring, libsecret, libgnome-keyring, cue]
