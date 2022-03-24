@@ -102,11 +102,13 @@ alias f="xplr"
 alias j="just"
 alias c="cargo"
 alias p="pnpm"
+alias px="pnpm dlx"
 alias fl="flutter"
 alias dc="docker-compose"
 
 alias nf="neofetch"
 alias nfr="neofetch --config none"
+alias dh="df -h"
 
 alias ts="tree-sitter"
 alias octperm="stat -c %a"
@@ -115,6 +117,10 @@ alias octperm="stat -c %a"
 ## Misc tools {{{
 function rsed { find . -type f -exec sed -i "s|$1|$2|g" {} +; }
 function rsedg { find . -type f -exec sed -i "s/$1/$2/g" {} +; }
+
+function ebin {
+    if which "$1" > /dev/null; then vi $(which "$1"); else echo "Bin not found" 1>&2; fi
+}
 
 function synctime {
     sudo sh -c 'ntpd -gq && hwclock --systohc'
