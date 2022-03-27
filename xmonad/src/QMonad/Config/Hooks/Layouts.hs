@@ -31,11 +31,13 @@ mkGaps = spacingRaw False
   (Border windowSpacing windowSpacing windowSpacing windowSpacing) True
 
 layouts =
-      avoidStruts . foreignLayout . focalWindow $ (
-            renamed [Replace "V 2*|1"] vtall
-        ||| renamed [Replace "H 1|1"] htall
+      (avoidStruts . foreignLayout $
+        focalWindow (
+              renamed [Replace "V 2*|1"] vtall
+          ||| renamed [Replace "H 1|1"] htall
+        )
+        ||| renamed [Replace "Full"] full
       )
-      ||| renamed [Replace "Full"] full
       ||| renamed [Replace "FS"] fullScreen
   where
     defaultIncr = 5/100
