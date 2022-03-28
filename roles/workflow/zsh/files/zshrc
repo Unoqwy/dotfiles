@@ -7,6 +7,7 @@ HISTFILE="$HOME/.zsh_history"
 HISTSIZE=10000
 SAVEHIST=$HISTSIZE
 setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_IGNORE_SPACE
 
 autoload -Uz up-line-or-beginning-search
 autoload -Uz down-line-or-beginning-search
