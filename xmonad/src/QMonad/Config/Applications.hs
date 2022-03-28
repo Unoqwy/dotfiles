@@ -40,6 +40,8 @@ keybindings conf@XConfig{XMonad.modMask = modm} = M.fromList [
       , ((0, xK_w), spawn "choose-wallpaper")
       , ((0, xK_k), spawn "choose-kbd-layout")
       , ((0, xK_a), spawn "choose-primary-sink")
+
+      , ((0, xK_o), spawn "open-proj")
       ])
 
   -- Special keys

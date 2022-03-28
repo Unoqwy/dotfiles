@@ -13,3 +13,8 @@
     src: "{{ install_src }}/roles/desktop/qde/bins/choose-wallpaper"
     dest: "{{ install_dest }}/.local/bin/choose-wallpaper"
     state: link
+- name: Link open-proj bin
+  file:
+    src: "{{ install_src }}/roles/desktop/qde/bins/open-proj"
+    dest: "{{ install_dest }}/.local/bin/open-proj"
+    state: link
