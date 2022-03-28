@@ -3,3 +3,8 @@
     src: "{{ install_src }}/roles/workflow/misctools/bins/qbck"
     dest: "{{ install_dest }}/.local/bin/qbck"
     state: link
+- name: Link histrec bin
+  file:
+    src: "{{ install_src }}/roles/workflow/misctools/bins/histrec"
+    dest: "{{ install_dest }}/.local/bin/histrec"
+    state: link

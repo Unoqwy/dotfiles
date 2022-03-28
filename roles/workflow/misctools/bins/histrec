@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+# vim:fdm=marker
+
+## Bash options {{{
+set -o errexit
+## }}}
+
+BIN="$(basename "$0")"
+HISTREC_DIR="${HISTREC_DIR:-"$HOME/.cache/histrec"}"
+
+## Dir check {{{
+if [[ -e "$HISTREC_DIR" ]]; then
+    if [[ ! -d "$HISTREC_DIR" ]]; then
+        echo "Path '$HISTREC_DIR' must must a directory, but it's not"
+        exit 1
+    fi
+else
+    mkdir -p "$HISTREC_DIR"
+fi
+## }}}
+
+if [[ -z "$1" ]]; then
+    echo "Usage: $BIN <key> - sort stdin entries by recency"
+    echo "       $BIN <key> <entry> - record entry usage"
+    exit 1
+fi
+
+key="$1"
+file="$HISTREC_DIR/$1.hist"
+
+if [[ $# > 1 ]]; then
+    ## Record entry {{{
+    shift
+    entry="$@"
+    if [[ -f $file ]]; then
+        sed -i "/^$entry\$/d" "$file"
+    else
+        touch "$file"
+    fi
+    printf "%s\n%s\n" "$entry" $(cat "$file") > "$file"
+    ## }}}
+else
+    ## Sort and print entries {{{
+    if [[ ! -f $file ]]; then
+        cat /dev/stdin
+        exit 1
+    fi
+
+    declare -A entries
+    while read line; do
+        entries[$line]=1
+    done < /dev/stdin
+
+    while read line; do
+        if [[ -v 'entries[$line]' ]]; then
+            echo "$line"
+            unset 'entries[$line]'
+        fi
+    done < "$file"
+    for remain in ${!entries[@]}; do
+        echo "$remain"
+    done
+    ## }}}
+fi

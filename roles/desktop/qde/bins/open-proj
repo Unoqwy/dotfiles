@@ -1,6 +1,7 @@
 #!/bin/sh
 OSH_BIN="${OSH_BIN:-"open"}"
-result=$("$OSH_BIN" -l | rofi -dmenu -i -l 8 -p "Project")
+result=$("$OSH_BIN" -l | sort | histrec osh | rofi -dmenu -i -l 8 -p "Project")
 if [[ -n "$result" ]]; then
+    histrec osh "$result"
     "$OSH_BIN" "$result"
 fi
