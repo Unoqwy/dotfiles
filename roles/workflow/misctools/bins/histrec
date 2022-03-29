@@ -52,6 +52,9 @@ else
     done < /dev/stdin
 
     while read line; do
+        if [[ -z $line ]]; then
+            continue
+        fi
         if [[ -v 'entries[$line]' ]]; then
             echo "$line"
             unset 'entries[$line]'
