@@ -91,10 +91,12 @@ _tmuxext_autoload() {
     fi
 
     tmux new-session -d -s "$session" -c "$cwd"
-    _tmuxext_apply "$layout_file" "$session" "$cwd"
     mktmux="$cwd/.mktmux"
+    if [[ ! -x "$mktmux" || "$layout" != "default" ]]; then
+        _tmuxext_apply "$layout_file" "$session" "$cwd"
+    fi
     if [[ -x "$mktmux" ]]; then
-        _tmuxext_apply "$layout_file" "$session"
+        _tmuxext_apply "$mktmux" "$session" "$cwd"
     fi
 }
 
@@ -109,7 +111,7 @@ _tmuxext_apply() {
     session="$2"
     (
         _w() {
-            tmux neww -d -t "$session" $@
+            tmux neww -d -t "$session" -c "#{session_path}" $@
         }
 
         cd "$3"
