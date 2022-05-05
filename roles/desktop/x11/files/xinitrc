@@ -1,5 +1,7 @@
 #!/bin/sh
 xset r rate 600 35
+xset b 0 0 0
+xset b off
 
 [[ -f "$HOME/.Xmodmap" ]] && xmodmap "$HOME/.Xmodmap"
 [[ -f "$HOME/.xbindkeysrc.scm" ]] && xbindkeys -f "$HOME/.xbindkeysrc.scm"
