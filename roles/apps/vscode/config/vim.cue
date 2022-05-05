@@ -23,6 +23,7 @@ vim: {
 	{before: ["<leader>", "'"], commands: ["workbench.action.showCommands"]},
 	{before: ["<leader>", "w"], commands: ["workbench.action.files.save"]},
 	{before: ["<leader>", "f", "s"], commands: ["workbench.action.files.save"]},
+	{before: ["<leader>", "r", "n"], commands: ["editor.action.rename"]},
 
 	// Some workarounds
 	{before: ["<leader>", "d"], after: ["\"", "_", "d"]},
