@@ -1,6 +1,6 @@
 #!/bin/python3
 import sys
-from os import path
+from os import path, mkdir
 
 import argparse
 import yaml
@@ -71,6 +71,8 @@ if __name__ == "__main__":
         print(f"YAML file '{file}' cannot be parsed.", file=sys.stderr)
         exit(1)
 
+    if not path.isdir(current_dir):
+        mkdir(current_dir)
     for key, template in templates.items():
         if key in theme["templates"]:
             env = theme["templates"][key]
