@@ -1,0 +1,3 @@
+tmux:
+  src: tmux.j2
+  dest: theme.tmux

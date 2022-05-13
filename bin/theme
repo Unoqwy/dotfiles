@@ -1,0 +1,94 @@
+#!/bin/python3
+import sys
+from os import path
+
+import argparse
+import yaml
+from jinja2 import Template
+
+DEFAULT_THEME = "sonokai"
+
+parser = argparse.ArgumentParser(
+    description="Set dotfiles theme"
+)
+parser.add_argument("theme", type=str, nargs="?")
+
+root_dir = path.realpath(path.join(path.basename(__file__), "..", "themes"))
+templates_dir = path.join(root_dir, "templates")
+templates_file = path.join(root_dir, "_templates.yml")
+current_dir = path.join(root_dir, "current")
+current_name = path.join(current_dir, "_name")
+
+
+def resolve_val(theme, val):
+    ns = val.split(":", 1)
+    if len(ns) < 2:
+        return val
+    match ns[0]:
+        case "v":
+            lookup = theme["v"]
+        case "term":
+            lookup = theme["term"]
+        case _:
+            return val
+    key = ns[1]
+    if not key in lookup:
+        print(f"Variable '{val}' could not be resolved!", file=sys.stderr)
+        exit(1)
+    return resolve_val(theme, lookup[key])
+
+
+if __name__ == "__main__":
+    args = parser.parse_args()
+
+    if args.theme is None:
+        # rebuild current theme
+        theme_name = DEFAULT_THEME
+        if path.isfile(current_name):
+            with open(current_name, "r") as fs:
+                theme_name = fs.read().strip()
+    else:
+        theme_name = args.theme.lower()
+        if theme_name == "default":
+            theme_name = DEFAULT_THEME
+
+    file = path.join(root_dir, f"{theme_name}.yml")
+    if not path.isfile(file):
+        print(f"Theme '{theme_name}' does not exist", file=sys.stderr)
+        exit(1)
+
+    try:
+        with open(templates_file, "r") as fs:
+            templates = yaml.safe_load(fs)
+    except yaml.YAMLError:
+        print(f"YAML file '{templates_file}' cannot be parsed.", file=sys.stderr)
+        exit(1)
+
+    try:
+        with open(file, "r") as fs:
+            theme = yaml.safe_load(fs)
+    except yaml.YAMLError:
+        print(f"YAML file '{file}' cannot be parsed.", file=sys.stderr)
+        exit(1)
+
+    for key, template in templates.items():
+        if key in theme["templates"]:
+            env = theme["templates"][key]
+        else:
+            env = {}
+        for k, v in env.items():
+            val = resolve_val(theme, v)
+            if val.startswith("#"):
+                val = val.lower() # make hex color lowercase, some programs (i.e. tmux) don't like uppercase
+            env[k] = val
+
+        with open(path.join(templates_dir, template["src"]), "r") as src:
+            jinja = Template(src.read())
+            out = jinja.render(v=env)
+            with open(path.join(current_dir, template["dest"]), "w+") as dest:
+                dest.write(out)
+        print(f"Template '{key}' OK")
+
+    with open(current_name, "w+") as fs:
+        fs.write(theme_name)
+    print(f"Dotfiles theme set to '{theme_name}'!")

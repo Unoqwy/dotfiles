@@ -1,0 +1,5 @@
+- name: Create qtheme bin
+  template:
+    src: "{{ install_src }}/roles/workflow/theme/templates/qtheme.j2"
+    dest: "{{ install_dest }}/.local/bin/qtheme"
+    mode: 0777

@@ -53,6 +53,11 @@ ansible-galaxy collection install -r ansible/requirements.yml \
     | grep -v 'Starting galaxy collection install process' \
     | grep -v 'Nothing to do.'
 
+echo "Updating theme..."
+if ! "$base/bin/theme" 1>/dev/null; then
+    exit 1
+fi
+
 if [[ "$1" == "pick" ]]; then
     options=$(anp main --list-tags | awk -F"TASK TAGS:" '{print $2}' | xargs echo -n)
     "$base/bin/select-tags" "$base/bin/anp $(pb main)" "$options"

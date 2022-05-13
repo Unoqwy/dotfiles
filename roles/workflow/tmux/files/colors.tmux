@@ -1,0 +1,6 @@
+fg="#e3e1e4"
+g="#222222"
+bg2="#363537"
+grey="#848089"
+primary="#aa08af"
+secondary="#385e84"

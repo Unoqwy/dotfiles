@@ -7,6 +7,11 @@
     src: "{{ install_src }}/roles/workflow/tmux/files/tmux.conf"
     dest: "{{ install_dest }}/.config/tmux/tmux.conf"
     state: link
+- name: Link theme.tmux
+  file:
+    src: "{{ install_src }}/themes/current/theme.tmux"
+    dest: "{{ install_dest }}/.config/tmux/theme.tmux"
+    state: link
 - name: Link plugins.tmux
   file:
     src: "{{ install_src }}/roles/workflow/tmux/files/plugins.tmux"

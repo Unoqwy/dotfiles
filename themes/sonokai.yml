@@ -1,0 +1,35 @@
+v:
+  white: "#e3e1e4"
+  grey: "#848089"
+  bg2: "#363537"
+
+term:
+  fg: v:white
+  bg: "#222222"
+
+  color0: "#534b4f"
+  color1: "#f85e84"
+  color2: "#7bd88f"
+  color3: "#fce566"
+  color4: "#5ad4e6"
+  color5: "#947ae3"
+  color6: "#85dacc"
+  color7: v:white
+
+  color8: "#635147"
+  color9: "#f85e84"
+  color10: "#9ecd6f"
+  color11: "#e5c463"
+  color12: "#7accd7"
+  color13: "#ab9df2"
+  color14: "#9cd1bb"
+  color15: v:white
+
+templates:
+  tmux:
+    fg: term:fg
+    bg: term:bg
+    bg2: v:bg2
+    primary: term:color2
+    secondary: term:color1
+    grey: v:grey
