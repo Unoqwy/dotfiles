@@ -17,12 +17,6 @@ zle -N down-line-or-beginning-search
 # zsh:dir
 setopt autocd
 
-# zsh:keybindings
-bindkey -v
-bindkey "^k" up-line-or-beginning-search
-bindkey "^j" down-line-or-beginning-search
-bindkey '^[[Z' reverse-menu-complete
-
 # zsh:completion
 autoload -Uz compinit; compinit
 setopt MENU_COMPLETE
@@ -63,6 +57,30 @@ if [[ -f $_TMUX_EXT_SOURCE ]]; then
 else
     alias ta="tmux attach -t"
 fi
+## }}}
+
+## History search {{{
+_fzf_hist() {
+    line=$(fc -lnr 0 | fzf +s +m)
+    if [[ -n $line ]]; then
+        BUFFER="$line"
+        zle end-of-line
+    fi
+}
+
+zle -N _fzf_hist
+## }}}
+
+## Keybindinsg {{{
+bindkey -v
+
+# builtin
+bindkey "^k" up-line-or-beginning-search
+bindkey "^j" down-line-or-beginning-search
+bindkey '^[[Z' reverse-menu-complete
+
+# misc
+bindkey "^r" _fzf_hist
 ## }}}
 
 ## Aliases {{{
