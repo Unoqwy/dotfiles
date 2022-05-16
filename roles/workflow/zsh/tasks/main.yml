@@ -3,8 +3,16 @@
     src: "{{ install_src }}/roles/workflow/zsh/files/zshrc"
     dest: "{{ install_dest }}/.zshrc"
     state: link
-- name: Link .zshenv
-  file:
-    src: "{{ install_src }}/roles/workflow/zsh/files/zshenv"
+- name: Create .zshenv
+  template:
+    src: "{{ install_src }}/roles/workflow/zsh/templates/zshenv.j2"
     dest: "{{ install_dest }}/.zshenv"
-    state: link
+  vars:
+    PATH:
+    - $HOME/.local/bin
+    - $HOME/.cargo/bin
+    - $HOME/.cabal/bin
+    - $HOME/.ghcup/bin
+    - $HOME/.yarn/bin
+    - $HOME/.luarocks/bin
+    - $GOPATH/bin

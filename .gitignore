@@ -1,2 +1,9 @@
 .env
 .generated
+
+# private repo overrides
+priv/
+
+# random stuff
+**/*.bak
+**/*.log
