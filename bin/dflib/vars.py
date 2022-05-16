@@ -23,5 +23,5 @@ def load_dotenv_vars(path):
     with open(os.path.join(path, ".env"), "r") as fs:
         dotenv = yaml.safe_load(fs)
         vars = dotenv_to_vars(dotenv)
-    return vars | defaults
+    return defaults | vars
 
