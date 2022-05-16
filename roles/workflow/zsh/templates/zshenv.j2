@@ -9,7 +9,7 @@ export XDG_DATAT_HOME="$HOME/.local/share"
 export GOPATH="$HOME/go"
 
 # PATH
-export PATH="$PATH:{{ PATH | join(":") }}"
+export PATH="{{ PATH | join(":") }}:$PATH"
 
 # Fixes
 export _JAVA_AWT_WM_NONREPARENTING=1
