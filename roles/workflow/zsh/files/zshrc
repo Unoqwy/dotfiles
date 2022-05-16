@@ -53,7 +53,17 @@ fi
 
 _TMUX_EXT_SOURCE="$HOME/.config/tmux/tmux_ext.sh"
 if [[ -f $_TMUX_EXT_SOURCE ]]; then
-    time source "$_TMUX_EXT_SOURCE"
+    source "$_TMUX_EXT_SOURCE"
+
+    _fzf_tmux_session() {
+        session=$(tl list-known-sessions | fzf +m)
+        if [[ -n $session ]]; then
+            BUFFER="ta $session"
+            zle accept-line
+        fi
+    }
+
+    zle -N _fzf_tmux_session
 else
     alias ta="tmux attach -t"
 fi
@@ -81,6 +91,7 @@ bindkey '^[[Z' reverse-menu-complete
 
 # misc
 bindkey "^r" _fzf_hist
+bindkey "^t" _fzf_tmux_session
 ## }}}
 
 ## Aliases {{{

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/zsh
 # vim:fdm=marker
 
 LAYOUTS_DIR="$HOME/.local/share/tmux/layouts"
@@ -186,7 +186,9 @@ function tt() {
         fi
     fi
     if ! _tmuxext_ensure_session "$session" $autoload; then
-        tl map ${2:-default} "$session"
+        if ! tl map "${2:-default}" "$session"; then
+            return 1
+        fi
     fi
     ta "$session"
 }
@@ -234,6 +236,14 @@ function tl() {
                 fi
             fi
             ;;
+        list-known-sessions|ll)
+            # List session names that are mapped to a layout
+            local -A map
+            if [[ -f "$LAYOUTS_MAP" ]]; then
+                source "$LAYOUTS_MAP"
+            fi
+            echo "${(k)map}" | xargs -n1 echo | sort
+            ;;
         load|map)
             if [[ -z "$layout" ]]; then
                 echo "Usage: tl $1 <layout> [session name]"
@@ -275,6 +285,11 @@ function tl() {
                         fi
                         ;;
                     map)
+                        if [[ $session == .* ]]; then
+                            echo "A session name may not start with '.'"
+                            return 1
+                        fi
+
                         local -A map
                         if [[ -f "$LAYOUTS_MAP" ]]; then
                             source "$LAYOUTS_MAP"
