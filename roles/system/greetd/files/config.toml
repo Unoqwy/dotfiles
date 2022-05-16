@@ -3,4 +3,4 @@ vt = 1
 
 [default_session]
 user = "greeter"
-command = "tuigreet --cmd \"zsh -c startx > ~/.cache/wmsession.log 2>&1\""
+command = "tuigreet --cmd /etc/greetd/start"

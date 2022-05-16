@@ -1,0 +1,2 @@
+#!/bin/dash
+startx > ~/.cache/wmsession.log 2>&1
