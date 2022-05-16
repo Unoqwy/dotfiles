@@ -1,31 +1,20 @@
 #!/bin/python3
 import yaml
 
+import sys
+from os import path
+import importlib.util
 
-def dotenv_to_vars(dotenv):
-    vars = {}
-    for key, val in dotenv.items():
-        key = key.replace("-", "_")
-        if isinstance(val, dict):
-            sub = dotenv_to_vars(val)
-            for k, v in sub.items():
-                vars[f"{key}_{k}"] = v
-        else:
-            vars[key] = val
-    return vars
+dflib_path = path.join(path.dirname(path.abspath(__file__)), "..", "..", "bin", "dflib", "__init__.py")
+dflib_spec = importlib.util.spec_from_file_location("dflib", dflib_path)
+dflib = importlib.util.module_from_spec(dflib_spec)
+sys.modules["dflib"] = dflib
+dflib_spec.loader.exec_module(dflib)
 
-
-def load_dotenv_vars():
-    with open(".env.example", "r") as fs:
-        dotenv = yaml.safe_load(fs)
-        defaults = dotenv_to_vars(dotenv)
-    with open(".env", "r") as fs:
-        dotenv = yaml.safe_load(fs)
-        vars = dotenv_to_vars(dotenv)
-    return vars | defaults
+import dflib.vars
 
 if __name__ == "__main__":
-    vars = load_dotenv_vars()
+    vars = dflib.vars.load_dotenv_vars(".")
     with open(".generated/env_vars.yml", "w") as vars_file:
         dump = "\n".join([
             "# This file was auto-generated.",
@@ -34,4 +23,4 @@ if __name__ == "__main__":
             yaml.dump(vars)
         ])
         vars_file.write(dump)
-        print(f"Written env vars to ansible/env_vars.yml")
+        print(f"Written env vars to .generated/env_vars.yml")

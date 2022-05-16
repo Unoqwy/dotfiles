@@ -4,3 +4,6 @@ tmux:
 kitty:
   src: kitty.j2
   dest: kitty-theme.conf
+xmonad:
+  src: xmonad.j2
+  dest: /xmonad/config/theme.yml

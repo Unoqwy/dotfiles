@@ -17,7 +17,7 @@ _:
     aur: [networkmanager-dmenu-git]
 
   # Fonts
-  - pacman: [fontforge, ttf-jetbrains-mono]
+  - pacman: [fontforge, ttf-jetbrains-mono, ttf-iosevka-nerd]
     aur: [nerd-fonts-jetbrains-mono]
 
   # Themes

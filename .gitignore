@@ -7,3 +7,6 @@ priv/
 # random stuff
 **/*.bak
 **/*.log
+
+# cache
+__pycache__

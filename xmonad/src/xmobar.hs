@@ -11,8 +11,8 @@ import qualified Configuration.Dotenv as Dotenv
 import qualified QMonad.Shared.XmobarColors as C
 
 -- Config
-config :: (String, String, [(String, String)], Int) -> Config
-config (scriptsDir, weatherStation, networkCards, fontTailor) = defaultConfig {
+config :: (String, String, [(String, String)], String, Int) -> Config
+config (scriptsDir, weatherStation, networkCards, font, fontTailor) = defaultConfig {
   -- General behavior
     hideOnStart = False
   , allDesktops = True
@@ -20,7 +20,7 @@ config (scriptsDir, weatherStation, networkCards, fontTailor) = defaultConfig {
   , persistent = False
 
   -- Appearance
-  , font = "xft:JetBrains Mono:size=" ++ show (11 + fontTailor) ++ ":antialias=true:hinting=true"
+  , font = "xft:" ++ show font ++ ":size=" ++ show (11 + fontTailor) ++ ":antialias=true:hinting=true"
   , additionalFonts = [
       "xft:Ubuntu Nerd Font:size=" ++ show (10 + fontTailor)
     , "xft:Font Awesome 5 Pro:size=" ++ show (10 + fontTailor) ++ ":style=Solid"
@@ -88,14 +88,16 @@ main = do
   exists <- doesFileExist $ head (Dotenv.configPath envCfg)
   when exists $
     void $ Dotenv.loadFile envCfg
-  weatherStation <- getEnvDefault "WEATHER_STATION" "LFLY"
+  weatherStation <- getEnvDefault "WEATHER_STATION" "LFPB"
   networkCards'  <- getEnvDefault "NETWORK_CARDS" "eth0:eth"
+  font <- getEnvDefault "FONT" "JetBrains Mono"
   fontTailor <- getEnvDefault "FONT_TAILOR" "0"
 
   xmonadDir <- getEnvDefault "XMONAD" "../.."
   xmobar $ config (xmonadDir ++ "/bin/statusbar/",
                    weatherStation,
                    map (mkTuple . splitOn ":") (splitOn "," networkCards'),
+                   font,
                    read fontTailor)
 
 defIcon :: String -> String

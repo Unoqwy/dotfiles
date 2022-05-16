@@ -6,6 +6,8 @@ import argparse
 import yaml
 from jinja2 import Template
 
+import dflib.vars
+
 DEFAULT_THEME = "sonokai"
 
 parser = argparse.ArgumentParser(
@@ -13,7 +15,8 @@ parser = argparse.ArgumentParser(
 )
 parser.add_argument("theme", type=str, nargs="?")
 
-root_dir = path.realpath(path.join(path.basename(__file__), "..", "themes"))
+df_dir = path.realpath(path.join(path.basename(__file__), ".."))
+root_dir = path.join(df_dir, "themes")
 templates_dir = path.join(root_dir, "templates")
 templates_file = path.join(root_dir, "_templates.yml")
 current_dir = path.join(root_dir, "current")
@@ -89,12 +92,17 @@ if __name__ == "__main__":
 
 
     term_env = resolve_env(theme, theme, "term")
+    vars = dflib.vars.load_dotenv_vars(df_dir)
     for key, template in templates.items():
         env = resolve_env(theme, theme["templates"], key)
         with open(path.join(templates_dir, template["src"]), "r") as src:
             jinja = Template(src.read())
-            out = jinja.render(v=env, term=term_env)
-            with open(path.join(current_dir, template["dest"]), "w+") as dest:
+            out = jinja.render(v=env, term=term_env, **vars)
+            if template["dest"].startswith("/"):
+                out_file = path.join(df_dir, template["dest"][1:])
+            else:
+                out_file = path.join(current_dir, template["dest"])
+            with open(out_file, "w+") as dest:
                 dest.write(out)
         print(f"Template '{key}' OK")
 
