@@ -15,16 +15,23 @@ def dotenv_to_vars(dotenv):
     return vars
 
 
-if __name__ == "__main__":
+def load_dotenv_vars():
+    with open(".env.example", "r") as fs:
+        dotenv = yaml.safe_load(fs)
+        defaults = dotenv_to_vars(dotenv)
     with open(".env", "r") as fs:
         dotenv = yaml.safe_load(fs)
         vars = dotenv_to_vars(dotenv)
-        with open(".generated/env_vars.yml", "w") as vars_file:
-            dump = "\n".join([
-                "# This file was auto-generated.",
-                "# See `ansible/scripts/generate_vars` for details.",
-                "",
-                yaml.dump(vars)
-            ])
-            vars_file.write(dump)
-            print(f"Written env vars to ansible/env_vars.yml")
+    return vars | defaults
+
+if __name__ == "__main__":
+    vars = load_dotenv_vars()
+    with open(".generated/env_vars.yml", "w") as vars_file:
+        dump = "\n".join([
+            "# This file was auto-generated.",
+            "# See `ansible/scripts/generate_vars` for details.",
+            "",
+            yaml.dump(vars)
+        ])
+        vars_file.write(dump)
+        print(f"Written env vars to ansible/env_vars.yml")

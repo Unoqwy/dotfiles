@@ -1,3 +1,6 @@
 tmux:
   src: tmux.j2
   dest: theme.tmux
+kitty:
+  src: kitty.j2
+  dest: kitty-theme.conf

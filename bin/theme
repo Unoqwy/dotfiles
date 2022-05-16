@@ -38,6 +38,19 @@ def resolve_val(theme, val):
     return resolve_val(theme, lookup[key])
 
 
+def resolve_env(theme, env, key):
+    if key in env:
+        resolved = env[key]
+        for k, v in env[key].items():
+            val = resolve_val(theme, v)
+            if val.startswith("#"):
+                val = val.lower() # make hex color lowercase, some programs (i.e. tmux) don't like uppercase
+            resolved[k] = val
+        return resolved
+    else:
+        return {}
+
+
 if __name__ == "__main__":
     args = parser.parse_args()
 
@@ -73,20 +86,14 @@ if __name__ == "__main__":
 
     if not path.isdir(current_dir):
         mkdir(current_dir)
-    for key, template in templates.items():
-        if key in theme["templates"]:
-            env = theme["templates"][key]
-        else:
-            env = {}
-        for k, v in env.items():
-            val = resolve_val(theme, v)
-            if val.startswith("#"):
-                val = val.lower() # make hex color lowercase, some programs (i.e. tmux) don't like uppercase
-            env[k] = val
 
+
+    term_env = resolve_env(theme, theme, "term")
+    for key, template in templates.items():
+        env = resolve_env(theme, theme["templates"], key)
         with open(path.join(templates_dir, template["src"]), "r") as src:
             jinja = Template(src.read())
-            out = jinja.render(v=env)
+            out = jinja.render(v=env, term=term_env)
             with open(path.join(current_dir, template["dest"]), "w+") as dest:
                 dest.write(out)
         print(f"Template '{key}' OK")

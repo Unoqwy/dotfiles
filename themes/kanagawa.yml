@@ -42,19 +42,20 @@ v:
   peachRed: "#FF5D62"
   surimiOrange: "#FFA066"
   katanaGray: "#717C7C"
+  oldWhite: "#C8C093"
 
 term:
   fg: v:fujiWhite
   bg: v:sumiInk1
 
-  color0: "#090618"
+  color0: "#534b4f"
   color1: v:autumnRed
   color2: v:autumnGreen
   color3: v:boatYellow2
   color4: v:crystalBlue
   color5: v:oniViolet
   color6: v:waveAqua1
-  color7: "#C8C093"
+  color7: v:oldWhite
 
   color8: v:fujiGray
   color9: v:samuraiRed
@@ -63,7 +64,7 @@ term:
   color12: v:springBlue
   color13: v:springViolet1
   color14: v:waveAqua2
-  color15: v:fujiwhite
+  color15: v:fujiWhite
 
 templates:
   tmux:

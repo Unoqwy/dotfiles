@@ -2,10 +2,10 @@
   file:
     path: "{{ install_dest }}/.config/kitty"
     state: directory
-- name: Link sonokai theme
+- name: Link kitty theme
   file:
-    src: "{{ install_src }}/roles/desktop/kitty/files/sonokai.conf"
-    dest: "{{ install_dest }}/.config/kitty/sonokai.conf"
+    src: "{{ install_src }}/themes/current/kitty-theme.conf"
+    dest: "{{ install_dest }}/.config/kitty/theme.conf"
     state: link
 - name: Create kitty config
   template:
