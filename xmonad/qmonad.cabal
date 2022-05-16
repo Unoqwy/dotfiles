@@ -3,7 +3,7 @@ build-type: Simple
 
 name: qmonad
 version: 1.5.1
-author: Unoqwy <julien.qwy@gmail.com>
+author: Unoqwy <pm@unoqwy.dev>
 license: MIT
 
 library
