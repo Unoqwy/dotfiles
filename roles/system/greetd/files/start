@@ -1,2 +1,4 @@
 #!/bin/dash
+# vim:ft=sh
+export PATH="$PATH:$HOME/.local/bin"
 startx > ~/.cache/wmsession.log 2>&1
