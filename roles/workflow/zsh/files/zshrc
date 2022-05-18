@@ -81,6 +81,15 @@ _fzf_hist() {
 zle -N _fzf_hist
 ## }}}
 
+## Misc widgets {{{
+_start_editor() {
+    BUFFER="${EDITOR:-vim}"
+    zle accept-line
+}
+
+zle -N _start_editor
+#}}}
+
 ## Keybindinsg {{{
 bindkey -v
 
@@ -92,6 +101,7 @@ bindkey '^[[Z' reverse-menu-complete
 # misc
 bindkey "^r" _fzf_hist
 bindkey "^t" _fzf_tmux_session
+bindkey "^n" _start_editor
 ## }}}
 
 ## Aliases {{{
