@@ -70,7 +70,7 @@ startupHook' xconf = do
   spawnOnce "unread-bell &"
 
   -- compositor
-  spawnOnce "picom --config $XDG_CONFIG_HOME/picom/picom.conf &"
+  spawnOnce "picom --config $XDG_CONFIG_HOME/picom/picom.conf --experimental-backends &"
 
   xmonad_started <- liftIO $ lookupEnv "XMONAD_STARTED"
   case xmonad_started of
