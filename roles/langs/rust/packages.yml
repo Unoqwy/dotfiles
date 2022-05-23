@@ -1,1 +1,1 @@
-pacman: [clang, lld, rustup]
+pacman: [clang, lld, mold, rustup]
