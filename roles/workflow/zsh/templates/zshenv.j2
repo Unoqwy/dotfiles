@@ -11,9 +11,6 @@ export GOPATH="$HOME/go"
 # PATH
 export PATH="{{ PATH | join(":") }}:$PATH"
 
-# Fixes
-export _JAVA_AWT_WM_NONREPARENTING=1
-
 # priv repo overrides
 if [[ -f "{{ install_src }}/priv/.zshenv" ]]; then
     source "{{ install_src }}/priv/.zshenv"

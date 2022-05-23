@@ -17,6 +17,9 @@ export XDG_CACHE_HOME="$HOME/.cache"
 # Set wallpaper
 [[ -f "$HOME/.fehbg" ]] && sh "$HOME/.fehbg"
 
+# Fixes
+export _JAVA_AWT_WM_NONREPARENTING=1
+
 # Reset pipes
 function mkpipe {
     if [[ -p "$1" ]]; then
