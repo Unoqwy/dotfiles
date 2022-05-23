@@ -1,0 +1,10 @@
+- name: Create .m2 directory
+  file:
+    path: "{{ install_dest }}/.m2"
+    state: directory
+- name: Create maven settings.xml
+  xml_merge:
+    src:
+      - "{{ install_src }}/roles/tools/maven/templates/settings.xml.j2"
+      - "{{ install_src }}/priv/.m2/settings.xml"
+    dest: "{{ install_dest }}/.m2/settings.xml"

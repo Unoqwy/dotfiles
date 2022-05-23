@@ -1,0 +1,72 @@
+#!/usr/bin/python3
+
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
+
+import hashlib
+import os
+import re
+from ansible.module_utils.basic import AnsibleModule
+from xml.etree import ElementTree
+
+
+if __name__ == "__main__":
+    global module
+
+    module = AnsibleModule(
+        argument_spec=dict(
+            src=dict(
+                type="list",
+                elements="path",
+                required=True,
+            ),
+            dest=dict(type="path", required=True),
+        )
+    )
+
+    src = module.params["src"]
+    dest = module.params["dest"]
+
+    if os.path.isfile(dest):
+        checksum_start = module.sha1(dest)
+    else:
+        checksum_start = None
+
+    merged = None
+    for file in src:
+        if not os.path.isfile(file):
+            if merged is None:
+                module.fail_json(msg="the first file (base) to merge needs to exist")
+            else:
+                continue
+        try:
+            data = ElementTree.parse(file).getroot()
+        except Exception as e:
+            module.fail_json(msg="failed to parse %s : %s" % (file, e))
+        if merged is None:
+            merged = data
+        else:
+            merged.extend(data)
+
+    if merged is None:
+        module.fail_json(msg="no files to merge")
+
+    ns_matcher = re.match(r'^\{(.*)\}', merged.tag)
+    if ns_matcher is not None:
+        default_ns = ns_matcher.group(1)
+    else:
+        default_ns = None
+
+    ElementTree.indent(merged)
+    output = ElementTree.tostring(merged, default_namespace=default_ns)
+    checksum_out = hashlib.sha1(output).hexdigest()
+
+    if checksum_start != checksum_out:
+        with open(dest, "w") as dest_file:
+            dest_file.write(output.decode("utf-8"))
+        changed = True
+    else:
+        changed = False
+
+    module.exit_json(changed=changed)
+
