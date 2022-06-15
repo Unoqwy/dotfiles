@@ -33,12 +33,12 @@ mkGaps = spacingRaw False
 layouts =
       (avoidStruts . foreignLayout $
         focalWindow (
-              renamed [Replace "V 2*|1"] vtall
-          ||| renamed [Replace "H 1|1"] htall
+              renamed [Replace "V"] vtall
+          ||| renamed [Replace "H"] htall
         )
-        ||| renamed [Replace "Full"] full
+        ||| renamed [Replace "F"] full
       )
-      ||| renamed [Replace "FS"] fullScreen
+      ||| renamed [Replace "X"] fullScreen
   where
     defaultIncr = 5/100
     vtall = mkGaps $ Mirror $ Tall 2 defaultIncr (2/3)
