@@ -33,8 +33,11 @@ else
     zstyle ":vcs_info:git*" formats "  %b"
     precmd() { vcs_info; }
 
-    # reminder: these need to stay single quotes to expand later, not on read
-    PS1='%F{red}%(?.. <%?>)%F{magenta}${vcs_info_msg_0_} %F{black}%f '
+    if [[ -n "$SSH_CONNECTION" ]]; then
+        PS1='%F{red}%(?.. <%?>)%F{magenta}${vcs_info_msg_0_} %F{red}%BSSH %F{black}%f '
+    else
+        PS1='%F{red}%(?.. <%?>)%F{magenta}${vcs_info_msg_0_} %F{black}%f '
+    fi
     RPS1="%F{blue}%~%f"
 fi
 ## }}}
