@@ -52,9 +52,8 @@ config (scriptsDir, weatherStation, networkCards, font, fontTailor) = defaultCon
       ++ "<action=`networkmanager_dmenu`>"
       ++ concatMap (\(networkCard,_) -> "%" ++ networkCard ++ "%") networkCards
       ++ "</action>"
-      ++ " "
-      ++ "%" ++ weatherStation ++ "% %formattedTime%"
-      ++ " "
+      ++ (if weatherStation /= "none" then " %" ++ weatherStation ++ "% " else " ")
+      ++ "%formattedTime% "
 
   -- Commands
   , commands = [
@@ -88,7 +87,7 @@ main = do
   exists <- doesFileExist $ head (Dotenv.configPath envCfg)
   when exists $
     void $ Dotenv.loadFile envCfg
-  weatherStation <- getEnvDefault "WEATHER_STATION" "LFPB"
+  weatherStation <- getEnvDefault "WEATHER_STATION" "none"
   networkCards'  <- getEnvDefault "NETWORK_CARDS" "eth0:eth"
   font <- getEnvDefault "FONT" "JetBrains Mono"
   fontTailor <- getEnvDefault "FONT_TAILOR" "0"
