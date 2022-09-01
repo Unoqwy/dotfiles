@@ -1,25 +1,25 @@
 module QMonad.Shared.XmobarColors where
 
-foreground = "#848089"
-brightForeground = "#d5d0c0"
-background = "#191919"
+foreground = "#727169"
+brightForeground = "#DCD7BA"
+background = "#1F1F28"
 
 focal = "#e5c463"
 title = foreground
-layout = "#948ae3"
-foreignWs = "#85dacc"
+layout = "#6A9589"
+foreignWs = brightForeground
 
 dndIcon = "#3f51b5"
 
-focusedPinnedWs = "#85dacc"
-focusedUnpinnedWs = "#948ae3"
+focusedPinnedWs = "#E46876"
+focusedUnpinnedWs = "#D27E99"
 nonEmtpyWs = title
 emptyWs = "#49464e"
 hiddenInfoDot = brightForeground
 
-sysMonitor = "#bd7572"
+sysMonitor = "#E46876"
 
-networkDown = "#72beb3"
+networkDown = "#6A9589"
 networkUp = foreground
 networkIcon = foreground
 

@@ -74,7 +74,7 @@ config (scriptsDir, weatherStation, networkCards, font, fontTailor) = defaultCon
   ] ++ map (\(networkCard, icon) -> Run $ Network networkCard [
       "-t", "<fc=" ++ C.networkDown ++ "><rx>kB<fn=1> </fn><fn=2>\xf063</fn></fc>"
          ++ "<fn=1> </fn><fc=" ++ C.networkIcon ++ "><fn=2>" ++ defIcon icon ++ "</fn></fc><fn=1> </fn>"
-         ++ "<fn=2>\xf062</fn><fn=1> </fn><fc=" ++ C.networkUp ++ "><tx>kB</fc>"
+         ++ "<fc=" ++ C.networkUp ++ "><fn=2>\xf062</fn><fn=1> </fn><tx>kB</fc>"
     , "-m", "2", "-c", " ", "-x", "~" ++ networkCard ++ "~"
   ] 10) networkCards
 }
