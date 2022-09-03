@@ -1,5 +1,5 @@
 #!/bin/sh
-choices=$(pamixer --list-sinks | tail +2 | awk -F'"' '{ print substr($1,1,length($1)-1) ". " $4; }')
+choices=$(pamixer --list-sinks | tail +2 | awk -F'"' '{ print substr($1,1,length($1)-1) ". " $6; }')
 result=$(echo "$choices" | rofi -dmenu -i -l 8 -p "Output")
 if [[ -n "$result" ]]; then
     sink=$(echo "$result" | cut -d "." -f 1)
