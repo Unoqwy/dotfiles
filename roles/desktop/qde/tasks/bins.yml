@@ -18,3 +18,8 @@
     src: "{{ install_src }}/roles/desktop/qde/bins/open-proj"
     dest: "{{ install_dest }}/.local/bin/open-proj"
     state: link
+- name: Link pamiec-save bin
+  file:
+    src: "{{ install_src }}/roles/desktop/qde/bins/pamiec-save"
+    dest: "{{ install_dest }}/.local/bin/pamiec-save"
+    state: link

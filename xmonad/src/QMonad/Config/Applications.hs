@@ -42,6 +42,8 @@ keybindings conf@XConfig{XMonad.modMask = modm} = M.fromList [
       , ((0, xK_a), spawn "choose-primary-sink")
 
       , ((0, xK_o), spawn "open-proj")
+
+      , ((0, xK_s), spawn "pamiec-save")
       ])
 
   -- Special keys
