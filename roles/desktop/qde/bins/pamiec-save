@@ -1,9 +1,12 @@
 #!/bin/sh
-SAVE_DIR=".cache/pamiec/records/"
+SAVE_DIR="$HOME/.cache/pamiec/records/"
 mkdir -p "$SAVE_DIR"
 
 filename=$(date +'pamiec_%F_%I-%M-%S_%p.wav')
 file="$SAVE_DIR/$filename"
 
-pamiec exec save "$file"
-notify-send "Audio Safekeeping" "Saved $filename"
+if pamiec exec save "$file"; then
+    notify-send "Audio Safekeeping" "Saved $filename"
+else
+    notify-send -u critical "Audio Safekeeping" "Daemon not running :("
+fi
