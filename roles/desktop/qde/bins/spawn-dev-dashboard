@@ -1,0 +1,7 @@
+#!/bin/sh
+chromium --user-data-dir="$HOME/.local/share/dev-dashboard/chrome-profile/tasks" \
+    --app="https://trello.com" --class="dev-dashboard-tasks" &
+chromium --user-data-dir="$HOME/.local/share/dev-dashboard/chrome-profile/tracker" \
+    --app="https://app.clockify.me/tracker" --class="dev-dashboard-tracker" &
+#${XMONAD_TERMINAL:-"kitty"} --class dev-dashboard-term -e python -q &!
+

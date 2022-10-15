@@ -10,6 +10,7 @@ import XMonad
 import XMonad.Prelude
 import XMonad.Hooks.ManageHelpers
 import XMonad.Util.NamedScratchpad (NamedScratchpad(..), namedScratchpadAction, namedScratchpadManageHook)
+import qualified XMonad.StackSet as W
 
 import QMonad.Config.Env (EnvConfig)
 import QMonad.Config.Util
@@ -26,6 +27,7 @@ scratchpads conf = [
     , NS "floaterm-min" (A.spawnTermWithClass conf "floaterm-min" Nothing) (resource =? "floaterm-min") doRectFloatSeventy
     , NS "quicksearch" "vimb --name quicksearch" (resource =? "quicksearch") doRectFloatEighty
     , NS "filexplorer" (A.spawnTermWithClass conf "floatfe" (Just "xplr")) (resource =? "floatfe") doRectFloatEighty
+    , NS "dev-dashboard" "spawn-dev-dashboard" (fmap ("dev-dashboard-" `isPrefixOf`) className) doPlaceDevDashboard
   ]
 
 transparentScratchpads :: [String]
@@ -41,3 +43,9 @@ wsScratchpadTerminal conf wid = NS c (A.spawnTermWithClass conf c Nothing) (reso
 
 wsScratchpadManageHook :: ManageHook
 wsScratchpadManageHook = composeOne [ fmap ("wsterm-" `isPrefixOf`) resource -?> doRectFloatSeventy ]
+
+doPlaceDevDashboard :: ManageHook
+doPlaceDevDashboard = composeOne [
+    className =? "dev-dashboard-tasks" -?> (doRectFloat $ W.RationalRect 0.05 0.1 0.5 0.8)
+  , className =? "dev-dashboard-tracker" -?> (doRectFloat $ W.RationalRect 0.55 0.1 0.4 0.8)
+  ]

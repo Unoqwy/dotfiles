@@ -21,7 +21,7 @@ import QMonad.Lib.WorkspaceMasks (
     renameCurrentWorkspace, toggleCurrentWorkspaceVisibility
   )
 
-import XMonad.Util.NamedScratchpad (namedScratchpadAction)
+import XMonad.Util.NamedScratchpad (namedScratchpadAction, allNamedScratchpadAction)
 
 import Control.Monad (when)
 import XMonad.Util.Run (runProcessWithInput)
@@ -142,6 +142,7 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
   , ((modm, xK_f), namedScratchpadAction scratchpads "floaterm-min")
   , ((modm .|. shiftMask, xK_f), namedScratchpadAction scratchpads "floaterm")
   , ((modm, xK_e), namedScratchpadAction scratchpads "filexplorer")
+  , ((modm, xK_g), allNamedScratchpadAction scratchpads "dev-dashboard")
 
   , ((modm, xK_q), wsScratchpadTerminalAction conf)
 
