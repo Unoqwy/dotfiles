@@ -140,7 +140,6 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
   -- Scratchpads
   , ((modm, xK_f), namedScratchpadAction scratchpads "floaterm-min")
   , ((modm .|. shiftMask, xK_f), namedScratchpadAction scratchpads "floaterm")
-  , ((modm, xK_e), namedScratchpadAction scratchpads "filexplorer")
 
   -- Customizable Scratchpads
   , ((modm, xK_g), allNamedScratchpadAction scratchpads "quickview-1")
