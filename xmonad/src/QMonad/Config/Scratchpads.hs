@@ -54,4 +54,6 @@ doPlaceFlexibleScratchpad prefix = composeOne [
   , className =? (prefix ++ "-wide-main") -?> (doRectFloat $ W.RationalRect 0.05 0.1 0.9 0.8)
   , className =? (prefix ++ "-primary") -?> (doRectFloat $ W.RationalRect 0.05 0.1 0.5 0.8)
   , className =? (prefix ++ "-secondary") -?> (doRectFloat $ W.RationalRect 0.55 0.1 0.4 0.8)
+  , className =? (prefix ++ "-left-pane") -?> (doRectFloat $ W.RationalRect 0.02 0.05 0.46 0.9)
+  , className =? (prefix ++ "-right-pane") -?> (doRectFloat $ W.RationalRect 0.52 0.05 0.46 0.9)
   ]
