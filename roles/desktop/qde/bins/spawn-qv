@@ -1,0 +1,20 @@
+#!/bin/bash
+# Utility to call a script that will spawn all the windows of a QDE quickview
+
+SCRIPTS_DIR="$HOME/.local/share/qde/quickview"
+if [[ ! -d $SCRIPTS_DIR ]]; then
+    exit 0
+fi
+
+if [[ -z $1 ]]; then
+    echo "Usage: $0 <id>"
+    exit 1
+fi
+
+script="$SCRIPTS_DIR/qv$1"
+if [[ -x "$script" ]]; then
+    "$script"
+else
+    echo "Could not find a spawn script for quickview: $1"
+    exit 1
+fi

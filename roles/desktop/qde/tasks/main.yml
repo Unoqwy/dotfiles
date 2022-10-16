@@ -29,3 +29,18 @@
     src: "{{ install_src }}/roles/desktop/qde/files/greenclip.toml"
     dest: "{{ install_dest }}/.config/greenclip.toml"
     state: link
+
+- name: Create QDE data directory
+  file:
+    path: "{{ install_dest }}/.local/share/qde"
+    state: directory
+- name: Check if src quickview dir exists
+  stat:
+    path: "{{ install_src }}/priv/quickview"
+  register: qde_main_qvcheck
+- name: Link quickview directory
+  file:
+    src: "{{ install_src }}/priv/quickview"
+    dest: "{{ install_dest }}/.local/share/qde/quickview"
+    state: link
+  when: qde_main_qvcheck.stat.isdir is defined and qde_main_qvcheck.stat.isdir

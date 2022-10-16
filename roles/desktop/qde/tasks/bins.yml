@@ -23,8 +23,8 @@
     src: "{{ install_src }}/roles/desktop/qde/bins/pamiec-save"
     dest: "{{ install_dest }}/.local/bin/pamiec-save"
     state: link
-- name: Link spawn-dev-dashboard bin
+- name: Link spawn-qv bin
   file:
-    src: "{{ install_src }}/roles/desktop/qde/bins/spawn-dev-dashboard"
-    dest: "{{ install_dest }}/.local/bin/spawn-dev-dashboard"
+    src: "{{ install_src }}/roles/desktop/qde/bins/spawn-qv"
+    dest: "{{ install_dest }}/.local/bin/spawn-qv"
     state: link

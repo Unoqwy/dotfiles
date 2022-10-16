@@ -25,13 +25,16 @@ scratchpads :: EnvConfig -> [NamedScratchpad]
 scratchpads conf = [
       NS "floaterm" (A.spawnTermWithClass conf "floaterm" Nothing) (resource =? "floaterm") doRectFloatEighty
     , NS "floaterm-min" (A.spawnTermWithClass conf "floaterm-min" Nothing) (resource =? "floaterm-min") doRectFloatSeventy
-    , NS "quicksearch" "vimb --name quicksearch" (resource =? "quicksearch") doRectFloatEighty
-    , NS "filexplorer" (A.spawnTermWithClass conf "floatfe" (Just "xplr")) (resource =? "floatfe") doRectFloatEighty
-    , NS "dev-dashboard" "spawn-dev-dashboard" (fmap ("dev-dashboard-" `isPrefixOf`) className) doPlaceDevDashboard
   ]
+  ++ -- Customizable scratchpads
+  [createQuickViewNS id | id <- map show [1..4]]
+
+createQuickViewNS :: String -> NamedScratchpad
+createQuickViewNS id = NS ("quickview-" ++ id) ("spawn-qv " ++ id) (fmap (c `isPrefixOf`) className) (doPlaceFlexibleScratchpad c)
+  where c = "qde-qv" ++ id
 
 transparentScratchpads :: [String]
-transparentScratchpads = ["floaterm", "floaterm-min", "floatfe"]
+transparentScratchpads = ["floaterm", "floaterm-min"]
 
 -- Scratchpad special actions
 oneScratchpadAction :: NamedScratchpad -> X()
@@ -44,8 +47,11 @@ wsScratchpadTerminal conf wid = NS c (A.spawnTermWithClass conf c Nothing) (reso
 wsScratchpadManageHook :: ManageHook
 wsScratchpadManageHook = composeOne [ fmap ("wsterm-" `isPrefixOf`) resource -?> doRectFloatSeventy ]
 
-doPlaceDevDashboard :: ManageHook
-doPlaceDevDashboard = composeOne [
-    className =? "dev-dashboard-tasks" -?> (doRectFloat $ W.RationalRect 0.05 0.1 0.5 0.8)
-  , className =? "dev-dashboard-tracker" -?> (doRectFloat $ W.RationalRect 0.55 0.1 0.4 0.8)
+-- Place windows depending on their assigned class name
+doPlaceFlexibleScratchpad :: String -> ManageHook
+doPlaceFlexibleScratchpad prefix = composeOne [
+    className =? (prefix ++ "-main") -?> (doRectFloat $ W.RationalRect 0.1 0.1 0.8 0.8)
+  , className =? (prefix ++ "-wide-main") -?> (doRectFloat $ W.RationalRect 0.05 0.1 0.9 0.8)
+  , className =? (prefix ++ "-primary") -?> (doRectFloat $ W.RationalRect 0.05 0.1 0.5 0.8)
+  , className =? (prefix ++ "-secondary") -?> (doRectFloat $ W.RationalRect 0.55 0.1 0.4 0.8)
   ]

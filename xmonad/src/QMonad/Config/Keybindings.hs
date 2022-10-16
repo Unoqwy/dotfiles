@@ -135,14 +135,18 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
   , ((modm, xK_i), minimizeCurrentWindow)
 
   -- Misc
-  , ((modm, xK_r), spawn "zsh -c 'sleep 0.2 && wiazac_client'")
   , ((modm .|. shiftMask, xK_z), toggleDND' xconf)
 
   -- Scratchpads
   , ((modm, xK_f), namedScratchpadAction scratchpads "floaterm-min")
   , ((modm .|. shiftMask, xK_f), namedScratchpadAction scratchpads "floaterm")
   , ((modm, xK_e), namedScratchpadAction scratchpads "filexplorer")
-  , ((modm, xK_g), allNamedScratchpadAction scratchpads "dev-dashboard")
+
+  -- Customizable Scratchpads
+  , ((modm, xK_g), allNamedScratchpadAction scratchpads "quickview-1")
+  , ((modm, xK_e), allNamedScratchpadAction scratchpads "quickview-2")
+  , ((modm, xK_v), allNamedScratchpadAction scratchpads "quickview-3")
+  , ((modm, xK_z), allNamedScratchpadAction scratchpads "quickview-4")
 
   , ((modm, xK_q), wsScratchpadTerminalAction conf)
 
