@@ -1,0 +1,14 @@
+#!/bin/bash
+# Start services when X session is ready and xmonad is starting up
+
+# Screenshots
+flameshot &
+
+# Clipboard
+greenclip daemon &
+
+# Notifications
+dunst &
+
+# Compositor
+picom --config $XDG_CONFIG_HOME/picom/picom.conf --experimental-backends &

@@ -123,11 +123,18 @@ def write_yml_file(path, yml_dict):
 
 
 def visit_then_write_tasks(src_path, dest_path, group: str, role: str):
+    # a shadow role is an extension of a role in the private repository
+    shadow_path = os.path.join("priv", "shadow", group, role)
+
     tasks_dir = os.path.join(src_path, "tasks")
     if os.path.isdir(tasks_dir):
         import_tasks = [os.path.abspath(path) for path in Path(tasks_dir).rglob("*.yml")]
     else:
         import_tasks = []
+
+    shadow_tasks_dir = os.path.join(shadow_path, "tasks")
+    if os.path.isdir(shadow_tasks_dir):
+        import_tasks.extend([os.path.abspath(path) for path in Path(shadow_tasks_dir).rglob("*.yml")])
 
     pkgs_path = os.path.join(src_path, "packages.yml")
     if os.path.isfile(pkgs_path):

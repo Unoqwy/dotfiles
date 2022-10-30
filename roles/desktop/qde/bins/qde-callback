@@ -1,0 +1,28 @@
+#!/bin/bash
+# Script that propagates xmonad (QDE) callbacks
+
+shopt -s nullglob
+
+if [[ -z $1 ]]; then
+    echo "Usage: $0 <event>"
+    exit 1
+fi
+
+MAIN_DIR="$HOME/.local/share/qde/callbacks"
+if [[ ! -d $MAIN_DIR ]]; then
+    echo "Not configured"
+    exit 0
+fi
+
+event_dir="$MAIN_DIR/$1"
+if [[ ! -d $event_dir ]]; then
+    echo "No script for this event type"
+    exit 0
+fi
+
+for file in "$event_dir"/*; do
+    if [[ -x $file ]]; then
+        "$file"
+    fi
+done
+

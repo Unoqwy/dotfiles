@@ -63,14 +63,7 @@ setupDefaultWorkspaces xconf = do
 
 startupHook' :: XConfig a -> X()
 startupHook' xconf = do
-  -- start daemons
-  spawnOnce "flameshot &"
-  spawnOnce "greenclip daemon &"
-  spawnOnce "dunst &"
-  spawnOnce "unread-bell &"
-
-  -- compositor
-  spawnOnce "picom --config $XDG_CONFIG_HOME/picom/picom.conf --experimental-backends &"
+  spawnOnce "qde-callback startup"
 
   xmonad_started <- liftIO $ lookupEnv "XMONAD_STARTED"
   case xmonad_started of

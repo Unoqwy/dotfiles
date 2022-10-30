@@ -34,13 +34,15 @@
   file:
     path: "{{ install_dest }}/.local/share/qde"
     state: directory
-- name: Check if src quickview dir exists
-  stat:
-    path: "{{ install_src }}/priv/quickview"
-  register: qde_main_qvcheck
-- name: Link quickview directory
+- name: Create QDE callbacks directories
   file:
-    src: "{{ install_src }}/priv/quickview"
-    dest: "{{ install_dest }}/.local/share/qde/quickview"
+    path: "{{ install_dest }}/.local/share/qde/{{ item }}"
+    state: directory
+  loop:
+    - "callbacks"
+    - "callbacks/startup"
+- name: Link default QDE startup callback
+  file:
+    src: "{{ install_src }}/roles/desktop/qde/files/callbacks/startup"
+    dest: "{{ install_dest }}/.local/share/qde/callbacks/startup/default"
     state: link
-  when: qde_main_qvcheck.stat.isdir is defined and qde_main_qvcheck.stat.isdir

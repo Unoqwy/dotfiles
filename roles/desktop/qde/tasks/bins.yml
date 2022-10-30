@@ -23,6 +23,11 @@
     src: "{{ install_src }}/roles/desktop/qde/bins/pamiec-save"
     dest: "{{ install_dest }}/.local/bin/pamiec-save"
     state: link
+- name: Link qde-callback bin
+  file:
+    src: "{{ install_src }}/roles/desktop/qde/bins/qde-callback"
+    dest: "{{ install_dest }}/.local/bin/qde-callback"
+    state: link
 - name: Link spawn-qv bin
   file:
     src: "{{ install_src }}/roles/desktop/qde/bins/spawn-qv"
