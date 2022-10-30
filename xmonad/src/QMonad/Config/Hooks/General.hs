@@ -46,7 +46,7 @@ setupDefaultWorkspaces xconf = do
             { W.workspace = (W.workspace $ W.current u)
             { W.layout = l' }}}
       ) allWs
-  where hidden = map show ([0, 1, 5] ++ [7..9]) ++ ["DND", "NSP"]
+  where hidden = map show ([0, 1, 5] ++ [6..9]) ++ ["DND", "NSP"]
         named  = map (Data.Bifunctor.first show) [
               (0, "0")
             , (1, "music")
