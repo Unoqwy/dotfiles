@@ -13,7 +13,7 @@ if ! command -v ansible > /dev/null; then
 fi
 
 if ! command -v ansible > /dev/null; then
-    echo "Asible couldn't be installed."
+    echo "Ansible couldn't be installed."
     exit 1
 fi
 

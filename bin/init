@@ -7,6 +7,12 @@ if [[ "$EUID" == 0 ]]; then
     echo "This should not be run as root!"
     exit 1
 fi
+
+if cat /etc/os-release | grep ID=arch > /dev/null; then
+    echo "Arch Linux detected. Ensuring base packages are installed..."
+    sudo pacman -Sy base-devel ansible python python-yaml
+fi
+
 base=$(readlink -f "$(dirname $(readlink -f "$0"))/..")
 
 if ! "$base/bin/prepare" 1>/dev/null; then
