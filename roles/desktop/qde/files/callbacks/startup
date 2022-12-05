@@ -11,4 +11,5 @@ greenclip daemon &
 dunst &
 
 # Compositor
-picom --config $XDG_CONFIG_HOME/picom/picom.conf --experimental-backends &
+picom --config $XDG_CONFIG_HOME/picom/picom.conf &
+
