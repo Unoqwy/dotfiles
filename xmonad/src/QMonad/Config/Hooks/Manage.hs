@@ -66,7 +66,7 @@ windowRules = composeAll [
   , className =? "media-app" --> doShift "9"
 
   -- Splash screens
-  , fmap ("jetbrains-" `isPrefixOf`) className <&&> title =? "win0" --> doCenterFloat
+  , fmap ("jetbrains-" `isPrefixOf`) className <&&> title =? "splash" --> doCenterFloat
   , className =? "jetbrains-toolbox" --> doCenterFloat
 
   -- Settings apps
