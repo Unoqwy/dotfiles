@@ -104,6 +104,7 @@ opacityHook = composeOne $
           , "discord"
           , "code"
           , "emacs"
+          , "Thunar"
           ] ++ t'
         classNames = [
             "Alacritty"

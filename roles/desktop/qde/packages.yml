@@ -26,5 +26,8 @@ _:
   # Themes
   - pacman: lxappearance
 
+  # GUI File Management
+  - pacman: [thunar, tumbler, ffmpegthumbnailer, engrampa]
+
   # Polkit
   - pacman: [polkit, lxsession]
