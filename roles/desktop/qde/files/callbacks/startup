@@ -13,3 +13,5 @@ dunst &
 # Compositor
 picom --config $XDG_CONFIG_HOME/picom/picom.conf &
 
+# Polkit
+lxsession &

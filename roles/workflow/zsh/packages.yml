@@ -1,1 +1,1 @@
-pacman: [zsh, zsh-syntax-highlighting]
+pacman: [zsh, zsh-syntax-highlighting, fzf]

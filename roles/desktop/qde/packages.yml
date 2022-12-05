@@ -16,9 +16,15 @@ _:
   - pacman: [networkmanager, network-manager-applet]
     aur: [networkmanager-dmenu-git]
 
-  # Fonts
+  # Used Fonts
   - pacman: [fontforge, ttf-jetbrains-mono, ttf-iosevka-nerd]
     aur: [nerd-fonts-jetbrains-mono]
 
+  # Fallback Fonts
+  - pacman: [noto-fonts, noto-fonts-emoji, noto-fonts-extra]
+
   # Themes
   - pacman: lxappearance
+
+  # Polkit
+  - pacman: [polkit, lxsession]
