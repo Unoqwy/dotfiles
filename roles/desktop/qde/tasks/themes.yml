@@ -3,3 +3,4 @@
     use: makepkg
     name: qogir-gtk-theme
     local_pkgbuild: "{{ install_src }}/PKGBUILDS/qogir-gtk-theme"
+  ignore_errors: true
