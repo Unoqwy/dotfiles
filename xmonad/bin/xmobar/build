@@ -1,7 +1,7 @@
 #!/bin/sh
 cd $XMONAD/bin/xmobar
 OUTPUT=${1:-"$(dirname $(readlink -f $0))/xmobar"}
-FLAGS=("+with_utf8" "+with_xft" "+with_weather" "+with_dbus")
+FLAGS=("+with_utf8" "+with_xft" "+with_dbus")
 
 _flags=$(printf " %s" "${FLAGS[@]}" | xargs)
 echo "INFO: xmobar flags: $_flags"
