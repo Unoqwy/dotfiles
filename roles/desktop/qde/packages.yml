@@ -17,8 +17,7 @@ _:
     aur: [networkmanager-dmenu-git]
 
   # Used Fonts
-  - pacman: [fontforge, ttf-jetbrains-mono, ttf-iosevka-nerd]
-    aur: [nerd-fonts-jetbrains-mono]
+  - pacman: [fontforge, ttf-jetbrains-mono, ttf-jetbrains-mono-nerd, ttf-iosevka-nerd]
 
   # Fallback Fonts
   - pacman: [noto-fonts, noto-fonts-emoji, noto-fonts-extra]
