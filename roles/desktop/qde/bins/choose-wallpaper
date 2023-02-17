@@ -1,7 +1,22 @@
 #!/bin/sh
+OVERLAY_FILE=${WALLPAPER_OVERLAY_FILE:-"$HOME/Pictures/wallpaper-overlay.png"}
+
 wallpaper=$(sxiv -brot ~/Wallpapers | head -n1)
 if [ -z "$wallpaper" ]; then
     exit 0
 fi
-feh --bg-fill "$wallpaper"
-notify-send "Wallpaper set" "${wallpaper##*/}"
+set_to="$wallpaper"
+extra_info=""
+if [[ -f $OVERLAY_FILE ]]; then
+    kdialog --title "Set Wallpaper" --yesno "Overlay file found.\nApply it?"
+    if [[ $? -eq 0 ]]; then
+        set_to="$HOME/.active-wallpaper.png"
+        extra_info=" (overlay applied)"
+        convert "$wallpaper" $OVERLAY_FILE \
+            -background None -gravity Center -resize 2560x -extent 2560x1440 \
+            -composite -compose Over \
+            "$set_to"
+    fi
+fi
+feh --bg-fill "$set_to"
+notify-send "Wallpaper Set" "${wallpaper##*/}$extra_info"
