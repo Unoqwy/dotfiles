@@ -35,6 +35,8 @@ else
 
     if [[ -n "$SSH_CONNECTION" ]]; then
         PS1='%F{red}%(?.. <%?>)%F{magenta}${vcs_info_msg_0_} %F{red}%BSSH %F{black}%f '
+    elif [[ $UID == 0 || $EUID == 0 ]]; then
+        PS1='%F{red}%(?.. <%?>)%F{magenta}${vcs_info_msg_0_} %F{red}%Broot %F{black}%f '
     else
         PS1='%F{red}%(?.. <%?>)%F{magenta}${vcs_info_msg_0_} %F{black}%f '
     fi
