@@ -24,6 +24,7 @@ _:
 
   # Themes
   - pacman: lxappearance
+    aur: [qogir-gtk-theme, tela-icon-theme]
 
   # GUI File Management
   - pacman: [thunar, tumbler, ffmpegthumbnailer, engrampa]
