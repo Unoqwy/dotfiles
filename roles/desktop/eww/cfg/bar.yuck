@@ -78,7 +78,7 @@
     )))
 
 (defwidget workspace [ws]
-  (box :class "workspace ${ws.focused ? "ws_focused" : ""} ${ws.windows > 0 ? "ws_occupied" : "ws_empty"}"
+  (box :class "workspace ${ws.focused ? "ws_focused" : ""} ${ws.pinned ? "" : "ws_unpinned"} ${ws.windows > 0 ? "ws_occupied" : "ws_empty"}"
        :orientation "h"
     (label :text "${ws.name}")
   ))

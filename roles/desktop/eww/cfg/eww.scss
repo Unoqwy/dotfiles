@@ -55,6 +55,9 @@
     &.ws_focused {
       color: #bd7572;
     }
+    &.ws_focused.ws_unpinned {
+      color: #948ae3;
+    }
     &.ws_occupied:not(.ws_focused) {
       color: $gray;
     }

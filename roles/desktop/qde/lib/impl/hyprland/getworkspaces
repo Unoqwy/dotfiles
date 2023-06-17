@@ -12,15 +12,18 @@ focused_ws=$(hyprctl monitors -j | "$jq_bin" -cr '.[] | select(.focused) | .acti
 win_count_map=$(hyprctl workspaces -j | "$jq_bin" -c 'map({key: .name, value: .windows}) | from_entries')
 if [ "$jq_bin" = "jaq" ]; then
     # jaq doesn't support unique_by
-    unique_entries_workaround="to_entries | map({key: .value, value: .value}) | from_entries"
+    maybe_unpinned='if has("'"$focused_ws"'") then . else . + {"'"$focused_ws"'": {name: "'"$focused_ws"'", pinned: false}} end'
+    unique_by_workaround='map({key: .value.name, value: .value}) | from_entries | '"$maybe_unpinned"' | to_entries'
+    remap='map({name: .value.name, windows: (($win_count_map | fromjson)[.value.name]//0), focused: (.value.name == $focused_ws), pinned: .value.pinned})'
     echo "$QDE_WORKSPACES" | jaq -nR -c --color never \
         --arg win_count_map "$win_count_map" \
         --arg focused_ws "$focused_ws" \
-        '[inputs, $focused_ws] | '"$unique_entries_workaround"' | to_entries | map({name: .value, windows: (($win_count_map | fromjson)[.value]//0), focused: (.value == $focused_ws)})'
+        '[inputs] | map({name: ., pinned: true}) | to_entries | '"$unique_by_workaround"' | '"$remap"
 else
+    remap='map({name: .value, windows: ($win_count_map[.value]//0), focused: (.value == $focused_ws), pinned: (.key != -1)})'
     echo "$QDE_WORKSPACES" | jq -nR -Mc \
         --argjson win_count_map "$win_count_map" \
         --arg focused_ws "$focused_ws" \
-        '[inputs, $focused_ws] | to_entries | unique_by(.value) | sort_by(.key) | map({name: .value, windows: ($win_count_map[.value]//0), focused: (.value == $focused_ws)})'
+        '[inputs] | to_entries | . + [{"key": -1, "value": "'"$focused_ws"'"}] | unique_by(.value) | sort_by(.key) | '"$remap"
 fi
 
