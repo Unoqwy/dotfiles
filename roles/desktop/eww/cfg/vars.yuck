@@ -1,0 +1,3 @@
+;; vim:set sw=2 ts=2
+
+(defvar network-interfaces '[{"name":"wlo1", "wifi":true}]')

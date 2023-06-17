@@ -1,0 +1,152 @@
+;; vim:set sw=2 ts=2
+
+;; External Values
+(defpoll time :interval "1s"
+  "date '+%I:%M:%S %p'")
+(defpoll date :interval "1m"
+  "date '+%a-%d'")
+
+(defpoll volume-val :interval "3s"
+  "~/.local/share/qde/lib/getvolume")
+
+(deflisten workspaces :initial "[]" "./scripts/listen-workspaces")
+
+;; Widgets
+(defwidget monitor [icon value ?unit]
+  (box :class "monitor"
+       :orientation "h"
+       :space-evenly false
+    (label :class "fa-icon" :text icon)
+    (literal {round(value, 0)})
+    (label :text {unit ?: "%"})
+  ))
+
+(defwidget battery [capacity status]
+  (box :class "battery"
+       :orientation "h"
+       :space-evenly false
+       :spacing 3
+    (label :class "fa-icon"
+           :text {status == "Discharging" ? "\\uf242" : "\\uf58f"})
+    (box :space-evenly false
+      (literal {round(capacity, 0)})
+      (label :text "%")
+    )))
+
+(defwidget volume [value]
+  (eventbox :onclick "pavucontrol &!"
+    (box :class "volume"
+         :orientation "h"
+         :space-evenly false
+         :spacing 3
+      (label :class "fa-icon"
+             :text {value == "-1" ? "\\uf6a9" : "\\uf58f"})
+      (box :space-evenly false
+           :visible {value != "-1"}
+        (literal value)
+        (label :text "%")
+      ))))
+
+(defwidget network [interface ?wifi]
+  (box :class "network"
+       :orientation "h"
+       :space-evenly false
+       :spacing 4
+    (box :class "network_down"
+         :orientation "h"
+         :space-evenly false
+      (literal {round(EWW_NET[interface].NET_DOWN / 1000, 0)})
+      (box :space-evenly false
+           :spacing 2
+        (label :text "kB")
+        (label :class "fa-icon" :text "\\uf063")
+      ))
+    (box :class "network_icon"
+         :orientation "h"
+         :space-evenly false
+      (label :class "fa-icon" :text {wifi == true ? "\\uf1eb" : "\\uf108"})
+    )
+    (box :class "network_up"
+         :orientation "h"
+         :space-evenly false
+      (box :space-evenly false
+           :spacing 2
+        (label :class "fa-icon" :text "\\uf062")
+        (literal {round(EWW_NET[interface].NET_UP / 1000, 0)})
+      )
+      (label :text "kB")
+    )))
+
+(defwidget workspace [ws]
+  (box :class "workspace ${ws.focused ? "ws_focused" : ""} ${ws.windows > 0 ? "ws_occupied" : "ws_empty"}"
+       :orientation "h"
+    (label :text "${ws.name}")
+  ))
+
+(defwidget left []
+  (box :class "left"
+    :orientation "h"
+    :space-evenly false
+    :spacing 6
+    (monitor :icon "\\uf538 "
+             :value {EWW_RAM.used_mem_perc})
+    (monitor :icon "\\uf2db "
+             :value {EWW_CPU.avg})
+    (monitor :icon "\\uf2c8 "
+             :value {EWW_TEMPS["ACPITZ_TEMP1"]}
+             :unit "°C")
+    (battery :capacity {EWW_BATTERY["BAT0"].capacity}
+             :status {EWW_BATTERY["BAT0"].status})
+  ))
+
+(defwidget middle []
+  (box :class "middle"
+       :orientation "h"
+       :halign "middle"
+       :space-evenly false
+       :spacing 6
+    (label :text "${workspaces}" :visible false)
+    (for workspace in workspaces
+      (eventbox :onclick "hyprctl dispatch workspace name:${workspace.name}"
+        (workspace :ws workspace)))
+  ))
+
+(defwidget right []
+  (box :class "right"
+       :orientation "h"
+       :halign "end"
+       :space-evenly false
+       :spacing 6
+    (volume :value volume-val)
+    (for interface in network-interfaces
+      (network :interface {interface.name}
+               :wifi {interface.wifi}))
+    (box :class "time"
+         :space-evenly false
+      (label :class "fa-icon" :text "\\uf017 ")
+    time)
+    (box :class "date" date)
+  ))
+
+;; Bar
+(defwidget bar []
+  (centerbox :class "bar"
+             :orientation "h"
+    (left)
+    (middle)
+    (right)
+  ))
+
+(defwindow bar
+  :monitor 0
+  :stacking "fg"
+  :exclusive true
+  :focusable false
+  :namespace "qde-bar"
+  :geometry (geometry
+    :x "0%"
+    :y "0%"
+    :width "100%"
+    :height "0px"
+  :anchor "top center")
+  (bar))
