@@ -14,8 +14,9 @@ autoload -Uz down-line-or-beginning-search
 zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
 
-# zsh:dir
+# zsh:general
 setopt autocd
+setopt interactive_comments
 
 # zsh:completion
 autoload -Uz compinit; compinit
@@ -171,3 +172,11 @@ function synctime {
     sudo sh -c 'ntpd -gq && hwclock --systohc'
 }
 ## }}}
+
+# pnpm
+export PNPM_HOME="/home/jq/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
