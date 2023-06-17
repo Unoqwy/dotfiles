@@ -1,0 +1,70 @@
+// vim:set sw=2 ts=2
+
+$spacing: 4px;
+
+$gray: #848089;
+$lightgray: #d5d0c0;
+
+$background: #191919;
+$background_contrast: lighten($background, 8%);
+
+* {
+  all: unset;
+}
+
+.bar {
+  font: 14px "JetBrains Mono";
+  background-color: $background;
+  margin: 2px $spacing; 
+}
+
+.fa-icon {
+  font: 12px "Font Awesome 5 Pro Solid";
+}
+
+.monitor {
+  color: #bd7572;
+}
+
+.time {
+  color: $lightgray;
+}
+
+.date {
+  color: $gray;
+}
+
+.network {
+  background: $background_contrast;
+  padding: 0 4px;
+  border-radius: 2px;
+}
+
+.network_down {
+  color: #72beb3;
+}
+
+.network_icon {
+  color: $gray;
+}
+
+.network_up {
+  color: $gray;
+}
+
+.volume, .battery {
+  color: $gray;
+}
+
+.ws_focused {
+  color: #bd7572;
+}
+
+.ws_occupied:not(.ws_focused) {
+  color: $gray;
+}
+
+.ws_empty:not(.ws_focused) {
+  color: #49464e;
+}
+

@@ -1,6 +1,10 @@
 #!/bin/sh
 OVERLAY_FILE=${WALLPAPER_OVERLAY_FILE:-"$HOME/Pictures/wallpaper-overlay.png"}
 
+SAVEFILE_DIR="$HOME/.local/state/qde"
+SAVEFILE_PREFIX="$SAVEFILE_DIR/wallpaper"
+SAVEFILE_HEADER="#!/bin/sh\n# Auto Generated - $0\n"
+
 wallpaper=$(sxiv -brot ~/Wallpapers | head -n1)
 if [ -z "$wallpaper" ]; then
     exit 0
@@ -18,5 +22,14 @@ if [[ -f $OVERLAY_FILE ]]; then
             "$set_to"
     fi
 fi
-feh --bg-fill "$set_to"
+mkdir -p "$SAVEFILE_DIR"
+if [[ $XDG_SESSION_TYPE -eq "wayland" ]]; then
+    savefile="${SAVEFILE_PREFIX}.wayland"
+    echo -e "${SAVEFILE_HEADER}pkill swaybg\nswaybg --image '$wallpaper' --mode fill" > "$savefile"
+else
+    savefile="${SAVEFILE_PREFIX}.x11"
+    echo -e "${SAVEFILE_HEADER}feh --no-fehbg --bg-fill '$wallpaper'" > "$savefile"
+fi
+chmod +x "$savefile"
+"$savefile"
 notify-send "Wallpaper Set" "${wallpaper##*/}$extra_info"

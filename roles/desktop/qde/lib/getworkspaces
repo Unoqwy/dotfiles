@@ -1,0 +1,10 @@
+#!/bin/dash
+QDE_LIB=${QDE_LIB:-$(dirname $(readlink -f "$0"))}
+
+wm=$("$QDE_LIB/getwm")
+if [ $? -ne 0 ]; then
+    exit 1
+fi
+
+export QDE_WORKSPACES=${QDE_WORKSPACES:-"default"}
+"$QDE_LIB/impl/$wm/getworkspaces"

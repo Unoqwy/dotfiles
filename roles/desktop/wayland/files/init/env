@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# XDG Directories
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_CACHE_HOME="$HOME/.cache"
+
+# QDE
+export QDE_LIB="$HOME/.local/share/qde/lib"
+export QDE_WORKSPACES="web\ndev\nmain" # visible workspaces

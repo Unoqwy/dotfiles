@@ -1,0 +1,6 @@
+#!/bin/dash
+if [ "$(pamixer --get-mute)" = "true" ]; then
+    echo "-1"
+else
+    pamixer --get-volume
+fi

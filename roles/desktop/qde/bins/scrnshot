@@ -1,0 +1,25 @@
+#!/bin/bash
+if [[ $XDG_SESSION_TYPE -ne "wayland" ]]; then
+    flameshot gui
+    exit 0
+fi
+
+SCREENSHOTS_DIR=${QDE_SCREENSHOTS_DIR:-$HOME/Pictures}
+FILENAME_FORMAT="Screenshot_%F_%H-%M"
+
+altno=0
+filename=$(date +"$FILENAME_FORMAT.png")
+while [[ -f "$SCREENSHOTS_DIR/$filename" ]]; do
+    ((altno+=1))
+    filename=$(date +"${FILENAME_FORMAT}_$altno.png")
+done
+mkdir -p "$SCREENSHOTS_DIR"
+
+selection=$(slurp)
+if [[ -z $selection ]]; then
+    notify-send "Screenshot" "Screenshot aborted."
+    exit 1
+fi
+targetfile="$SCREENSHOTS_DIR/$filename"
+grim -g "$selection" "$targetfile"
+notify-send "Screenshot" "Capture saved as $(realpath -q $targetfile)."

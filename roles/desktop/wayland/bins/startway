@@ -1,0 +1,2 @@
+#!/bin/sh
+"$HOME/.local/share/qde-wayland/init/start"

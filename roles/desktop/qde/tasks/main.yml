@@ -46,3 +46,9 @@
     src: "{{ install_src }}/roles/desktop/qde/files/callbacks/startup"
     dest: "{{ install_dest }}/.local/share/qde/callbacks/startup/default"
     state: link
+
+- name: Link QDE lib directory
+  file:
+    src: "{{ install_src }}/roles/desktop/qde/lib"
+    dest: "{{ install_dest }}/.local/share/qde/lib"
+    state: link

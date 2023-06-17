@@ -1,0 +1,6 @@
+#!/bin/dash
+script="$HOME/.local/share/qde/lib/getworkspaces"
+"$script"
+socat -u UNIX-CONNECT:/tmp/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock - | while read -r line; do
+    "$script"
+done

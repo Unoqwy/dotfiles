@@ -28,6 +28,11 @@
     src: "{{ install_src }}/roles/desktop/qde/bins/qde-callback"
     dest: "{{ install_dest }}/.local/bin/qde-callback"
     state: link
+- name: Link scrnshot bin
+  file:
+    src: "{{ install_src }}/roles/desktop/qde/bins/scrnshot"
+    dest: "{{ install_dest }}/.local/bin/scrnshot"
+    state: link
 - name: Link spawn-qv bin
   file:
     src: "{{ install_src }}/roles/desktop/qde/bins/spawn-qv"
