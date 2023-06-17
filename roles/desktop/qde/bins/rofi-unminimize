@@ -1,0 +1,32 @@
+#!/bin/bash
+windows=$(qdectl list-minimized)
+jq_bin="jq"
+if command -v jaq &> /dev/null; then
+    jq_bin="jaq"
+fi
+declare input
+declare -A choices
+idx=0
+for row in $(echo "$windows" | jq -cr 'sort_by(.minimized_at) | reverse | .[] | @base64'); do
+    ((idx+=1))
+    row_json=$(echo "$row" | base64 --decode)
+    window_name=$(echo "$row_json" | "$jq_bin" -cr .title)
+    minimized_at=$(echo "$row_json" | "$jq_bin" -cr .minimized_at)
+    formatted_time="$(date -d "@$minimized_at" +'%I:%M:%S %p')"
+    key="$idx. $window_name [$formatted_time]"
+    choices[$key]="$row_json"
+    if [[ -z "$input" ]]; then
+        input="$key"
+    else
+        printf -v input "$input\n$key"
+    fi
+done
+if [[ -z "$input" ]]; then
+    exit 1
+fi
+result=$(echo "$input" | rofi -dmenu -i -l 8 -p "Select Window")
+if [[ -z $result ]]; then
+    exit 0
+fi
+window=${choices[$result]}
+qdectl unminimize $(echo "$window" | "$jq_bin" -cr .address)

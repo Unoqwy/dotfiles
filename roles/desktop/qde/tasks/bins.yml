@@ -28,6 +28,16 @@
     src: "{{ install_src }}/roles/desktop/qde/bins/qde-callback"
     dest: "{{ install_dest }}/.local/bin/qde-callback"
     state: link
+- name: Link qdectl bin
+  file:
+    src: "{{ install_src }}/roles/desktop/qde/bins/qdectl"
+    dest: "{{ install_dest }}/.local/bin/qdectl"
+    state: link
+- name: Link rofi-unminimize bin
+  file:
+    src: "{{ install_src }}/roles/desktop/qde/bins/rofi-unminimize"
+    dest: "{{ install_dest }}/.local/bin/rofi-unminimize"
+    state: link
 - name: Link scrnshot bin
   file:
     src: "{{ install_src }}/roles/desktop/qde/bins/scrnshot"

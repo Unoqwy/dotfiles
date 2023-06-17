@@ -1,0 +1,68 @@
+#!/bin/bash
+MINIMIZED_STATE_SAVEFILE="/tmp/qde.minimized"
+
+# https://stackoverflow.com/a/44793442
+function dict2json {
+    declare -n v=$1
+    printf '%s\0' "${!v[@]}" "${v[@]}" |
+    jq -Rs -Mc 'split("\u0000") | . as $v | (length / 2) as $n | reduce range($n) as $idx ({}; .[$v[$idx]]=$v[$idx+$n])'
+}
+
+jq_bin="jq"
+if command -v jaq &> /dev/null; then
+    jq_bin="jaq"
+fi
+
+case "$1" in
+    minimize)
+        focused_ws=$(hyprctl activeworkspace -j | "$jq_bin" -cr '.name')
+        win_addr=$(hyprctl activewindow -j | "$jq_bin" -cr '.address')
+        hyprctl dispatch movetoworkspace "special:minimized:$focused_ws"
+        declare -A state
+        if [[ -f "$MINIMIZED_STATE_SAVEFILE" ]]; then
+            source "$MINIMIZED_STATE_SAVEFILE"
+        fi
+        state[$win_addr]=$(date +%s)
+        declare -p state > "$MINIMIZED_STATE_SAVEFILE"
+        ;;
+    unminimize)
+        focused_ws=$(hyprctl activeworkspace -j | "$jq_bin" -cr '.name')
+        addr="$2"
+        if [[ -z $addr ]]; then
+            >&2 echo "Usage: $(basename $0) unminimize <addr>"
+            >&2 echo "> Missing address parameter."
+            exit 1
+        fi
+        hyprctl dispatch movetoworkspace "$focused_ws,address:$addr"
+        declare -A state
+        if [[ -f "$MINIMIZED_STATE_SAVEFILE" ]]; then
+            source "$MINIMIZED_STATE_SAVEFILE"
+        fi
+        unset "state[$addr]"
+        declare -p state > "$MINIMIZED_STATE_SAVEFILE"
+        ;;
+    list-minimized)
+        focused_ws=$(hyprctl activeworkspace -j | "$jq_bin" -cr '.name')
+        special_ws="special:minimized:$focused_ws"
+        declare -A state
+        if [[ -f "$MINIMIZED_STATE_SAVEFILE" ]]; then
+            source "$MINIMIZED_STATE_SAVEFILE"
+        fi
+        if [[ $jq_bin == "jaq" ]]; then
+            hyprctl clients -j | jaq -c --color never --arg state "$(dict2json state)" \
+                '[.[] | select(.workspace.name == "'"$special_ws"'") | {address,pid,title,class,minimized_at:(($state | fromjson)[.address]//0)}]'
+        else
+            hyprctl clients -j | "$jq_bin" -Mc --argjson state "$(dict2json state)" \
+                '[.[] | select(.workspace.name == "'"$special_ws"'") | {address,pid,title,class,minimized_at:($state[.address]//0)}]'
+        fi
+        ;;
+    *)
+        echo "QDE Control Tool - v0.1"
+        echo "Usage: $(basename $0) <command>"
+        echo
+        echo "Commands:"
+        echo "  minimize - Minimize the current window"
+        echo "  unminimize <addr> - Unminimize a window"
+        echo "  list-minimized - List minimized windows in the current workspace (JSON)"
+        ;;
+esac
