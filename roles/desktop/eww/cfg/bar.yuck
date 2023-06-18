@@ -78,10 +78,23 @@
     )))
 
 (defwidget workspace [ws]
-  (box :class "workspace ${ws.focused ? "ws_focused" : ""} ${ws.pinned ? "" : "ws_unpinned"} ${ws.windows > 0 ? "ws_occupied" : "ws_empty"}"
+  (box :class "workspace ${ws.focused ? "ws_focused" : ""} ${ws.pinned ? "" : "ws_unpinned"} ${ws.windows > 0 ? "ws_occupied" : "ws_empty"} ${ws.minimized > 0 ? "ws_hasminimized" : ""} ${ws.hasfullscreen ? "ws_hasfullscreen" : ""}"
        :orientation "h"
-    (label :text "${ws.name}")
-  ))
+    (overlay
+      (label :text "${ws.name}")
+      (box :orientation "v"
+           :space-evenly false
+        (box :orientation "h"
+             :halign "start"
+             :space-evenly false
+          (box :class "ws_infodot_top_left")))
+      (box :orientation "v"
+           :space-evenly false
+        (box :orientation "h"
+             :halign "end"
+             :space-evenly false
+          (box :class "ws_infodot_top_right")))
+      )))
 
 (defwidget left []
   (box :class "left"

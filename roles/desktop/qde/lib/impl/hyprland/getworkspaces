@@ -3,27 +3,32 @@ if [ -z "$QDE_WORKSPACES" ]; then
     exit 1
 fi
 
+## Dependencies {{{
 jq_bin="jq"
-if ! command -v &> /dev/null; then
+if command -v jaq > /dev/null 2>&1; then
     # jaq is 4x faster in this case!
     jq_bin="jaq"
 fi
+## }}}
+
 focused_ws=$(hyprctl monitors -j | "$jq_bin" -cr '.[] | select(.focused) | .activeWorkspace.name')
-win_count_map=$(hyprctl workspaces -j | "$jq_bin" -c 'map({key: .name, value: .windows}) | from_entries')
+ws_map=$(hyprctl workspaces -j | "$jq_bin" -c 'map({key: .name, value: (. | {windows,hasfullscreen})}) | from_entries')
 if [ "$jq_bin" = "jaq" ]; then
     # jaq doesn't support unique_by
     maybe_unpinned='if has("'"$focused_ws"'") then . else . + {"'"$focused_ws"'": {name: "'"$focused_ws"'", pinned: false}} end'
     unique_by_workaround='map({key: .value.name, value: .value}) | from_entries | '"$maybe_unpinned"' | to_entries'
-    remap='map({name: .value.name, windows: (($win_count_map | fromjson)[.value.name]//0), focused: (.value.name == $focused_ws), pinned: .value.pinned})'
+    globals='($ws_map_raw | fromjson) as $ws_map | {windows: 0, hasfullscreen: false} as $defwin'
+    remap='map(($ws_map[.value.name]//$defwin) + {name: .value.name, minimized: (($ws_map["special:minimized:" + .value.name]//$defwin).windows//0), focused: (.value.name == $focused_ws), pinned: .value.pinned})'
     echo "$QDE_WORKSPACES" | jaq -nR -c --color never \
-        --arg win_count_map "$win_count_map" \
+        --arg ws_map_raw "$ws_map" \
         --arg focused_ws "$focused_ws" \
-        '[inputs] | map({name: ., pinned: true}) | to_entries | '"$unique_by_workaround"' | '"$remap"
+        "$globals"' | [inputs] | map({name: ., pinned: true}) | to_entries | '"$unique_by_workaround"' | '"$remap"
 else
-    remap='map({name: .value, windows: ($win_count_map[.value]//0), focused: (.value == $focused_ws), pinned: (.key != -1)})'
+    remap='map(($ws_map[.value]//$defwin) + {name: .value, minimized: (($ws_map["special:minimized:" + .value]//$defwin).windows//0), focused: (.value == $focused_ws), pinned: (.key != -1)})'
+    globals='{windows: 0, hasfullscreen: false} as $defwin'
     echo "$QDE_WORKSPACES" | jq -nR -Mc \
-        --argjson win_count_map "$win_count_map" \
+        --argjson ws_map "$ws_map" \
         --arg focused_ws "$focused_ws" \
-        '[inputs] | to_entries | . + [{"key": -1, "value": "'"$focused_ws"'"}] | unique_by(.value) | sort_by(.key) | '"$remap"
+        "$globals"' | [inputs] | to_entries | . + [{"key": -1, "value": "'"$focused_ws"'"}] | unique_by(.value) | sort_by(.key) | '"$remap"
 fi
 

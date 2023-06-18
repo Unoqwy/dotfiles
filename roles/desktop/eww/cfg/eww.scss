@@ -4,6 +4,7 @@
   all: unset;
 }
 
+// Status Bar {{{
 .bar {
   $spacing: 4px;
 
@@ -64,8 +65,19 @@
     &.ws_empty:not(.ws_focused) {
       color: #49464e;
     }
+    &.ws_focused.ws_hasfullscreen .ws_infodot_top_left {
+      min-width: 3px;
+      min-height: 3px;
+      background: #e5c463;
+    }
+    &.ws_hasminimized .ws_infodot_top_right {
+      min-width: 2px;
+      min-height: 2px;
+      background: $lightgray;
+    }
   }
 }
+// }}}
 
 }
 
