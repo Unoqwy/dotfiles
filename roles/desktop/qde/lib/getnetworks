@@ -1,0 +1,22 @@
+#!/bin/dash
+builder=""
+for intsys in /sys/class/net/*; do
+    if [ ! -d "$intsys/device" ]; then
+        # only list physical interfaces
+        continue
+    fi
+    if [ -d "$intsys/wireless" ]; then
+        wifi="true"
+    else
+        wifi="false"
+    fi
+    state="$(cat "$intsys/operstate")"
+    interface="$(basename "$intsys")"
+    json="{\"name\": \"$interface\", \"wifi\": $wifi, \"state\": \"$state\"}"
+    if [ -n "$builder" ]; then
+        builder="$builder, $json"
+    else
+        builder="$json"
+    fi
+done
+echo "[$builder]"

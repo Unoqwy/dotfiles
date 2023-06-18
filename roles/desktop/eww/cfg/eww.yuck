@@ -1,8 +1,5 @@
 ;; vim:set sw=2 ts=2
 
-;; Variables
-(include "./vars.yuck")
-
 ;; Windows
 (include "./bar.yuck")
 

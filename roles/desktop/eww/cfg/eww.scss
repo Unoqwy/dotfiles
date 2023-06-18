@@ -5,18 +5,22 @@
 }
 
 // Status Bar {{{
-.bar {
-  $spacing: 4px;
-
+.statusbar {
   $gray: #848089;
   $lightgray: #d5d0c0;
 
   $background: #191919;
   $background_contrast: lighten($background, 8%);
 
-  font: 14px "JetBrains Mono";
-  background-color: $background;
-  margin: 2px $spacing; 
+  font: 14px "IosevkaTerm";
+  background: $background;
+  padding: 2px 4px;
+
+  &.statusbar_floating {
+    padding: 3px 8px;
+    margin: 4px 6px 2px 6px;
+    border-radius: 4px;
+  }
 
   .fa-icon {
     font: 12px "Font Awesome 5 Pro Solid";
@@ -55,9 +59,18 @@
   .workspace {
     &.ws_focused {
       color: #bd7572;
+      .ws_decoration_top_center {
+        margin-right: 5px;
+        margin-left: 5px;
+        min-height: 1px;
+        background: #bd7572;
+      }
     }
     &.ws_focused.ws_unpinned {
       color: #948ae3;
+      .ws_decoration_top_center {
+        background: #948ae3;
+      }
     }
     &.ws_occupied:not(.ws_focused) {
       color: $gray;
@@ -79,5 +92,4 @@
 }
 // }}}
 
-}
 

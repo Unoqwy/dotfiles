@@ -9,6 +9,9 @@
 (defpoll volume-val :interval "3s"
   "~/.local/share/qde/lib/getvolume")
 
+(defpoll network-interfaces :interval "3s" :initial "[]"
+  "~/.local/share/qde/lib/getnetworks")
+
 (deflisten workspaces :initial "[]" "./scripts/listen-workspaces")
 
 ;; Widgets
@@ -27,7 +30,7 @@
        :space-evenly false
        :spacing 3
     (label :class "fa-icon"
-           :text {status == "Discharging" ? "\\uf242" : "\\uf58f"})
+           :text {status == "Discharging" ? "\\uf242" : "\\uf376"})
     (box :space-evenly false
       (literal {round(capacity, 0)})
       (label :text "%")
@@ -47,7 +50,7 @@
         (label :text "%")
       ))))
 
-(defwidget network [interface ?wifi]
+(defwidget network [interface net]
   (box :class "network"
        :orientation "h"
        :space-evenly false
@@ -55,7 +58,7 @@
     (box :class "network_down"
          :orientation "h"
          :space-evenly false
-      (literal {round(EWW_NET[interface].NET_DOWN / 1000, 0)})
+      (label :text {round(net.NET_DOWN / 1000, 0)})
       (box :space-evenly false
            :spacing 2
         (label :text "kB")
@@ -64,7 +67,7 @@
     (box :class "network_icon"
          :orientation "h"
          :space-evenly false
-      (label :class "fa-icon" :text {wifi == true ? "\\uf1eb" : "\\uf108"})
+      (label :class "fa-icon" :text {interface.wifi ? "\\uf1eb" : "\\uf108"})
     )
     (box :class "network_up"
          :orientation "h"
@@ -72,7 +75,7 @@
       (box :space-evenly false
            :spacing 2
         (label :class "fa-icon" :text "\\uf062")
-        (literal {round(EWW_NET[interface].NET_UP / 1000, 0)})
+        (label :text {round(net.NET_UP / 1000, 0)})
       )
       (label :text "kB")
     )))
@@ -88,6 +91,9 @@
              :halign "start"
              :space-evenly false
           (box :class "ws_infodot_top_left")))
+      (box :orientation "v"
+           :space-evenly false
+          (box :class "ws_decoration_top_center"))
       (box :orientation "v"
            :space-evenly false
         (box :orientation "h"
@@ -106,10 +112,14 @@
     (monitor :icon "\\uf2db "
              :value {EWW_CPU.avg})
     (monitor :icon "\\uf2c8 "
-             :value {EWW_TEMPS["ACPITZ_TEMP1"]}
+             :value {jq(EWW_TEMPS, '[to_entries | .[].value] | max')}
              :unit "°C")
-    (battery :capacity {EWW_BATTERY["BAT0"].capacity}
-             :status {EWW_BATTERY["BAT0"].status})
+    (box :orientation "h"
+         :space-evenly false
+         :spacing 4
+      (for bat in {jq(EWW_BATTERY, '[.[] | select(type == "object")]')}
+        (battery :capacity {bat.capacity}
+                 :status {bat.status})))
   ))
 
 (defwidget middle []
@@ -131,9 +141,12 @@
        :space-evenly false
        :spacing 6
     (volume :value volume-val)
-    (for interface in network-interfaces
-      (network :interface {interface.name}
-               :wifi {interface.wifi}))
+    (literal :content EWW_NET :visible false) ; required otherwise eww doesn't recognize the var is used
+    (box :orientation "h"
+         :space-evenly false
+         :spacing 4
+      (for interface in network-interfaces
+        (network :interface interface :net {EWW_NET[interface.name]})))
     (box :class "time"
          :space-evenly false
       (label :class "fa-icon" :text "\\uf017 ")
@@ -143,7 +156,7 @@
 
 ;; Bar
 (defwidget bar []
-  (centerbox :class "bar"
+  (centerbox :class "statusbar statusbar_floating"
              :orientation "h"
     (left)
     (middle)
