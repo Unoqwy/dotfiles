@@ -66,6 +66,13 @@ function cmd_minimize {
                     '[.[] | select(.workspace.name == "'"$special_ws"'") | {address,pid,title,class,minimized_at:($state[.address]//0)}]'
             fi
             ;;
+        pop-minimized)
+            last_minimized=$(cmd_minimize list-minimized | jq -cr "sort_by(.minimized_at) | last | .address")
+            if [[ $last_minimized == "null" ]]; then
+                return 0
+            fi
+            cmd_minimize unminimize "$last_minimized"
+            ;;
         *)
             return 1
     esac
@@ -79,7 +86,7 @@ case "$1" in
     getworkspaces)
         "$QDE_LIB/getworkspaces"
         ;;
-    minimize|unminimize|list-minimized)
+    minimize|unminimize|list-minimized|pop-minimized)
         cmd_minimize "$@"
         ;;
     *)
@@ -90,8 +97,9 @@ case "$1" in
         echo "  getwm - Get the current supported window manager"
         echo "  getworkspaces - List workspaces, including QDE data (JSON)"
         echo
-        echo "  minimize - Minimize the current window"
+        echo "  minimize - Minimize the focused window"
         echo "  unminimize <addr> - Unminimize a window"
         echo "  list-minimized - List minimized windows in the current workspace (JSON)"
+        echo "  pop-minimized - Unminimize the last minimized window in the current workspace"
         ;;
 esac
