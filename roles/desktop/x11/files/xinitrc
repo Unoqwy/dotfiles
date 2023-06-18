@@ -15,7 +15,7 @@ export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_CACHE_HOME="$HOME/.cache"
 
 # Set wallpaper
-[[ -f "$HOME/.fehbg" ]] && sh "$HOME/.fehbg"
+[[ -f "$HOME/.local/state/qde/wallpaper.x11" ]] && sh "$HOME/.local/state/qde/wallpaper.x11"
 
 # Fixes
 export _JAVA_AWT_WM_NONREPARENTING=1

@@ -23,7 +23,7 @@ if [[ -f $OVERLAY_FILE ]]; then
     fi
 fi
 mkdir -p "$SAVEFILE_DIR"
-if [[ $XDG_SESSION_TYPE -eq "wayland" ]]; then
+if [[ $XDG_SESSION_TYPE == "wayland" ]]; then
     savefile="${SAVEFILE_PREFIX}.wayland"
     echo -e "${SAVEFILE_HEADER}pkill swaybg\nswaybg --image '$wallpaper' --mode fill" > "$savefile"
 else

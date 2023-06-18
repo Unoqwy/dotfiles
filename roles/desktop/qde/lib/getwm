@@ -1,6 +1,8 @@
 #!/bin/dash
 if [ "$XDG_CURRENT_DESKTOP" = "Hyprland" -o -n "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
     echo "hyprland"
+elif [ "$XMONAD_STARTED" = "1" ]; then
+    echo "xmonad"
 else
     >&2 echo "Unknown window manager"
     exit 1

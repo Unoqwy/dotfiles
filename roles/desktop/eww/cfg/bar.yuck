@@ -130,7 +130,7 @@
        :spacing 6
     (label :text "${workspaces}" :visible false)
     (for workspace in workspaces
-      (eventbox :onclick "hyprctl dispatch workspace name:${workspace.name}"
+      (eventbox :onclick 'qdectl gotoworkspace "${workspace.name}" "${workspace.id}"'
         (workspace :ws workspace)))
   ))
 
@@ -166,9 +166,12 @@
 (defwindow bar
   :monitor 0
   :stacking "fg"
+  ;; wayland
   :exclusive true
   :focusable false
   :namespace "qde-bar"
+  ;; x11
+  :reserve (struts :distance "34px" :side "top")
   :geometry (geometry
     :x "0%"
     :y "0%"

@@ -1,5 +1,5 @@
 #!/bin/bash
-QDECTL_VERSION="0.1.3"
+QDECTL_VERSION="0.1.4"
 
 QDE_LIB=${QDE_LIB:-"$HOME/.local/share/qde/lib"}
 
@@ -89,6 +89,10 @@ case "$1" in
     getnetworks)
         "$QDE_LIB/getnetworks"
         ;;
+    gotoworkspace)
+        shift
+        "$QDE_LIB/gotoworkspace" $@
+        ;;
     minimize|unminimize|list-minimized|pop-minimized)
         cmd_minimize "$@"
         ;;
@@ -100,6 +104,8 @@ case "$1" in
         echo "  getwm - Get the current supported window manager"
         echo "  getworkspaces - List workspaces, including QDE data (JSON)"
         echo "  getnetworks - List internet network interfaces and their type (JSON)"
+        echo
+        echo "  gotoworkspace <name> <id> - Go to a workspace. Either name or id will be used depending on the wm"
         echo
         echo "  minimize - Minimize the focused window"
         echo "  unminimize <addr> - Unminimize a window"

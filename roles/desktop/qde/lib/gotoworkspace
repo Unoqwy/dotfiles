@@ -6,9 +6,12 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-export QDE_WORKSPACES=${QDE_WORKSPACES:-"default"}
+# $1: workspace name
+# $2: workspace id
 if [ "$wm" = "xmonad" ]; then
-    qwmhctl getworkspaces
+    xdotool key "super+$2"
+elif [ "$wm" = "hyprland" ]; then
+    hyprctl dispatch workspace "name:$1"
 else
-    "$QDE_LIB/impl/$wm/getworkspaces"
+    exit 1
 fi

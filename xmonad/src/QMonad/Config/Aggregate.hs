@@ -16,7 +16,9 @@ import QMonad.Config.Layout.LayoutDescriptionMeta (parseLayoutDescription)
 import QMonad.Lib.WorkspaceMasks
 
 data WorkspaceAggregate = WorkspaceAggregate {
+    idx :: Int,
     tag :: WorkspaceId,
+    name :: String,
     visible :: Bool,
     empty :: Bool,
     hasMinimized :: Bool,
@@ -29,17 +31,20 @@ workspaces = do
   minimized <- XS.gets minimizedStack
   stackWs <- sort' . W.workspaces <$> gets windowset
   WorkspaceMasks masks <- XS.get
-  return $ map
-    (\ws -> do
+  return $ zipWith
+    (\idx ws  -> do
       let stack = W.integrate' . W.stack $ ws
       let (meta,_) = parseLayoutDescription [] (description . W.layout $ ws)
       let wsTag = W.tag ws
+      let mask = M.findWithDefault ([], True) wsTag masks
       WorkspaceAggregate {
+        idx = idx,
         tag = wsTag,
-        visible = snd $ M.findWithDefault ([], True) wsTag masks,
+        name = fst mask,
+        visible = snd mask,
         empty = not $ any (`notElem` minimized) stack,
         hasMinimized = any (`elem` minimized) stack,
         focal = "focal" `elem` meta
-      }
-    ) stackWs
+      })
+    [0..] stackWs
 
