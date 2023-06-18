@@ -33,6 +33,11 @@
     src: "{{ install_src }}/roles/desktop/qde/bins/qdectl"
     dest: "{{ install_dest }}/.local/bin/qdectl"
     state: link
+- name: Link spotifyctl bin
+  file:
+    src: "{{ install_src }}/roles/desktop/qde/bins/spotifyctl"
+    dest: "{{ install_dest }}/.local/bin/spotifyctl"
+    state: link
 - name: Link rofi-unminimize bin
   file:
     src: "{{ install_src }}/roles/desktop/qde/bins/rofi-unminimize"

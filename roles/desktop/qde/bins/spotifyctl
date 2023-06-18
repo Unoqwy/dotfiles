@@ -1,0 +1,28 @@
+#!/bin/dash
+
+## Utilities {{{
+send_action() {
+    dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify \
+        /org/mpris/MediaPlayer2 "org.mpris.MediaPlayer2.Player.$1"
+}
+## }}}
+
+case "$1" in
+    playpause)
+        send_action PlayPause
+        ;;
+    prev)
+        send_action Previous
+        ;;
+    next)
+        send_action Next
+        ;;
+    *)
+        echo "spotifyctl - Control running Spotify instance"
+        echo
+        echo "Commands:"
+        echo "  playpause"
+        echo "  prev"
+        echo "  next"
+        ;;
+esac
