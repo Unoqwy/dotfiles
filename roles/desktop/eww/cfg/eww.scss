@@ -25,12 +25,22 @@
   .fa-icon {
     font: 12px "Font Awesome 5 Pro Solid";
   }
+  .battery .fa-icon {
+    font-size: 10px;
+  }
 
   .monitor {
     color: #bd7572;
   }
-  .volume, .battery {
+  .volume {
     color: $gray;
+  }
+  .battery {
+    color: $gray;
+
+    &.battery_low {
+      color: $lightgray;
+    }
   }
 
   .time {

@@ -25,11 +25,11 @@
   ))
 
 (defwidget battery [capacity status]
-  (box :class "battery"
+  (box :class "battery ${capacity > 15 ? "battery_normal" : "battery_low"}"
        :orientation "h"
        :space-evenly false
-       :spacing 3
-    (label :class "fa-icon"
+       :spacing 2
+    (label :class "fa-icon" :angle 90
            :text {status == "Discharging" ? "\\uf242" : "\\uf376"})
     (box :space-evenly false
       (literal {round(capacity, 0)})
