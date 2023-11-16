@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 
 	"github.com/jezek/xgb/xproto"
@@ -62,7 +61,6 @@ func handlePropertyChange(xu *xgbutil.XUtil, ev xevent.PropertyNotifyEvent) {
 func execGetWorkspaces(xu *xgbutil.XUtil) error {
 	root := xu.RootWin()
 	current, err := xprop.PropValNum(xprop.GetProperty(xu, root, AtomCurrentDesktop))
-	fmt.Println(current)
 	desktopNames, err := xprop.PropValStrs(xprop.GetProperty(xu, root, AtomDesktopNames))
 	if err != nil {
 		return err
