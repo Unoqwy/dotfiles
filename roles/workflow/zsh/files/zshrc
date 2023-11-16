@@ -139,6 +139,10 @@ alias ga="gita"
 alias gs="git status"
 alias lg="lazygit"
 
+function gd {
+    git diff "$1^!"
+}
+
 # alias vim and vi to nvim if installed
 if type nvim > /dev/null; then
     alias vim="nvim"
@@ -147,10 +151,13 @@ fi
 alias f="xplr"
 alias j="just"
 alias c="cargo"
+alias ca="cargo check && cargo fmt && cargo clippy"
 alias p="pnpm"
 alias px="pnpm dlx"
 alias fl="flutter"
 alias dc="docker-compose"
+alias tf="terraform"
+alias mk="minikube"
 
 alias nf="neofetch"
 alias nfr="neofetch --config none"
