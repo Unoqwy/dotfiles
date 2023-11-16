@@ -27,8 +27,8 @@ screenSpacing = [ 6 - windowSpacing -- Top
                 ]
 
 mkGaps = spacingRaw False
-  (Border (head screenSpacing) (screenSpacing!!1) (screenSpacing!!2) (screenSpacing!!3)) True
-  (Border windowSpacing windowSpacing windowSpacing windowSpacing) True
+  (Border (head screenSpacing) (screenSpacing!!1) (screenSpacing!!2) (screenSpacing!!3)) False
+  (Border windowSpacing windowSpacing windowSpacing windowSpacing) False
 
 layouts =
       (avoidStruts . foreignLayout $
