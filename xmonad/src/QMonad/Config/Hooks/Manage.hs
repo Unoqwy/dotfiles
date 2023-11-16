@@ -77,10 +77,14 @@ windowRules = composeAll [
   -- Firefox PiP
   , wmName =? "Picture-in-Picture" --> doFloat
 
+  -- Steam
+  , resource =? "vrmonitor" --> doFloat
+  , resource =? "vrwebhelper" --> doFloat
+
   -- Misc
   , resource =? "Godot_ProjectList" --> doCenteredFloat
-  , resource =? "Godot_Engine" <&&> className /=? "Godot" --> doFloat
   , wmRole =? "GtkFileChooserDialog" --> doCenteredFloat
+  , fmap ("Pianoteq" `isPrefixOf`) className --> doCenterFloat
   ]
 
 -- DND rules
@@ -103,6 +107,7 @@ opacityHook = composeOne $
           , "spotify"
           , "discord"
           , "code"
+          , "code-oss"
           , "emacs"
           , "Thunar"
           ] ++ t'
