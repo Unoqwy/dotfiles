@@ -9,6 +9,9 @@
 (defpoll volume-val :interval "3s"
   "~/.local/share/qde/lib/getvolume")
 
+(defpoll mic-state :interval "3s"
+  "~/.local/share/qde/lib/getmic")
+
 (defpoll network-interfaces :interval "3s" :initial "[]"
   "~/.local/share/qde/lib/getnetworks")
 
@@ -46,8 +49,20 @@
              :text {value == "-1" ? "\\uf6a9" : "\\uf58f"})
       (box :space-evenly false
            :visible {value != "-1"}
-        (literal value)
+        (label :text value)
         (label :text "%")
+      ))))
+
+(defwidget mic [value]
+  (eventbox :onclick "pavucontrol &!"
+    (box :class "volume"
+         :orientation "h"
+         :space-evenly false
+         :spacing 3
+      (label :class "fa-icon"
+             :text {value == "Mic ON" ? "\\uf130" : "\\uf131"})
+      (box :space-evenly false
+        (label :text value)
       ))))
 
 (defwidget network [interface net]
@@ -114,6 +129,7 @@
     (monitor :icon "\\uf2c8 "
              :value {jq(EWW_TEMPS, '[to_entries | .[].value] | max')}
              :unit "°C")
+    (mic :value mic-state)
     (box :orientation "h"
          :space-evenly false
          :spacing 4

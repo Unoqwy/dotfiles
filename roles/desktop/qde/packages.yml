@@ -10,7 +10,7 @@ _:
       unless: picom-git
 
   # Audio
-  - pacman: [libpulse, pipewire-pulse, pavucontrol, pamixer]
+  - pacman: [libpulse, pipewire-pulse, pavucontrol, pamixer, alsa-utils]
 
   # Network
   - pacman: [networkmanager, network-manager-applet]

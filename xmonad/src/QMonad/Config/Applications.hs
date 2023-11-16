@@ -44,6 +44,8 @@ keybindings conf@XConfig{XMonad.modMask = modm} = M.fromList [
       , ((0, xK_o), spawn "open-proj")
 
       , ((0, xK_s), spawn "pamiec-save")
+
+      , ((0, xK_m), spawn "togglemic")
       ])
 
   -- Special keys

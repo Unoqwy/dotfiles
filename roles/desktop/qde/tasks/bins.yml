@@ -53,3 +53,8 @@
     src: "{{ install_src }}/roles/desktop/qde/bins/spawn-qv"
     dest: "{{ install_dest }}/.local/bin/spawn-qv"
     state: link
+- name: Link togglemic bin
+  file:
+    src: "{{ install_src }}/roles/desktop/qde/bins/togglemic"
+    dest: "{{ install_dest }}/.local/bin/togglemic"
+    state: link

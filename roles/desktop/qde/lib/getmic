@@ -1,0 +1,6 @@
+#!/bin/bash
+if amixer get Capture | grep -q '\[on\]'; then
+    echo "Mic ON"
+else
+    echo "Mic OFF"
+fi
