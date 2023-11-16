@@ -2,7 +2,7 @@ import XMonad (X, xmonad, def, mod4Mask, extensionType)
 import qualified XMonad
 import XMonad.Util.Run (spawnPipe)
 
-import XMonad.Hooks.EwmhDesktops (ewmh)
+import XMonad.Hooks.EwmhDesktops (ewmh, ewmhFullscreen)
 import XMonad.Hooks.ManageDocks (docks)
 import qualified XMonad.Util.ExtensibleState as XS
 
@@ -34,7 +34,7 @@ main = do
   infoPipe <- getFIFOHandle "/tmp/xmonad-info"
 
   conf <- loadEnvConfig
-  xmonad $ (ewmh . qwmh . docks . hooks conf) def {
+  xmonad $ (ewmhFullscreen . ewmh . qwmh . docks . hooks conf) def {
       XMonad.terminal = terminal conf
     , XMonad.modMask = mod4Mask
     , XMonad.workspaces = map show [0..9]
