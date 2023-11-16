@@ -13,6 +13,7 @@ import XMonad.Actions.CycleWS (prevScreen, nextScreen, toggleWS)
 import XMonad.Actions.CopyWindow (copy)
 import Graphics.X11.ExtraTypes.XF86
 
+import XMonad.Layout.LayoutScreens (layoutSplitScreen)
 import XMonad.Layout.Spacing (
     toggleScreenSpacingEnabled, toggleWindowSpacingEnabled
   )
@@ -33,6 +34,7 @@ import QMonad.Config.DoNotDisturb (toggleDND)
 import QMonad.Config.ControlSliders
 import QMonad.Config.Layout.FocalWindow (FocalToggle(..))
 import QMonad.Config.Layout.ForeignLayout (ForeignMessage(..), killFocused)
+import QMonad.Config.Hooks.Layouts (verticalMonitorsLayout)
 import QMonad.Config.Env (EnvConfig(..), localBin)
 import QMonad.Config.IPC (MediaControl(..), mediaAction, toggleStatusBar)
 import QMonad.Lib.Window.Minimize (minimizeWindow, maximizeWindow, sortMinimizedWindows, minimizedStack)
@@ -157,6 +159,10 @@ keybindings conf xconf@XConfig {XMonad.modMask = modm} = M.fromList ([
   , ((modm, xK_x), submap . M.fromList $ [
         ((0, xK_r), spawn "$XMONAD/bin/xmonad/recompile -r")
       , ((0, xK_k), io exitSuccess)
+
+      -- Virtual monitors
+      , ((0, xK_v), layoutSplitScreen 2 verticalMonitorsLayout)
+      , ((0, xK_c), rescreen)
       ])
 
   -- Go to workspaces

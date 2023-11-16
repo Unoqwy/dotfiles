@@ -1,5 +1,6 @@
 module QMonad.Config.Hooks.Layouts (
   layoutHook,
+  verticalMonitorsLayout,
 ) where
 
 import XMonad hiding (layoutHook)
@@ -9,6 +10,7 @@ import XMonad.Layout.Minimize (minimize)
 import XMonad.Layout.Renamed (renamed, Rename(..))
 import XMonad.Layout.NoBorders (smartBorders, noBorders)
 import XMonad.Layout.Spacing (spacingRaw, Border(..))
+import XMonad.Layout.TwoPane (TwoPane(..))
 import XMonad.Layout.LayoutModifier
 import qualified XMonad.StackSet as W
 
@@ -47,3 +49,5 @@ layouts =
     fullScreen = noBorders Full
 
 layoutHook = renamed [CutLeft 9] . minimize . boringWindows . smartBorders $ layouts
+
+verticalMonitorsLayout = Mirror $ TwoPane 0.35 0.65
