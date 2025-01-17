@@ -1,9 +1,0 @@
-- name: Create QDE-wayland config directory
-  file:
-    path: "{{ install_dest }}/.local/share/qde-wayland"
-    state: directory
-- name: Link QDE-wayland init scripts
-  file:
-    src: "{{ install_src }}/roles/desktop/wayland/files/init"
-    dest: "{{ install_dest }}/.local/share/qde-wayland/init"
-    state: link

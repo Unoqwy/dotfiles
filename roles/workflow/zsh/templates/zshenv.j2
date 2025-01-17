@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/usr/bin/env zsh
+# vim: set ft=zsh
 export GPG_TTY=$(tty)
 export EDITOR=nvim
 
@@ -9,7 +10,7 @@ export XDG_DATAT_HOME="$HOME/.local/share"
 export GOPATH="$HOME/go"
 
 # PATH
-export PATH="{{ PATH | join(":") }}:$PATH"
+export PATH="$PATH:{{ PATH | join(":") }}"
 
 # priv repo overrides
 if [[ -f "{{ install_src }}/priv/.zshenv" ]]; then

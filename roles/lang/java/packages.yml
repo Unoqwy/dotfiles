@@ -1,0 +1,3 @@
+aur: [mvnvm]
+pacman: [ruby, ruby-rexml]
+brew: [mvnvm]

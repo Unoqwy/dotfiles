@@ -1,0 +1,8 @@
+#!/bin/bash
+# vim: set ft=bash
+_file="{{ install_src }}/themes/current/_name"
+if [[ -f $_file ]]; then
+    cat "$_file"
+else
+    echo "default"
+fi

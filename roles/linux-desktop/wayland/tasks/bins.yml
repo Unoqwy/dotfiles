@@ -1,0 +1,5 @@
+- name: Link startway bin
+  file:
+    src: "{{ install_src }}/roles/linux-desktop/wayland/bins/startway"
+    dest: "{{ install_dest }}/.local/bin/startway"
+    state: link

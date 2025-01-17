@@ -1,0 +1,5 @@
+- name: Link eww config directory
+  file:
+    src: "{{ install_src }}/roles/linux-desktop/eww/cfg"
+    dest: "{{ install_dest }}/.config/eww"
+    state: link

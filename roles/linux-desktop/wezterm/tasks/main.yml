@@ -1,0 +1,14 @@
+- name: Create wezterm config directory
+  file:
+    path: "{{ install_dest }}/.config/wezterm"
+    state: directory
+- name: Link wezterm theme
+  file:
+    src: "{{ install_src }}/roles/linux-desktop/wezterm/files/sonokai_colorscheme.lua"
+    dest: "{{ install_dest }}/.config/wezterm/sonokai_colorscheme.lua"
+    state: link
+- name: Link wezterm config
+  file:
+    src: "{{ install_src }}/roles/linux-desktop/wezterm/files/wezterm.lua"
+    dest: "{{ install_dest }}/.config/wezterm/wezterm.lua"
+    state: link

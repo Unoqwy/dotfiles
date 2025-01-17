@@ -1,5 +1,0 @@
-# vim:ft=udevrules
-ACTION=="bind", SUBSYSTEM=="usb" \
-, ENV{DRIVER}=="usb", ENV{PRODUCT}=="256c/6d/100" \
-, ENV{DISPLAY}=":0", ENV{XAUTHORITY}="{{ xautority_file }}" \
-, RUN+="/etc/udev/rules.d/10-huion-tablet/pad"

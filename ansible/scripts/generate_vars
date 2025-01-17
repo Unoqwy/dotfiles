@@ -1,4 +1,4 @@
-#!/bin/python3
+#!/usr/bin/env python3
 import yaml
 
 import sys
@@ -15,7 +15,7 @@ import dflib.vars
 
 if __name__ == "__main__":
     vars = dflib.vars.load_dotenv_vars(".")
-    with open(".generated/env_vars.yml", "w") as vars_file:
+    with open("ansible/.generated/env_vars.yml", "w") as vars_file:
         dump = "\n".join([
             "# This file was auto-generated.",
             "# See `ansible/scripts/generate_vars` for details.",
@@ -23,4 +23,4 @@ if __name__ == "__main__":
             yaml.dump(vars)
         ])
         vars_file.write(dump)
-        print(f"Written env vars to .generated/env_vars.yml")
+        # print(f"Written env vars to ansible/.generated/env_vars.yml")

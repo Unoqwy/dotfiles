@@ -1,0 +1,16 @@
+- name: Create greetd config
+  template:
+    src: "{{ install_src }}/roles/linux-desktop/greetd/files/config.toml"
+    dest: "/etc/greetd/config.toml"
+  become: true
+- name: Copy greetd start script
+  copy:
+    src: "{{ install_src }}/roles/linux-desktop/greetd/files/start"
+    dest: "/etc/greetd/start"
+    mode: 0755
+  become: true
+- name: Enable greetd on start
+  systemd:
+    name: greetd.service
+    enabled: true
+  become: true

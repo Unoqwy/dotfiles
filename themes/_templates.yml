@@ -6,4 +6,4 @@ kitty:
   dest: kitty-theme.conf
 xmonad:
   src: xmonad.j2
-  dest: /xmonad/config/theme.yml
+  dest: /roles/linux-desktop/xmonad/xmonad-src/config/theme.yml

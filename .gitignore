@@ -1,5 +1,4 @@
 .env
-.generated
 
 # private repo overrides
 priv/
@@ -10,3 +9,6 @@ priv/
 
 # cache
 __pycache__
+
+# editors
+.vscode

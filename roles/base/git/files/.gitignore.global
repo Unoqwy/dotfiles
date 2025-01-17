@@ -2,7 +2,6 @@
 
 **/.idea/
 *.iml
-**/.vscode/
 
 **/.classpath
 **/.factorypath

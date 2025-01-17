@@ -1,0 +1,8 @@
+- name: Create alacritty config directory
+  file:
+    path: "{{ install_dest }}/.config/alacritty"
+    state: directory
+- name: Create alacritty config
+  template:
+    src: "{{ install_src }}/roles/linux-desktop/alacritty/templates/alacritty.yml.j2"
+    dest: "{{ install_dest }}/.config/alacritty/alacritty.yml"

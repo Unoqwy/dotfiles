@@ -1,4 +1,4 @@
-#!/bin/python3
+#!/usr/bin/env python3
 
 import sys
 import os
@@ -8,11 +8,29 @@ from pathlib import Path
 import shutil
 
 
+def get_sys_platfrom():
+    id = sys.platform.lower()
+    if id.startswith("linux"):
+        return "linux"
+    if id.startswith("win"):
+        return "windows"
+    if id.startswith("darwin"):
+        return "macos"
+    return id
+
+
+SYS_PLATFORM = get_sys_platfrom()
+
+
 PKG_MANAGERS = {
+    "brew": (True, [
+        ("community.general.homebrew", ("name", "{0}")),
+        ("when", "ansible_distribution == 'MacOSX'"),
+    ], "homebrew"),
     "pacman": (True, [
         ("community.general.pacman", ("package", "{0}")),
         ("when", "ansible_pkg_mgr == 'pacman'"),
-        ("become", "true"),
+        ("become", True),
     ], "pacman"),
     "aur": (True, [
         ("kewlfft.aur.aur", [("use", "paru"), ("name", "{0}")]),
@@ -20,7 +38,7 @@ PKG_MANAGERS = {
     ], "paru"),
     "pkgbuild": (True, [
         ("kewlfft.aur.aur", [("use", "makepkg"), ("name", "{0}"),
-            ("local_pkgbuild", "{{{{ install_src }}}}/PKGBUILDS/{0[0]}")]),
+            ("local_pkgbuild", "{{{{ install_src }}}}/pkg/PKGBUILDS/{0[0]}")]),
         ("when", "ansible_pkg_mgr == 'pacman'")
     ], "makepkg"),
 }
@@ -102,12 +120,12 @@ def write_to_entry(entry, pkg, append):
         for subval in val:
             write_to_entry(sub, pkg, subval)
         entry[key] = sub
-    else:
-        if isinstance(pkg, list) and val == "{0}":
+    elif isinstance(pkg, list) and val == "{0}":
             entry[key] = pkg
-        else:
-            entry[key] = val.format(pkg)
-
+    elif isinstance(val, str):
+        entry[key] = val.format(pkg)
+    else:
+        entry[key] = val
 
 ## Generate
 
@@ -127,14 +145,15 @@ def visit_then_write_tasks(src_path, dest_path, group: str, role: str):
     shadow_path = os.path.join("priv", "shadow", group, role)
 
     tasks_dir = os.path.join(src_path, "tasks")
-    if os.path.isdir(tasks_dir):
-        import_tasks = [os.path.abspath(path) for path in Path(tasks_dir).rglob("*.yml")]
-    else:
-        import_tasks = []
-
-    shadow_tasks_dir = os.path.join(shadow_path, "tasks")
-    if os.path.isdir(shadow_tasks_dir):
-        import_tasks.extend([os.path.abspath(path) for path in Path(shadow_tasks_dir).rglob("*.yml")])
+    import_tasks = []
+    for a_tasks_dir in [tasks_dir, os.path.join(shadow_path, "tasks")]:
+        if os.path.isdir(a_tasks_dir):
+            import_tasks.extend([os.path.abspath(path) for path in Path(a_tasks_dir).rglob("*.yml")])
+        else:
+            continue
+        sys_specific_tasks_dir = os.path.join(a_tasks_dir, SYS_PLATFORM)
+        if os.path.isdir(sys_specific_tasks_dir):
+            import_tasks.extend([os.path.abspath(path) for path in Path(sys_specific_tasks_dir).rglob("*.yml")])
 
     pkgs_path = os.path.join(src_path, "packages.yml")
     if os.path.isfile(pkgs_path):
@@ -149,14 +168,30 @@ def visit_then_write_tasks(src_path, dest_path, group: str, role: str):
             except yaml.YAMLError:
                 print(f"YAML file '{pkgs_path}' cannot be parsed.", file=sys.stderr)
 
-    main = [{"import_tasks": task} for task in import_tasks]
-    write_yml_file(os.path.join(dest_path, "main.yml"), main)
+    if import_tasks:
+        main = [include_task_entry(task, group.startswith("_")) for task in import_tasks]
+        write_yml_file(os.path.join(dest_path, "main.yml"), main)
 
-    print(f"Written tasks for {group}/{role}")
+    # print(f"Written tasks for {group}/{role}")
 
+
+def include_task_entry(task, important):
+    basename = os.path.basename(task)
+    if basename.startswith("install"):
+        pass_kind = "install"
+    else:
+        pass_kind = "config"
+    return {
+        "block": [{
+            "name": "{0} ({1})".format(basename, pass_kind),
+            "include_tasks": task,
+        }],
+        "when": "df_pass_kind == '{0}'".format(pass_kind),
+        "ignore_errors": not important,
+    }
 
 if __name__ == "__main__":
-    generated_dir = os.path.join(".generated", "roles")
+    out_roles_dir = os.path.join("ansible", ".generated", "roles")
     roles = []
 
     for group in os.listdir("roles"):
@@ -168,7 +203,7 @@ if __name__ == "__main__":
             role_dir = os.path.join(roles_dir, role)
             if not os.path.isdir(role_dir):
                 continue
-            mapped_role_dir = os.path.join(generated_dir, role)
+            mapped_role_dir = os.path.join(out_roles_dir, role)
 
             tasks_dir = os.path.join(mapped_role_dir, "tasks")
             for dir in [tasks_dir]:
@@ -185,13 +220,19 @@ if __name__ == "__main__":
             roles.append({"role": role, "tags": [group, role]})
 
     playbook = [{
-        "name": "Setup dotfiles",
+        "name": "Copy/link config files (df_pass_kind == config)",
         "hosts": "local",
         "vars_files": [
-            "../ansible/vars/dirs.yml",
-            "../ansible/vars/misc.yml",
+            "../default_vars.yml",
             "env_vars.yml",
         ],
+        "vars": {
+            "df_pass_kind": "config"
+        },
         "roles": roles,
     }]
-    write_yml_file(os.path.join(".generated", "playbook.yml"), playbook)
+    write_yml_file(os.path.join("ansible", ".generated", "playbook-config.yml"), playbook)
+
+    playbook[0]['name'] = "Download/install software"
+    playbook[0]['vars']['df_pass_kind'] = "install"
+    write_yml_file(os.path.join("ansible", ".generated", "playbook-install.yml"), playbook)

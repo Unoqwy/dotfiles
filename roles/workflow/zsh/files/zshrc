@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env zsh
 # vim:fdm=marker
 
 ## ZSH config {{{
@@ -47,10 +47,16 @@ fi
 
 ## Sourcing {{{
 # zsh:syntax-highlighting
-_ZSH_SHL_SOURCE="/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-if [[ -f $_ZSH_SHL_SOURCE ]]; then
-    source "$_ZSH_SHL_SOURCE"
-fi
+_ZSH_SHL_SOURCES=(
+    "/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+    "/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+)
+for f in "${_ZSH_SHL_SOURCES[@]}"; do
+    if [[ -f "$f" ]]; then
+        source "$f"
+        break
+    fi
+done
 
 # source z.lua
 if [[ -f /usr/share/z.lua/z.lua ]]; then
@@ -117,10 +123,10 @@ alias ssh="TERM=xterm-256color ssh"
 alias hist="vim ~/.zsh_history"
 alias inhist="history 0 | grep -i"
 
-# require confirmation on main file ops
-alias cp="cp --interactive"
-alias mv="mv --interactive"
-alias rm="rm --interactive"
+# require confirmation on main file ops (bypassable with -f)
+alias cp="cp -i"
+alias mv="mv -i"
+alias rm="rm -i"
 
 # automatic colors
 alias ls="ls --color=auto"

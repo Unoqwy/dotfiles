@@ -1,1 +1,2 @@
 pacman: [jq, wget, fuse, htop, dash]
+brew: [jq, wget, htop]

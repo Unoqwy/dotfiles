@@ -1,76 +1,88 @@
 #!/bin/bash
-base=$(readlink -f "$(dirname $(readlink -f "$0"))/..")
+# vim: set fdm=marker
+set -e
+set -o pipefail
+
 if [[ "$EUID" == 0 ]]; then
     echo "This should not be run as root!"
     exit 1
 fi
 
-if ! command -v ansible > /dev/null; then
-    echo "Ansible not found, trying to install with package manager."
-    if cat /etc/os-release | grep ID=arch > /dev/null; then
-        sudo pacman -Sy ansible
-    fi
+## Software requirements {{{
+if cat /etc/os-release 2>/dev/null | grep ID=arch >/dev/null; then
+    echo "Arch Linux detected. Ensuring base packages are installed..."
+    sudo pacman -Sy base-devel ansible python python-yaml
 fi
 
 if ! command -v ansible > /dev/null; then
-    echo "Ansible couldn't be installed."
-    exit 1
+    echo "Ansible is missing. Please install it"
 fi
-
 if ! command -v python3 > /dev/null; then
-    echo "Python 3 is required (should come with Ansible anyway)."
+    echo "Python 3 is missing. It should have come with Ansible, PATH issue?"
     exit 1
 fi
-if ! "$base/bin/prepare" 1>/dev/null; then
-    exit 1
-fi
+## }}}
 
-if [[ "$1" == "-" ]]; then
-    shift
-    _pwd=$(</dev/stdin)
-else
-    _pwd=""
-fi
-if [[ -z "$_pwd" ]]; then
-    _pwd=$("$base/bin/__/prompt-password")
-    if [[ -z "$_pwd" ]]; then
-        echo "Invalid sudo password"
+base=$(readlink -f "$(dirname $(readlink -f "$0"))/..")
+
+## Sudo password input {{{
+function prompt_password {
+    read -p "Password: " -s _pwd_input
+    if printf "$_pwd_input\n" | sudo -Skp '' true &>/dev/null; then
+        echo "$_pwd_input"
+    else
         exit 1
     fi
-    printf "\n"
-fi
-
-function pb {
-    echo "$base/playbooks/$1-playbook.yml"
 }
+
+echo "Enter sudo password. This is required now so the whole process can complete in one go."
+_pwd=$(prompt_password)
+if [[ -z "$_pwd" ]]; then
+    >&2 echo "Invalid sudo password"
+    exit 1
+fi
+printf "\n"
+## }}}
 
 function anp {
-    "$base/bin/anp" "$(pb $1)" ${@:2}
+    ANSIBLE_CONFIG=ansible/ansible.cfg ansible-playbook -i ansible/hosts $@
 }
 
-# install dependencies and ignore messages when all is installed
-ansible-galaxy collection install -r ansible/requirements.yml \
-    | grep -v 'Starting galaxy collection install process' \
-    | grep -v 'Nothing to do.'
+if ! echo "$_pwd" | anp "$base/ansible/playbooks/init-playbook.yml" --become-password-file -; then
+    >&2 echo "Failed to install the correct environment for Ansible"
+    exit 1
+fi
 
-echo "Updating theme..."
+echo "Ensuring Ansible has all required modules..."
+ansible-galaxy collection install -r ansible/galaxy-requirements.yml
+
+## Generate playbooks {{{
+echo "Generating playbooks..."
+source "$base/ansible/venv/bin/activate"
+
+if [[ ! -f "$base/.env" ]]; then
+    echo "Created new .env file"
+    cp "$base/.env.example" "$base/.env"
+fi
+
+mkdir -p "$base/ansible/.generated"
+"$base/ansible/scripts/generate_vars"
+if [[ -d "$base/ansible/.generated/roles" ]]; then
+    rm -rf "$base/ansible/.generated/roles"
+fi
+mkdir -p "$base/ansible/.generated/roles"
+"$base/ansible/scripts/generate_playbook"
+## }}}
+
+echo "Updating theme files..."
 if ! "$base/bin/theme" 1>/dev/null; then
     exit 1
 fi
 
-if [[ "$1" == "pick" ]]; then
-    options=$(anp main --list-tags | awk -F"TASK TAGS:" '{print $2}' | xargs echo -n)
-    "$base/bin/select-tags" "$base/bin/anp $(pb main)" "$options"
-else
-    mkdir -p "$HOME/.config"
-    mkdir -p "$HOME/.local/bin"
+mkdir -p "$HOME/.config"
+mkdir -p "$HOME/.local/bin"
 
-    _skip_tags="apps,pacmans"
-    for arg in "$@"; do
-        if [[ $arg == "--tags" ]]; then
-            _skip_tags="."
-            break
-        fi
-    done
-    echo "$_pwd" | anp main --become-password-file - --skip-tags "$_skip_tags" $@
+if ! echo "$_pwd" | anp "$base/ansible/.generated/playbook-config.yml" --become-password-file - $@; then
+    exit 1
 fi
+echo "$_pwd" | anp "$base/ansible/.generated/playbook-install.yml" --become-password-file - $@

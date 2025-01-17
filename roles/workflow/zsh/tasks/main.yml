@@ -11,8 +11,8 @@
     PATH:
     - $HOME/.local/bin
     - $HOME/.cargo/bin
-    - $HOME/.cabal/bin
-    - $HOME/.ghcup/bin
-    - $HOME/.yarn/bin
-    - $HOME/.luarocks/bin
-    - $GOPATH/bin
+    # - $HOME/.cabal/bin
+    # - $HOME/.ghcup/bin
+    # - $HOME/.yarn/bin
+    # - $HOME/.luarocks/bin
+    # - $GOPATH/bin

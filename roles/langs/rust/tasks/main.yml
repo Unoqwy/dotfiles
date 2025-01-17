@@ -1,9 +1,0 @@
-- name: Create .cargo directory
-  file:
-    path: "{{ install_dest }}/.cargo"
-    state: directory
-- name: Link cargo config
-  file:
-    src: "{{ install_src }}/roles/langs/rust/files/cargo-config"
-    dest: "{{ install_dest }}/.cargo/config"
-    state: link

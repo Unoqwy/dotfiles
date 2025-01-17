@@ -1,0 +1,20 @@
+- name: Prepare machine to support installation of dotfiles
+  hosts: local
+
+  vars_files:
+  - ../default_vars.yml
+
+  tasks:
+  - name: Setup for MacOS environment
+    when: ansible_distribution == "MacOSX"
+    block:
+      - name: Install python-packaging
+        community.general.homebrew:
+          name: python-packaging
+      - name: Install virtualenv
+        community.general.homebrew:
+          name: virtualenv
+  - name: Setup Python venv for Ansible
+    ansible.builtin.pip:
+      virtualenv: "{{ ansible_src }}/venv"
+      requirements: "{{ ansible_src }}/py-requirements.txt"

@@ -1,0 +1,13 @@
+- name: Create kitty config directory
+  file:
+    path: "{{ install_dest }}/.config/kitty"
+    state: directory
+- name: Link kitty theme
+  file:
+    src: "{{ install_src }}/themes/current/kitty-theme.conf"
+    dest: "{{ install_dest }}/.config/kitty/theme.conf"
+    state: link
+- name: Create kitty config
+  template:
+    src: "{{ install_src }}/roles/linux-desktop/kitty/templates/kitty.conf.j2"
+    dest: "{{ install_dest }}/.config/kitty/kitty.conf"

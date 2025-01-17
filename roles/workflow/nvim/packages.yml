@@ -1,1 +1,2 @@
 pacman: [neovim, ripgrep, fd]
+brew: [neovim, ripgrep, fd]

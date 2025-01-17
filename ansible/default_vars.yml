@@ -1,0 +1,9 @@
+userhome: "{{ '~' | expanduser }}"
+dotfiles_clone_dir: "{{ playbook_dir }}/../.."
+base_dir: "{{ dotfiles_clone_dir | realpath }}"
+
+ansible_src: "{{ base_dir }}/ansible"
+install_src: "{{ base_dir }}"
+install_dest: "{{ userhome }}"
+
+xauthority_file: "{{ userhome }}/.Xauthority"

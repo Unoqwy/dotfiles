@@ -1,0 +1,24 @@
+#!/bin/bash
+in_file=${1:-"*.cue"}
+out_file="../files/settings.json"
+
+set -e
+
+if [[ -f $out_file ]]; then
+    before_hash=$(md5sum $out_file)
+else
+    before_hash=none
+fi
+
+if type cue > /dev/null; then
+    cue export $in_file > "$out_file"
+    printf "settings.json generated"
+else
+    # create file even if cue isn't installed so symlink can be created anyway
+    [[ ! -f $out_file ]] && touch "$out_file"
+fi
+
+if [[ $before_hash != $(md5sum $out_file) ]]; then
+    printf " (changed)"
+fi
+printf "\n"
