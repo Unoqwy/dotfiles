@@ -1,1 +1,2 @@
 pacman: gnupg
+brew: [gpg, pinentry]
