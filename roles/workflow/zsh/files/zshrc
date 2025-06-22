@@ -105,9 +105,16 @@ _start_editor() {
 }
 
 zle -N _start_editor
+
+_fzf_fcd() {
+    BUFFER="fcd"
+    zle accept-line
+}
+
+zle -N _fzf_fcd
 #}}}
 
-## Keybindinsg {{{
+## Keybindings {{{
 bindkey -v
 
 # builtin
@@ -119,6 +126,7 @@ bindkey '^[[Z' reverse-menu-complete
 bindkey "^r" _fzf_hist
 bindkey "^t" _fzf_tmux_session
 bindkey "^n" _start_editor
+bindkey "^g" _fzf_fcd
 ## }}}
 
 ## Aliases {{{
@@ -158,8 +166,12 @@ function gd {
 if type nvim > /dev/null; then
     alias vim="nvim"
     alias vi="nvim"
+    alias v="nvim"
+elif type vim > /dev/null; then
+    alias vi="vim"
+    alias v="vim"
 fi
-alias f="xplr"
+alias f="yazi"
 alias j="just"
 alias c="cargo"
 alias ca="cargo check && cargo fmt && cargo clippy"
@@ -178,12 +190,20 @@ alias ts="tree-sitter"
 alias octperm="stat -c %a"
 ## }}}
 
-## Misc tools {{{
+## Useful functions {{{
+function fcd {
+    cd "$(FZF_DEFAULT_COMMAND='fd -t d' fzf +m)"
+}
+
 function rsed { find . -type f -exec sed -i "s|$1|$2|g" {} +; }
 function rsedg { find . -type f -exec sed -i "s/$1/$2/g" {} +; }
 
 function ebin {
-    if which "$1" > /dev/null; then vi $(which "$1"); else echo "Bin not found" 1>&2; fi
+    if which "$1" > /dev/null; then
+        vi $(which "$1")
+    else
+        echo "Bin not found" 1>&2
+    fi
 }
 
 function synctime {
@@ -191,15 +211,18 @@ function synctime {
 }
 ## }}}
 
-# pnpm
-export PNPM_HOME="/home/jq/.local/share/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end
+## Tool integrations {{{
+# init jenv
+if command -v jenv > /dev/null; then
+    eval "$(jenv init -)"
+fi
+
+# bun completions
+[ -s "/Users/jq/.bun/_bun" ] && source "/Users/jq/.bun/_bun"
+## }}}
 
 # use gpg as the ssh agent
 if command -v gpgconf > /dev/null; then
     export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
 fi
+
