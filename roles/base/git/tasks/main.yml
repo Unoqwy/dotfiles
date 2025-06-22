@@ -11,3 +11,12 @@
     src: "{{ install_src }}/roles/base/git/files/.gitignore.global"
     dest: "{{ install_dest }}/.config/git/.gitignore.global"
     state: link
+- name: Create lazygit config directory
+  file:
+    path: "{{ install_dest }}/.config/lazygit"
+    state: directory
+- name: Link lazygit config
+  file:
+    src: "{{ install_src }}/roles/base/git/files/lazygit.yml"
+    dest: "{{ install_dest }}/.config/lazygit/config.yml"
+    state: link

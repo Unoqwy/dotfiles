@@ -1,1 +1,3 @@
-pacman: git
+pacman: [git, lazygit]
+brew: [lazygit]
+apt: [git, lazygit]
