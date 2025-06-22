@@ -192,7 +192,11 @@ alias octperm="stat -c %a"
 
 ## Useful functions {{{
 function fcd {
-    cd "$(FZF_DEFAULT_COMMAND='fd -t d' fzf +m)"
+    fd_bin="fd"
+    if type fdfind > /dev/null; then
+        fd_bin="fdfind"
+    fi
+    cd "$(FZF_DEFAULT_COMMAND="$fd_bin -t d" fzf +m)"
 }
 
 function rsed { find . -type f -exec sed -i "s|$1|$2|g" {} +; }
