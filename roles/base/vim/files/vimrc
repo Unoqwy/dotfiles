@@ -9,7 +9,7 @@ set nocompatible encoding=utf8
 set noerrorbells
 set lazyredraw
 
-set number relativenumber
+set number
 set hidden
 set wrap linebreak
 set noshowmatch
