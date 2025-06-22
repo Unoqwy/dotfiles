@@ -27,6 +27,11 @@ PKG_MANAGERS = {
         ("community.general.homebrew", ("name", "{0}")),
         ("when", "ansible_distribution == 'MacOSX'"),
     ], "homebrew"),
+    "apt": (True, [
+        ("ansible.builtin.apt", ("name", "{0}")),
+        ("when", "ansible_pkg_mgr == 'apt'"),
+        ("become", True),
+    ], "apt"),
     "pacman": (True, [
         ("community.general.pacman", ("package", "{0}")),
         ("when", "ansible_pkg_mgr == 'pacman'"),
@@ -178,7 +183,7 @@ def visit_then_write_tasks(src_path, dest_path, group: str, role: str):
 def include_task_entry(task, important):
     basename = os.path.basename(task)
     if basename.startswith("install"):
-        pass_kind = "install"
+        pass_kind = "packages"
     else:
         pass_kind = "config"
     return {
@@ -186,7 +191,7 @@ def include_task_entry(task, important):
             "name": "{0} ({1})".format(basename, pass_kind),
             "include_tasks": task,
         }],
-        "when": "df_pass_kind == '{0}'".format(pass_kind),
+        "when": "'{0}' in df_filter".format(pass_kind),
         "ignore_errors": not important,
     }
 
@@ -220,19 +225,13 @@ if __name__ == "__main__":
             roles.append({"role": role, "tags": [group, role]})
 
     playbook = [{
-        "name": "Copy/link config files (df_pass_kind == config)",
+        "name": "Install dotfiles",
         "hosts": "local",
         "vars_files": [
             "../default_vars.yml",
             "env_vars.yml",
         ],
-        "vars": {
-            "df_pass_kind": "config"
-        },
         "roles": roles,
     }]
-    write_yml_file(os.path.join("ansible", ".generated", "playbook-config.yml"), playbook)
-
-    playbook[0]['name'] = "Download/install software"
-    playbook[0]['vars']['df_pass_kind'] = "install"
     write_yml_file(os.path.join("ansible", ".generated", "playbook-install.yml"), playbook)
+

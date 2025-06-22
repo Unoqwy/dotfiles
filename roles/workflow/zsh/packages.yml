@@ -1,2 +1,3 @@
 pacman: [zsh, zsh-syntax-highlighting, fzf]
 brew: [zsh-syntax-highlighting, fzf] # (MacOS ships latest zsh already)
+apt: [zsh, zsh-syntax-highlighting, fzf]

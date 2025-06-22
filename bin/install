@@ -16,11 +16,21 @@ fi
 
 if ! command -v ansible > /dev/null; then
     echo "Ansible is missing. Please install it"
+    exit 1
 fi
 if ! command -v python3 > /dev/null; then
     echo "Python 3 is missing. It should have come with Ansible, PATH issue?"
     exit 1
 fi
+## }}}
+
+## Primary argument {{{
+if [[ "$1" != *"config"* && "$1" != *"packages"* ]]; then
+    echo "Usage: $0 <filter(config,packages)> [ansible args]"
+    exit 1
+fi
+df_filter="$1"
+shift
 ## }}}
 
 base=$(readlink -f "$(dirname $(readlink -f "$0"))/..")
@@ -53,9 +63,6 @@ if ! echo "$_pwd" | anp "$base/ansible/playbooks/init-playbook.yml" --become-pas
     exit 1
 fi
 
-echo "Ensuring Ansible has all required modules..."
-ansible-galaxy collection install -r ansible/galaxy-requirements.yml
-
 ## Generate playbooks {{{
 echo "Generating playbooks..."
 source "$base/ansible/venv/bin/activate"
@@ -82,7 +89,8 @@ fi
 mkdir -p "$HOME/.config"
 mkdir -p "$HOME/.local/bin"
 
-if ! echo "$_pwd" | anp "$base/ansible/.generated/playbook-config.yml" --become-password-file - $@; then
-    exit 1
-fi
-echo "$_pwd" | anp "$base/ansible/.generated/playbook-install.yml" --become-password-file - $@
+echo "$_pwd" | anp "$base/ansible/.generated/playbook-install.yml"\
+    --become-password-file -\
+    --extra-vars "{\"df_filter\":\"$df_filter\"}"\
+    $@
+

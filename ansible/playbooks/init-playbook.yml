@@ -8,13 +8,22 @@
   - name: Setup for MacOS environment
     when: ansible_distribution == "MacOSX"
     block:
-      - name: Install python-packaging
+      - name: Install python-packaging (homebrew)
         community.general.homebrew:
           name: python-packaging
-      - name: Install virtualenv
+      - name: Install virtualenv (homebrew)
         community.general.homebrew:
           name: virtualenv
+  - name: Setup for Debian environment
+    when: ansible_distribution == "Debian"
+    block:
+      - name: Install virtualenv (apt)
+        apt:
+          name: python3-virtualenv
+        become: true
   - name: Setup Python venv for Ansible
     ansible.builtin.pip:
       virtualenv: "{{ ansible_src }}/venv"
       requirements: "{{ ansible_src }}/py-requirements.txt"
+  - name: Install Ansible collections
+    command: ansible-galaxy collection install -r ../galaxy-requirements.yml

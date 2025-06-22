@@ -47,9 +47,14 @@ fi
 
 ## Sourcing {{{
 # zsh:syntax-highlighting
+if [[ -v WSL_DISTRO_NAME ]]; then
+    ZSH_HIGHLIGHT_DIRS_BLACKLIST+=(/mnt/c)
+fi
+
 _ZSH_SHL_SOURCES=(
     "/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
     "/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+    "/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 )
 for f in "${_ZSH_SHL_SOURCES[@]}"; do
     if [[ -f "$f" ]]; then
