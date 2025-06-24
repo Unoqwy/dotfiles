@@ -196,7 +196,7 @@ function fcd {
     if type fdfind > /dev/null; then
         fd_bin="fdfind"
     fi
-    cd "$(FZF_DEFAULT_COMMAND="$fd_bin -t d" fzf +m)"
+    cd "$(FZF_DEFAULT_COMMAND="$fd_bin -t d . $1" fzf +m)"
 }
 
 function rsed { find . -type f -exec sed -i "s|$1|$2|g" {} +; }
