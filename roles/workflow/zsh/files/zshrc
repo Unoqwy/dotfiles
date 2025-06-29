@@ -73,7 +73,7 @@ if [[ -f $_TMUX_EXT_SOURCE ]]; then
     source "$_TMUX_EXT_SOURCE"
 
     _fzf_tmux_session() {
-        session=$(tl list-known-sessions | fzf +m)
+        session=$({ tl list-known-sessions; tmux ls -F "#{session_name}"; } | sort -u | fzf +m)
         if [[ -n $session ]]; then
             BUFFER="ta $session"
             zle accept-line
@@ -83,6 +83,14 @@ if [[ -f $_TMUX_EXT_SOURCE ]]; then
     zle -N _fzf_tmux_session
 else
     alias ta="tmux attach -t"
+
+    _fzf_tmux_session() {
+        session=$(tmux ls -F "#{session_name}" | fzf +m)
+        if [[ -n $session ]]; then
+            BUFFER="ta $session"
+            zle accept-line
+        fi
+    }
 fi
 ## }}}
 
@@ -196,7 +204,7 @@ function fcd {
     if type fdfind > /dev/null; then
         fd_bin="fdfind"
     fi
-    cd "$(FZF_DEFAULT_COMMAND="$fd_bin -t d . $1" fzf +m)"
+    cd "$(FZF_DEFAULT_COMMAND="$fd_bin -L -t d . $1" fzf +m)"
 }
 
 function rsed { find . -type f -exec sed -i "s|$1|$2|g" {} +; }
