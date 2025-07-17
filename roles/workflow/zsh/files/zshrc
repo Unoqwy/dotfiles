@@ -73,7 +73,7 @@ if [[ -f $_TMUX_EXT_SOURCE ]]; then
     source "$_TMUX_EXT_SOURCE"
 
     _fzf_tmux_session() {
-        session=$({ tl list-known-sessions; tmux ls -F "#{session_name}"; } | sort -u | fzf +m)
+        session=$({ tl list-known-sessions; tmux ls -F "#{session_name}"; } | awk NF | sort -u | fzf +m)
         if [[ -n $session ]]; then
             BUFFER="ta $session"
             zle accept-line
