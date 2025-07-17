@@ -1,9 +1,4 @@
-- name: Create GNUPG config directory
-  file:
-    path: "{{ install_dest }}/.gnupg"
-    state: directory
-- name: Link GNUPG agent config
-  file:
-    src: "{{ install_src }}/roles/base/gnupg/files/gpg-agent.conf"
+- name: Create GNUPG agent config
+  template:
+    src: "{{ install_src }}/roles/base/gnupg/templates/gpg-agent.conf.j2"
     dest: "{{ install_dest }}/.gnupg/gpg-agent.conf"
-    state: link

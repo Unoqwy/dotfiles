@@ -1,0 +1,20 @@
+- name: Pinentry WSL
+  when: lookup('env', 'WSL_DISTRO_NAME')
+  block:
+    - name: Ensure ~/.local/share exists
+      file:
+        path: "{{ install_dest }}/.local/share"
+        state: directory
+    - stat:
+        path: "{{ install_dest }}/.local/share/pinentry-wsl-ps1"
+      register: pinentry_wsl_stat
+    - name: Clone pinentry-wsl-ps1 repository
+      git:
+        repo: "https://github.com/diablodale/pinentry-wsl-ps1.git"
+        dest: "{{ install_dest }}/.local/share/pinentry-wsl-ps1"
+        version: "4fc6ea16270c9c2f2d9daeae1ba4aa0d868d1b2a"
+      when: not pinentry_wsl_stat.stat.exists
+    - name: Make pinentry-wsl-ps1.sh executable
+      file:
+        path: "{{ install_dest }}/.local/share/pinentry-wsl-ps1/pinentry-wsl-ps1.sh"
+        mode: 0755

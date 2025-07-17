@@ -1,0 +1,11 @@
+default-cache-ttl 1800
+enable-ssh-support
+
+allow-loopback-pinentry
+{% if lookup('env', 'WSL_DISTRO_NAME') %}
+pinentry-program {{ install_dest }}/.local/share/pinentry-wsl-ps1/pinentry-wsl-ps1.sh
+{% elif ansible_distribution == 'MacOSX'  %}
+pinentry-program /opt/homebrew/bin/pinentry-mac
+{% else %}
+pinentry-program /usr/bin/pinentry
+{% endif %}

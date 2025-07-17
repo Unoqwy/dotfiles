@@ -1,2 +1,3 @@
 pacman: gnupg
 brew: [gpg, pinentry]
+apt: [pinentry-curses]
